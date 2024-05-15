@@ -1,10 +1,3 @@
-//
-//  AppDelegate.swift
-//  Tracker
-//
-//  Created by dreamlogin on 13.05.2024.
-//
-
 import UIKit
 
 @main
@@ -18,7 +11,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     ) -> Bool {
         
        let window = UIWindow()
-        window.rootViewController = ViewController()
+        window.rootViewController = TabBarController()
         window.makeKeyAndVisible()
         
         self.window = window
