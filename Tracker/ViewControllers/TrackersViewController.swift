@@ -4,12 +4,25 @@ import SnapKit
 class TrackersViewController: UIViewController {
     
     // MARK: - Private Properties
-    private var addTrackerButton = UIButton(type: .system)
-    private var datePicker = UILabel()
+    private var categories: [TrackerCategory] = []
+    private var completedTrackers: [TrackerRecord] = []
+    
+    private lazy var addTrackerButton: UIBarButtonItem = {
+        let button = UIBarButtonItem(
+            image: UIImage(systemName: "plus")?.withTintColor(.trackerBlack, renderingMode: .alwaysOriginal),
+            style: .plain,
+            target: self,
+            action: #selector(didTapAddTrackerButton)
+        )
+        return button
+    }()
+    
+    private var datePicker = UIDatePicker()
     private var mainLabel = UILabel()
     private var searchField = UITextField()
     private var noTrackersImageView = UIImageView()
     private var noTrackersLabel = UILabel()
+    
     // MARK: - Public Methods
     
     override func viewDidLoad() {
@@ -21,39 +34,44 @@ class TrackersViewController: UIViewController {
     // MARK: - Private Methods
     private func setUI() {
         view.backgroundColor = .trackerWhite
-        configureAddTrackerButton()
-        configureDatePicker()
+        configureNavBar()
         configureMainLabel()
         configureSearchField()
         configureNoTrackersImageAndText()
     }
     
-    private func configureAddTrackerButton() {
-        addTrackerButton.setImage(UIImage(systemName: "plus")?.withTintColor(.black, renderingMode: .alwaysOriginal), for: .normal)
-        view.addSubview(addTrackerButton)
-        addTrackerButton.snp.makeConstraints { make in
-            make.width.height.equalTo(44)
-            make.leading.equalToSuperview().inset(4)
-            make.top.equalToSuperview().offset(43)
-        }
+    private func configureNavBar() {
+        configureDatePicker()
+        navigationItem.leftBarButtonItem = addTrackerButton
+        navigationItem.rightBarButtonItem = UIBarButtonItem(customView: datePicker)
     }
     
-    private func configureDatePicker() {
-        datePicker.backgroundColor = .trackerBackground
-        datePicker.layer.masksToBounds = true
-        datePicker.layer.cornerRadius = 8
-        datePicker.text = "14.12.22"
-        datePicker.font = UIFont.systemFont(ofSize: 17)
-        datePicker.textAlignment = .center
-        view.addSubview(datePicker)
-        
-        datePicker.snp.makeConstraints { make in
-            make.width.equalTo(77)
-            make.height.equalTo(34)
-            make.trailing.equalToSuperview().inset(16)
-            make.top.equalToSuperview().offset(49)
-        }
+    @objc private func didTapAddTrackerButton() {
+        let viewController = AddTrackerViewController()
+        let navigationController = UINavigationController(rootViewController: viewController)
        
+        present(navigationController, animated: true)
+    }
+        
+    private func configureDatePicker() {
+        let currentDate = Date()
+        let calendar = Calendar.current
+        let minDate = calendar.date(byAdding: .year, value: -10, to: currentDate)
+        let maxDate = calendar.date(byAdding: .year, value: 10, to: currentDate)
+        
+        datePicker.preferredDatePickerStyle = .compact
+        datePicker.datePickerMode = .date
+        datePicker.minimumDate = minDate
+        datePicker.maximumDate = maxDate
+        datePicker.addTarget(self, action: #selector(datePickerValueDateChanged(_:)), for: .valueChanged)
+    }
+    
+    @objc private func datePickerValueDateChanged(_ sender: UIDatePicker) {
+        let selectedDate = sender.date
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "dd.MM.yyyy"
+        let formateDate = dateFormatter.string(from: selectedDate)
+        print("Date from DatePicker = \(formateDate)")
     }
     
     private func configureMainLabel() {
@@ -119,6 +137,7 @@ class TrackersViewController: UIViewController {
         }
     }
     
+ 
     
     
 }

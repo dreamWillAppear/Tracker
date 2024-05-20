@@ -5,7 +5,7 @@ final class TabBarController: UITabBarController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        let trackersViewController = TrackersViewController()
+        let trackersViewController = UINavigationController(rootViewController: TrackersViewController())
         let statisticsViewController = StatisticsViewController()
         configureTabBarButtons(trackersViewControler: trackersViewController, and: statisticsViewController)
         self.viewControllers = [trackersViewController, statisticsViewController]
