@@ -19,6 +19,11 @@ class AddTrackerViewController: UIViewController {
         button.titleLabel?.tintColor = .trackerWhite
         button.setTitle("Привычка", for: .normal)
         button.layer.cornerRadius = 16
+        button.addTarget(
+            self,
+            action: #selector(didTapAddHabbitButton),
+            for: .touchUpInside
+        )
         return button
     }()
     
@@ -29,15 +34,20 @@ class AddTrackerViewController: UIViewController {
         button.titleLabel?.tintColor = .trackerWhite
         button.setTitle("Нерегулярные событие", for: .normal)
         button.layer.cornerRadius = 16
+        button.addTarget(
+            self,
+            action: #selector(didTapAddEventButton),
+            for: .touchUpInside
+        )
         return button
     }()
-
+    
     
     // MARK: - Public Methods
     
     override func viewDidLoad() {
         super.viewDidLoad()
-
+        
         setUI()
         setConstraints()
     }
@@ -45,16 +55,16 @@ class AddTrackerViewController: UIViewController {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         
-     
+        
     }
     
     // MARK: - Private Methods
-
+    
     private func setUI() {
         view.backgroundColor = .trackerWhite
         self.navigationController?.navigationBar.titleTextAttributes = [NSAttributedString.Key.font: UIFont.systemFont(ofSize: 16)]
         title = "Создание трекера"
-
+        
         buttonsStackView.addArrangedSubview(addHabbitButton)
         buttonsStackView.addArrangedSubview(addEventButton)
         view.addSubview(buttonsStackView)
@@ -77,9 +87,20 @@ class AddTrackerViewController: UIViewController {
         }
     }
     
+    //MARK: - Actions
+    
+    @objc private func didTapAddHabbitButton(){
+        let viewController = AddHabbitViewController()
+        let navigationController = UINavigationController(rootViewController: viewController)
+       
+        present(navigationController, animated: true)
+    }
+    
+    @objc private func didTapAddEventButton(){
+        
+    }
+    
 }
-
-
 
 // MARK: - Types
 

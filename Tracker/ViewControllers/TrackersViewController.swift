@@ -17,11 +17,59 @@ class TrackersViewController: UIViewController {
         return button
     }()
     
-    private var datePicker = UIDatePicker()
-    private var mainLabel = UILabel()
-    private var searchField = UITextField()
-    private var noTrackersImageView = UIImageView()
-    private var noTrackersLabel = UILabel()
+    private lazy var mainLabel: UILabel = {
+        let label = UILabel()
+        label.text = "Трекеры"
+        label.font = UIFont.boldSystemFont(ofSize: 34)
+        label.textAlignment = .left
+        return label
+    }()
+    
+    private lazy var datePicker: UIDatePicker = {
+        let datePicker = UIDatePicker()
+        let currentDate = Date()
+        let calendar = Calendar.current
+        let minDate = calendar.date(byAdding: .year, value: -10, to: currentDate)
+        let maxDate = calendar.date(byAdding: .year, value: 10, to: currentDate)
+        datePicker.tintColor = .blue
+        datePicker.preferredDatePickerStyle = .compact
+        datePicker.datePickerMode = .date
+        datePicker.locale = Locale(identifier: "ru_RU")
+        datePicker.calendar = Calendar(identifier: .iso8601)
+        datePicker.minimumDate = minDate
+        datePicker.maximumDate = maxDate
+        datePicker.addTarget(self, action: #selector(datePickerValueDateChanged(_:)), for: .valueChanged)
+        return datePicker
+    }()
+    
+    private lazy var searchField: UISearchBar = {
+        let searchField = UISearchBar()
+        searchField.placeholder = "Поиск"
+        searchField.searchBarStyle = .minimal
+        return searchField
+    }()
+    
+    private lazy var noTrackersStackView: UIStackView = {
+        let view = UIStackView()
+        view.axis = .vertical
+        view.alignment = .center
+        view.spacing = 8
+        return view
+    }()
+    
+    private var noTrackersImageView: UIImageView = {
+        let imageView = UIImageView()
+        imageView.image = .noTrackers
+        return imageView
+    }()
+    
+    private var noTrackersLabel: UILabel = {
+        let label = UILabel()
+        label.text = "Что будем отслеживать?"
+        label.font = .systemFont(ofSize: 12)
+        label.textAlignment = .center
+        return label
+    }()
     
     // MARK: - Public Methods
     
@@ -34,36 +82,45 @@ class TrackersViewController: UIViewController {
     // MARK: - Private Methods
     private func setUI() {
         view.backgroundColor = .trackerWhite
+        view.addSubview(mainLabel)
+        view.addSubview(searchField)
+        view.addSubview(noTrackersStackView)
+        
+        noTrackersStackView.addArrangedSubview(noTrackersImageView)
+        noTrackersStackView.addArrangedSubview(noTrackersLabel)
+        
         configureNavBar()
-        configureMainLabel()
-        configureSearchField()
-        configureNoTrackersImageAndText()
+        setConstraints()
     }
     
     private func configureNavBar() {
-        configureDatePicker()
         navigationItem.leftBarButtonItem = addTrackerButton
         navigationItem.rightBarButtonItem = UIBarButtonItem(customView: datePicker)
     }
     
-    @objc private func didTapAddTrackerButton() {
-        let viewController = AddTrackerViewController()
-        let navigationController = UINavigationController(rootViewController: viewController)
-       
-        present(navigationController, animated: true)
-    }
+    private func setConstraints() {
+        mainLabel.snp.makeConstraints { make in
+            make.width.equalTo(254)
+            make.height.equalTo(41)
+            make.leading.equalToSuperview().inset(16)
+            make.top.equalToSuperview().offset(88)
+        }
         
-    private func configureDatePicker() {
-        let currentDate = Date()
-        let calendar = Calendar.current
-        let minDate = calendar.date(byAdding: .year, value: -10, to: currentDate)
-        let maxDate = calendar.date(byAdding: .year, value: 10, to: currentDate)
+        datePicker.snp.makeConstraints { make in
+            make.width.equalTo(120)
+        }
         
-        datePicker.preferredDatePickerStyle = .compact
-        datePicker.datePickerMode = .date
-        datePicker.minimumDate = minDate
-        datePicker.maximumDate = maxDate
-        datePicker.addTarget(self, action: #selector(datePickerValueDateChanged(_:)), for: .valueChanged)
+        searchField.snp.makeConstraints { make in
+            make.width.equalToSuperview().inset(16)
+            make.height.equalTo(36)
+            make.leading.equalToSuperview().inset(16)
+            make.top.equalToSuperview().offset(136)
+        }
+        
+        noTrackersStackView.snp.makeConstraints { make in
+            make.centerX.centerY.equalToSuperview()
+        }
+        
     }
     
     @objc private func datePickerValueDateChanged(_ sender: UIDatePicker) {
@@ -74,71 +131,14 @@ class TrackersViewController: UIViewController {
         print("Date from DatePicker = \(formateDate)")
     }
     
-    private func configureMainLabel() {
-        mainLabel.text = "Трекеры"
-        mainLabel.font = UIFont.boldSystemFont(ofSize: 34)
-        mainLabel.textAlignment = .left
-        view.addSubview(mainLabel)
-        
-        mainLabel.snp.makeConstraints { make in
-            make.width.equalTo(254)
-            make.height.equalTo(41)
-            make.leading.equalToSuperview().inset(16)
-            make.top.equalToSuperview().offset(88)
-        }
-    }
-
-    private func configureSearchField() {
-        let placeholderView = UIView(frame: CGRect(x: 8, y: 10, width: 53 + 6.37 + 15.63, height: 36))
-        let  searchFieldIcon = UIImageView(image: UIImage(systemName: "magnifyingglass"))
-        let placeholderText = UILabel(frame: CGRect(x: 30, y: 7, width: 53, height: 22))
-        searchFieldIcon.frame = CGRect(x: 8, y: 10, width: 15.63, height: 15.78)
-        placeholderText.text = "Поиск"
-        placeholderText.font = UIFont.systemFont(ofSize: 17)
-        searchFieldIcon.tintColor = .trackerGray
-        placeholderText.textColor = .trackerGray
-        placeholderView.addSubview(searchFieldIcon)
-        placeholderView.addSubview(placeholderText)
-        
-        searchField.backgroundColor = .trackerBackground
-        searchField.layer.masksToBounds = true
-        searchField.layer.cornerRadius = 8
-        searchField.leftView = placeholderView
-        searchField.leftViewMode = .unlessEditing
-        view.addSubview(searchField)
-        
-        searchField.snp.makeConstraints { make in
-            make.width.equalTo(343)
-            make.height.equalTo(36)
-            make.leading.equalToSuperview().inset(16)
-            make.top.equalToSuperview().offset(136)
-        }
-    }
+    //MARK: - Actions
     
-    private func configureNoTrackersImageAndText() {
-        noTrackersImageView.image = .noTrackers
-        view.addSubview(noTrackersImageView)
-        
-        noTrackersImageView.snp.makeConstraints { make in
-            make.width.height.equalTo(80)
-            make.centerX.centerY.equalToSuperview()
-        }
-        
-        noTrackersLabel.text = "Что будем отслеживать?"
-        noTrackersLabel.font = .systemFont(ofSize: 12)
-        noTrackersLabel.textAlignment = .center
-        view.addSubview(noTrackersLabel)
-        
-        noTrackersLabel.snp.makeConstraints { make in
-            make.width.equalTo(343)
-            make.height.equalTo(18)
-            make.top.equalTo(noTrackersImageView.snp.bottom).offset(8)
-            make.leading.equalToSuperview().inset(16)
-        }
+    @objc private func didTapAddTrackerButton() {
+        let viewController = AddTrackerViewController()
+        let navigationController = UINavigationController(rootViewController: viewController)
+       
+        present(navigationController, animated: true)
     }
-    
- 
-    
     
 }
 
