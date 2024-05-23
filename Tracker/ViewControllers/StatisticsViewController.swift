@@ -72,6 +72,8 @@ class StatisticsViewController: UIViewController {
         noStatisticsImageView.snp.makeConstraints { make in
             make.width.height.equalTo(80)
         }
+        
+        
     }
 }
 

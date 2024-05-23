@@ -85,6 +85,7 @@ class AddTrackerViewController: UIViewController {
             make.width.equalTo(335)
             make.height.equalTo(60)
         }
+
     }
     
     //MARK: - Actions

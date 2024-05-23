@@ -71,20 +71,35 @@ class TrackersViewController: UIViewController {
         return label
     }()
     
+    private lazy var collectionView: UICollectionView = {
+        let view = UICollectionView(frame: .zero , collectionViewLayout: UICollectionViewFlowLayout())
+        return view
+    }()
+    
     // MARK: - Public Methods
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
+       
+        configureCollectionView()
         setUI()
     }
     
     // MARK: - Private Methods
+    
+    private func configureCollectionView() {
+        collectionView.dataSource = self
+        collectionView.dataSource = self
+        
+        collectionView.register(TrackerCell.self, forCellWithReuseIdentifier: TrackerCell.reuseIdentifier)
+    }
+    
     private func setUI() {
         view.backgroundColor = .trackerWhite
         view.addSubview(mainLabel)
         view.addSubview(searchField)
         view.addSubview(noTrackersStackView)
+        view.addSubview(collectionView)
         
         noTrackersStackView.addArrangedSubview(noTrackersImageView)
         noTrackersStackView.addArrangedSubview(noTrackersLabel)
@@ -121,6 +136,13 @@ class TrackersViewController: UIViewController {
             make.centerX.centerY.equalToSuperview()
         }
         
+        collectionView.snp.makeConstraints { make in
+            make.top.equalTo(searchField.snp.bottom).offset(10)
+            make.leading.equalToSuperview().inset(16)
+            make.trailing.equalToSuperview().inset(16)
+            make.bottom.equalToSuperview()
+        }
+        
     }
     
     @objc private func datePickerValueDateChanged(_ sender: UIDatePicker) {
@@ -141,6 +163,28 @@ class TrackersViewController: UIViewController {
     }
     
 }
+
+//MARK: - UICollectionViewDataSource & UICollectionViewDelegate
+extension TrackersViewController: UICollectionViewDataSource & UICollectionViewDelegate {
+    
+    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+        return 1
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: TrackerCell.reuseIdentifier, for: indexPath) as! TrackerCell
+        
+        let mockTracker = Tracker(id: UUID(), title: "Пить пиво", color: .trackerBlue, emoji: "🍻", schedule: [true])
+        cell.configureCell(for: mockTracker)
+        return cell
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
+            return CGSize(width: 167, height: 148)
+        }
+    
+}
+
 
 // MARK: - Types
 
