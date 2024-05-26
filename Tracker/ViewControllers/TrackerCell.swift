@@ -89,8 +89,9 @@ class TrackerCell: UICollectionViewCell {
     
     private func setConstraints() {
         contentView.snp.makeConstraints { make in
-            make.width.equalTo(167)
-            make.height.equalTo(148)
+            make.leading.trailing.equalToSuperview()
+            make.top.bottom.equalToSuperview()
+            
         }
         
         colorFilledView.snp.makeConstraints { make in

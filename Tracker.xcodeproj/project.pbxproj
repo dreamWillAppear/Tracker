@@ -11,6 +11,8 @@
 		1631E09A2BF40A85003986AE /* TabBarController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1631E0992BF40A85003986AE /* TabBarController.swift */; };
 		16343C402BFE603E00838829 /* AddHabbitViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16343C3F2BFE603E00838829 /* AddHabbitViewController.swift */; };
 		1645C9B32BF8A5ED00CC7B90 /* Tracker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1645C9B22BF8A5ED00CC7B90 /* Tracker.swift */; };
+		16947A4F2C033CA800426968 /* TrackersFactory.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16947A4E2C033CA800426968 /* TrackersFactory.swift */; };
+		16947A512C036E0800426968 /* CategoryHaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16947A502C036E0800426968 /* CategoryHaderView.swift */; };
 		FD4204222BF17E7C0007A254 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = FD4204212BF17E7C0007A254 /* AppDelegate.swift */; };
 		FD4204262BF17E7C0007A254 /* TrackersViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = FD4204252BF17E7C0007A254 /* TrackersViewController.swift */; };
 		FD42042B2BF17E7E0007A254 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = FD42042A2BF17E7E0007A254 /* Assets.xcassets */; };
@@ -27,6 +29,8 @@
 		1631E0992BF40A85003986AE /* TabBarController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TabBarController.swift; sourceTree = "<group>"; };
 		16343C3F2BFE603E00838829 /* AddHabbitViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddHabbitViewController.swift; sourceTree = "<group>"; };
 		1645C9B22BF8A5ED00CC7B90 /* Tracker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Tracker.swift; sourceTree = "<group>"; };
+		16947A4E2C033CA800426968 /* TrackersFactory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrackersFactory.swift; sourceTree = "<group>"; };
+		16947A502C036E0800426968 /* CategoryHaderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CategoryHaderView.swift; sourceTree = "<group>"; };
 		FD42041E2BF17E7C0007A254 /* Tracker.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Tracker.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		FD4204212BF17E7C0007A254 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		FD4204252BF17E7C0007A254 /* TrackersViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrackersViewController.swift; sourceTree = "<group>"; };
@@ -59,6 +63,14 @@
 			path = "UI Models";
 			sourceTree = "<group>";
 		};
+		16947A4D2C033C8300426968 /* TrackersFactory */ = {
+			isa = PBXGroup;
+			children = (
+				16947A4E2C033CA800426968 /* TrackersFactory.swift */,
+			);
+			path = TrackersFactory;
+			sourceTree = "<group>";
+		};
 		FD4204152BF17E7C0007A254 = {
 			isa = PBXGroup;
 			children = (
@@ -82,6 +94,7 @@
 				1631E0992BF40A85003986AE /* TabBarController.swift */,
 				1645C9B12BF8A5A600CC7B90 /* UI Models */,
 				FD53E19B2BF5657C0073B644 /* ViewControllers */,
+				16947A4D2C033C8300426968 /* TrackersFactory */,
 				FD42042A2BF17E7E0007A254 /* Assets.xcassets */,
 				FD42042C2BF17E7E0007A254 /* LaunchScreen.storyboard */,
 				FD42042F2BF17E7E0007A254 /* Info.plist */,
@@ -98,6 +111,7 @@
 				1629E7492BFB331E00A50F54 /* AddTrackerViewController.swift */,
 				16343C3F2BFE603E00838829 /* AddHabbitViewController.swift */,
 				FDC14C902BFFC8D400198716 /* TrackerCell.swift */,
+				16947A502C036E0800426968 /* CategoryHaderView.swift */,
 			);
 			path = ViewControllers;
 			sourceTree = "<group>";
@@ -181,7 +195,9 @@
 			files = (
 				1645C9B32BF8A5ED00CC7B90 /* Tracker.swift in Sources */,
 				1631E09A2BF40A85003986AE /* TabBarController.swift in Sources */,
+				16947A512C036E0800426968 /* CategoryHaderView.swift in Sources */,
 				16343C402BFE603E00838829 /* AddHabbitViewController.swift in Sources */,
+				16947A4F2C033CA800426968 /* TrackersFactory.swift in Sources */,
 				FDC14C912BFFC8D400198716 /* TrackerCell.swift in Sources */,
 				FD53E19A2BF562890073B644 /* StatisticsViewController.swift in Sources */,
 				FD4204262BF17E7C0007A254 /* TrackersViewController.swift in Sources */,

@@ -4,8 +4,13 @@ import SnapKit
 class TrackersViewController: UIViewController {
     
     // MARK: - Private Properties
+    let mockTracker = Tracker(id: UUID(), title: "Пить пиво", color: .trackerBlue, emoji: "🍻", schedule: [true])
+    let mockTracker2 = Tracker(id: UUID(), title: "Работать в техподдержке", color: .trackerRed, emoji: "🤡", schedule: [true])
+   
+    
     private var categories: [TrackerCategory] = []
     private var completedTrackers: [TrackerRecord] = []
+
     
     private lazy var addTrackerButton: UIBarButtonItem = {
         let button = UIBarButtonItem(
@@ -46,6 +51,7 @@ class TrackersViewController: UIViewController {
         let searchField = UISearchBar()
         searchField.placeholder = "Поиск"
         searchField.searchBarStyle = .minimal
+        searchField.contentMode = .scaleToFill
         return searchField
     }()
     
@@ -72,7 +78,11 @@ class TrackersViewController: UIViewController {
     }()
     
     private lazy var collectionView: UICollectionView = {
-        let view = UICollectionView(frame: .zero , collectionViewLayout: UICollectionViewFlowLayout())
+        let layout = UICollectionViewFlowLayout()
+        layout.sectionInset = UIEdgeInsets(top: 12, left: 16, bottom: 16, right: 16)
+        layout.minimumLineSpacing = 0
+        layout.minimumInteritemSpacing = 9
+        let view = UICollectionView(frame: .zero , collectionViewLayout: layout)
         return view
     }()
     
@@ -80,17 +90,18 @@ class TrackersViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-       
         configureCollectionView()
         setUI()
+        categories.append(TrackerCategory(title: "First Cat", trackers: [mockTracker, mockTracker, mockTracker]))
+        categories.append(TrackerCategory(title: "Second Cat", trackers: [mockTracker2, mockTracker2]))
     }
     
     // MARK: - Private Methods
     
     private func configureCollectionView() {
+        collectionView.delegate = self
         collectionView.dataSource = self
-        collectionView.dataSource = self
-        
+        collectionView.register(CategoryHeaderView.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: CategoryHeaderView.identifier)
         collectionView.register(TrackerCell.self, forCellWithReuseIdentifier: TrackerCell.reuseIdentifier)
     }
     
@@ -126,9 +137,9 @@ class TrackersViewController: UIViewController {
         }
         
         searchField.snp.makeConstraints { make in
-            make.width.equalToSuperview().inset(16)
             make.height.equalTo(36)
-            make.leading.equalToSuperview().inset(16)
+            make.leading.equalToSuperview().inset(8)
+            make.trailing.equalToSuperview().inset(8)
             make.top.equalToSuperview().offset(136)
         }
         
@@ -137,9 +148,10 @@ class TrackersViewController: UIViewController {
         }
         
         collectionView.snp.makeConstraints { make in
-            make.top.equalTo(searchField.snp.bottom).offset(10)
-            make.leading.equalToSuperview().inset(16)
-            make.trailing.equalToSuperview().inset(16)
+            make.width.equalToSuperview()
+            make.top.equalTo(searchField.snp.bottom).offset(34)
+            make.leading.equalToSuperview()
+            make.trailing.equalToSuperview()
             make.bottom.equalToSuperview()
         }
         
@@ -165,23 +177,43 @@ class TrackersViewController: UIViewController {
 }
 
 //MARK: - UICollectionViewDataSource & UICollectionViewDelegate
-extension TrackersViewController: UICollectionViewDataSource & UICollectionViewDelegate {
+extension TrackersViewController: UICollectionViewDataSource, UICollectionViewDelegate, UICollectionViewDelegateFlowLayout {
     
-    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return 1
+    func numberOfSections(in collectionView: UICollectionView) -> Int {
+        categories.count
     }
     
+    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+        return categories[section].trackers.count
+    }
+    
+
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+        let tracker = categories[indexPath.section].trackers[indexPath.item]
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: TrackerCell.reuseIdentifier, for: indexPath) as! TrackerCell
         
-        let mockTracker = Tracker(id: UUID(), title: "Пить пиво", color: .trackerBlue, emoji: "🍻", schedule: [true])
-        cell.configureCell(for: mockTracker)
+        cell.configureCell(for: tracker)
         return cell
     }
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-            return CGSize(width: 167, height: 148)
+        let paddingSpace = (collectionViewLayout as! UICollectionViewFlowLayout).sectionInset.left +
+        (collectionViewLayout as! UICollectionViewFlowLayout).sectionInset.right +
+        (collectionViewLayout as! UICollectionViewFlowLayout).minimumInteritemSpacing
+        let availableWidth = collectionView.frame.width - paddingSpace
+        return CGSize(width: availableWidth / 2, height: 148)
         }
+    
+    func collectionView(_ collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, at indexPath: IndexPath) -> UICollectionReusableView {
+        let header = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: CategoryHeaderView.identifier, for: indexPath) as! CategoryHeaderView
+        
+        header.categoryTitle.text = categories[indexPath.section].title
+        return header
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, referenceSizeForHeaderInSection section: Int) -> CGSize {
+        return CGSize(width: 149, height: 18)
+    }
     
 }
 

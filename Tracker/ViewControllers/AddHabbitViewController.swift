@@ -5,15 +5,17 @@ class AddHabbitViewController: UIViewController {
     
     // MARK: - Private Properties
     
+    private let factory = TrackersFactory.shared
+    
     private lazy var addTrackerNameField: UIView = {
-        makeTextFiled(withPlaceholder: "Введите название трекера")
+        makeTextFiled(with: "Введите название трекера")
     }()
     
     private lazy var buttonsStackView: UIStackView = {
         let view = UIStackView()
         view.axis = .vertical
         view.spacing = 0
-        view.backgroundColor = .trackerLightGray
+        view.backgroundColor = .trackerBackground
         view.layer.cornerRadius = 16
         return view
     }()
@@ -25,6 +27,8 @@ class AddHabbitViewController: UIViewController {
         button.titleEdgeInsets = UIEdgeInsets(top: 0, left: 8, bottom: 0, right: 0)
         button.setImage(UIImage(named: "Chevron")?.withRenderingMode(.alwaysOriginal).withTintColor(.trackerGray), for: .normal)
         button.tintColor = .trackerBlack
+        button.addTarget(self, action: #selector(didTapCategoryButton), for: .touchUpInside)
+        
         button.imageView?.snp.makeConstraints({ make in
             make.centerY.equalToSuperview()
             make.trailing.equalToSuperview().inset(16)
@@ -39,6 +43,8 @@ class AddHabbitViewController: UIViewController {
         button.titleEdgeInsets = UIEdgeInsets(top: 0, left: 8, bottom: 0, right: 0)
         button.setImage(UIImage(named: "Chevron")?.withRenderingMode(.alwaysOriginal).withTintColor(.trackerGray), for: .normal)
         button.tintColor = .trackerBlack
+        button.addTarget(self, action: #selector(didTapScheduleButton), for: .touchUpInside)
+        
         button.imageView?.snp.makeConstraints({ make in
             make.centerY.equalToSuperview()
             make.trailing.equalToSuperview().inset(16)
@@ -106,17 +112,24 @@ class AddHabbitViewController: UIViewController {
     
     }
     
-   private func makeTextFiled(withPlaceholder: String) -> UIView {
+   private func makeTextFiled(with placeholder: String) -> UIView {
         let view = UIView()
-        
-        view.backgroundColor = .trackerLightGray
+        view.backgroundColor = .trackerBackground
         view.layer.cornerRadius = 16
         let textField = UITextField(frame: CGRect(x: 16, y: 27, width: super.view.bounds.width - 64, height: 22))
-        textField.placeholder = "Введите название трекера"
+        textField.placeholder = placeholder
         textField.clearButtonMode = .whileEditing
         view.addSubview(textField)
-    
         return view
+    }
+    
+    @objc private func didTapCategoryButton() {
+        factory.addCategory(withName: "Важное")
+    
+    }
+    
+    @objc private func didTapScheduleButton() {
+        
     }
     
 }

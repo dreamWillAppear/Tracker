@@ -62,7 +62,7 @@ class AddTrackerViewController: UIViewController {
     
     private func setUI() {
         view.backgroundColor = .trackerWhite
-        self.navigationController?.navigationBar.titleTextAttributes = [NSAttributedString.Key.font: UIFont.systemFont(ofSize: 16)]
+        self.navigationController?.navigationBar.titleTextAttributes = [NSAttributedString.Key.font: UIFont.systemFont(ofSize: 16, weight: .medium)]
         title = "Создание трекера"
         
         buttonsStackView.addArrangedSubview(addHabbitButton)
