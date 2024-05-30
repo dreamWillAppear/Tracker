@@ -6,11 +6,9 @@ class TrackersViewController: UIViewController {
     // MARK: - Private Properties
     let mockTracker = Tracker(id: UUID(), title: "Пить пиво", color: .trackerBlue, emoji: "🍻", schedule: [true])
     let mockTracker2 = Tracker(id: UUID(), title: "Работать в техподдержке", color: .trackerRed, emoji: "🤡", schedule: [true])
-   
-    
-    private var categories: [TrackerCategory] = []
+    private let factory = TrackersFactory.shared
     private var completedTrackers: [TrackerRecord] = []
-
+    
     
     private lazy var addTrackerButton: UIBarButtonItem = {
         let button = UIBarButtonItem(
@@ -92,11 +90,22 @@ class TrackersViewController: UIViewController {
         super.viewDidLoad()
         configureCollectionView()
         setUI()
-        categories.append(TrackerCategory(title: "First Cat", trackers: [mockTracker, mockTracker, mockTracker]))
-        categories.append(TrackerCategory(title: "Second Cat", trackers: [mockTracker2, mockTracker2]))
+        setupObservers()
+    }
+    
+    deinit {
+        NotificationCenter.default.removeObserver(self, name: TrackersFactory.trackersUpdatedNotification, object: nil)
     }
     
     // MARK: - Private Methods
+    
+    private func setupObservers() {
+        NotificationCenter.default.addObserver(self, selector: #selector(trackersUpdated), name: TrackersFactory.trackersUpdatedNotification, object: nil)
+    }
+    
+    @objc private func trackersUpdated() {
+        collectionView.reloadData()
+    }
     
     private func configureCollectionView() {
         collectionView.delegate = self
@@ -169,9 +178,7 @@ class TrackersViewController: UIViewController {
     
     @objc private func didTapAddTrackerButton() {
         let viewController = AddTrackerViewController()
-        let navigationController = UINavigationController(rootViewController: viewController)
-       
-        present(navigationController, animated: true)
+        navigationController?.present(viewController, animated: true)
     }
     
 }
@@ -180,16 +187,16 @@ class TrackersViewController: UIViewController {
 extension TrackersViewController: UICollectionViewDataSource, UICollectionViewDelegate, UICollectionViewDelegateFlowLayout {
     
     func numberOfSections(in collectionView: UICollectionView) -> Int {
-        categories.count
+        factory.categories.count
     }
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return categories[section].trackers.count
+        return factory.categories[section].trackers.count
     }
     
-
+    
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        let tracker = categories[indexPath.section].trackers[indexPath.item]
+        let tracker = factory.categories[indexPath.section].trackers[indexPath.item]
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: TrackerCell.reuseIdentifier, for: indexPath) as! TrackerCell
         
         cell.configureCell(for: tracker)
@@ -202,12 +209,12 @@ extension TrackersViewController: UICollectionViewDataSource, UICollectionViewDe
         (collectionViewLayout as! UICollectionViewFlowLayout).minimumInteritemSpacing
         let availableWidth = collectionView.frame.width - paddingSpace
         return CGSize(width: availableWidth / 2, height: 148)
-        }
+    }
     
     func collectionView(_ collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, at indexPath: IndexPath) -> UICollectionReusableView {
         let header = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: CategoryHeaderView.identifier, for: indexPath) as! CategoryHeaderView
         
-        header.categoryTitle.text = categories[indexPath.section].title
+        header.categoryTitle.text = factory.categories[indexPath.section].title
         return header
     }
     

@@ -78,15 +78,46 @@ class AddHabbitViewController: UIViewController, UITextFieldDelegate {
         return button
     }()
     
+    private lazy var cancelAndCreateButtonsStackView: UIStackView = {
+        let view = UIStackView()
+        view.axis = .horizontal
+        view.spacing = 8
+        view.distribution = .fillEqually
+        return view
+    }()
+    
+    private lazy var cancelButton: UIButton = {
+        let button = UIButton(type: .system)
+        button.setTitle("Отменить", for: .normal)
+        button.titleLabel?.font = .systemFont(ofSize: 16, weight: .medium)
+        button.tintColor = .trackerRed
+        button.layer.cornerRadius = 16
+        button.layer.borderColor = UIColor.trackerRed.cgColor
+        button.layer.borderWidth = 1
+        button.addTarget(self, action: #selector(didTapCancelButton), for: .touchUpInside)
+        return button
+    }()
+    
+    private lazy var createButton: UIButton = {
+        let button = UIButton(type: .system)
+        button.setTitle("Создать", for: .normal)
+        button.titleLabel?.font = .systemFont(ofSize: 16, weight: .medium)
+        button.tintColor = .trackerWhite
+        button.backgroundColor = .trackerGray
+        button.layer.cornerRadius = 16
+        button.isEnabled = false
+        button.addTarget(self, action: #selector(didTapCreateButton), for: .touchUpInside)
+        return button
+    }()
+    
     // MARK: - Public Methods
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
-        addTrackerNameField.delegate = self
-        
+
         setUI()
         setConstraints()
+        configureDismissingKeyboard()
     }
     
     // MARK: - Private Methods
@@ -95,14 +126,14 @@ class AddHabbitViewController: UIViewController, UITextFieldDelegate {
         self.navigationController?.navigationBar.titleTextAttributes = [NSAttributedString.Key.font: UIFont.systemFont(ofSize: 16)]
         title = "Новая привычка"
         
-        configureButtonsStackView()
+        configureButtonsStackViews()
         
         view.addSubview(addTrackerNameField)
         view.addSubview(buttonsStackView)
-        
+        view.addSubview(cancelAndCreateButtonsStackView)
     }
     
-    private func configureButtonsStackView() {
+    private func configureButtonsStackViews() {
         
         let separatorLine = UIView()
         separatorLine.backgroundColor = .trackerGray
@@ -117,6 +148,10 @@ class AddHabbitViewController: UIViewController, UITextFieldDelegate {
             make.leading.equalTo(buttonsStackView).offset(16)
             make.trailing.equalTo(buttonsStackView).offset(-16)
         }
+        
+        cancelAndCreateButtonsStackView.addArrangedSubview(cancelButton)
+        cancelAndCreateButtonsStackView.addArrangedSubview(createButton)
+        
     }
     
     private func setConstraints() {
@@ -138,18 +173,68 @@ class AddHabbitViewController: UIViewController, UITextFieldDelegate {
             make.width.equalToSuperview()
         }
         
+        cancelAndCreateButtonsStackView.snp.makeConstraints { make in
+            make.height.equalTo(60)
+            make.leading.trailing.equalToSuperview().inset(20)
+            make.bottom.equalToSuperview().inset(34)
+        }
+
     }
     
-    @objc private func didTapCategoryButton() {
-        factory.addCategory(withName: "Важное")
-        categoryButton.addSupplementaryTitle(with: "Важное")
+    private func configureDismissingKeyboard() {
+        let tapAssideKeyboard = UITapGestureRecognizer(target: self, action: #selector(dismissKeyboard))
+        tapAssideKeyboard.cancelsTouchesInView = false
+       view.addGestureRecognizer(tapAssideKeyboard)
         
+        addTrackerNameField.delegate = self
+    }
+    
+    
+    @objc private func didTapCategoryButton() {
+        categoryButton.addSupplementaryTitle(with: "Важное")
+        createButton.backgroundColor = .trackerBlack
+        createButton.isEnabled = true
     }
     
     @objc private func didTapScheduleButton() {
         
     }
     
+    @objc private func didTapCreateButton() {
+        let categoryName = "Важное"
+        let categoryName2 = "Полезное"
+        let trackerName = addTrackerNameField.text ?? ""
+        let tracker1 = Tracker(id: UUID(), title: trackerName, color: .trackerRed, emoji:"🤡", schedule: [true])
+        let tracker2 = Tracker(id: UUID(), title: "Трекер о Важном 2", color: .trackerRed, emoji:"🍻", schedule: [true])
+        let tracker3 = Tracker(id: UUID(), title: "Трекер о Полезном 1", color: .trackerBlue, emoji:"🐺", schedule: [true])
+        let tracker4 = Tracker(id: UUID(), title: "Трекер о Полезном 2", color: .trackerBlue, emoji:"🥲", schedule: [true])
+        
+        factory.add(tracker: tracker1, in: "Важное")
+        factory.add(tracker: tracker2, in: "Важное")
+        factory.add(tracker: tracker3, in: "Полезное")
+        factory.add(tracker: tracker4, in: "Полезное")
+        
+
+        self.view.window?.rootViewController?.dismiss(animated: true, completion: nil)
+    }
+    
+    @objc private func didTapCancelButton() {
+        self.dismiss(animated: true)
+    }
+    
+    @objc private  func dismissKeyboard() {
+        view.endEditing(true)
+    }
+    
+}
+
+//MARK - textField Delegate
+
+extension AddHabbitViewController {
+    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
+           textField.resignFirstResponder()
+           return true
+       }
 }
 
 // MARK: - Types

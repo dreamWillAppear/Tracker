@@ -5,26 +5,31 @@ final class TrackersFactory {
     // MARK: - Public Properties
     
     static let shared = TrackersFactory()
+    static let trackersUpdatedNotification = Notification.Name("trackersUpdatedNotification")
     
     // MARK: - Private Properties
     
-    private(set) var trackers: [Tracker] = []
-    private(set) var categories: [TrackerCategory] = []
+    var categories: [TrackerCategory] = [] {
+        didSet {
+            NotificationCenter.default.post(name: TrackersFactory.trackersUpdatedNotification, object: nil)
+        }
+    }
+    
+
     
     // MARK: - Initializers
     
-    private init() {}
+    private  init() {}
     
     // MARK: - Public Methods
     
-    func addCategory(withName: String) {
-        let category = TrackerCategory(title: withName, trackers: [])
+    func add(tracker: Tracker, in category: String) {
+        if let index = categories.enumerated().first(where: { $0.element.title == category })?.offset {
+            categories[index].trackers.append(tracker)
+        } else {
+            categories.append(TrackerCategory(title: category, trackers: [tracker]))
+        }
     }
-    
-    func addTracker() {
-        
-    }
-    
     
 }
 
