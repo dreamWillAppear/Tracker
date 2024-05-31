@@ -1,4 +1,4 @@
-import Foundation
+import UIKit
 
 final class TrackersFactory {
     
@@ -15,8 +15,6 @@ final class TrackersFactory {
         }
     }
     
-
-    
     // MARK: - Initializers
     
     private  init() {}
@@ -29,6 +27,19 @@ final class TrackersFactory {
         } else {
             categories.append(TrackerCategory(title: category, trackers: [tracker]))
         }
+    }
+    
+    func randomColor() -> UIColor {
+        UIColor(named: "Color selection \(String(Int.random(in: 1...18)))")!
+    }
+    
+    func randomEmoji() -> String {
+    ["💎","🚀","🌙","🎁","⛄","🌊","⛵","🏀","🎱","💰","👄","🚲","🍉","💛","💚"].randomElement()!
+
+    }
+    
+    func generateCatName() -> String {
+        ["Важное", "Домашний уют", "Cамочувствие", "Мелочи"].randomElement()!
     }
     
 }

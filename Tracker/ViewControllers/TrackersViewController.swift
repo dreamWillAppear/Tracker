@@ -4,11 +4,9 @@ import SnapKit
 class TrackersViewController: UIViewController {
     
     // MARK: - Private Properties
-    let mockTracker = Tracker(id: UUID(), title: "Пить пиво", color: .trackerBlue, emoji: "🍻", schedule: [true])
-    let mockTracker2 = Tracker(id: UUID(), title: "Работать в техподдержке", color: .trackerRed, emoji: "🤡", schedule: [true])
     private let factory = TrackersFactory.shared
-    private var completedTrackers: [TrackerRecord] = []
     
+    private var completedTrackers: [TrackerRecord] = []
     
     private lazy var addTrackerButton: UIBarButtonItem = {
         let button = UIBarButtonItem(
@@ -53,7 +51,7 @@ class TrackersViewController: UIViewController {
         return searchField
     }()
     
-    private lazy var noTrackersStackView: UIStackView = {
+    private lazy var collectionViewPlaceholderStackView: UIStackView = {
         let view = UIStackView()
         view.axis = .vertical
         view.alignment = .center
@@ -81,6 +79,7 @@ class TrackersViewController: UIViewController {
         layout.minimumLineSpacing = 0
         layout.minimumInteritemSpacing = 9
         let view = UICollectionView(frame: .zero , collectionViewLayout: layout)
+        view.backgroundColor = .clear
         return view
     }()
     
@@ -88,6 +87,7 @@ class TrackersViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        
         configureCollectionView()
         setUI()
         setupObservers()
@@ -116,13 +116,13 @@ class TrackersViewController: UIViewController {
     
     private func setUI() {
         view.backgroundColor = .trackerWhite
-        view.addSubview(mainLabel)
         view.addSubview(searchField)
-        view.addSubview(noTrackersStackView)
+        view.addSubview(mainLabel)
         view.addSubview(collectionView)
+        view.addSubview(collectionViewPlaceholderStackView)
         
-        noTrackersStackView.addArrangedSubview(noTrackersImageView)
-        noTrackersStackView.addArrangedSubview(noTrackersLabel)
+        collectionViewPlaceholderStackView.addArrangedSubview(noTrackersImageView)
+        collectionViewPlaceholderStackView.addArrangedSubview(noTrackersLabel)
         
         configureNavBar()
         setConstraints()
@@ -131,6 +131,10 @@ class TrackersViewController: UIViewController {
     private func configureNavBar() {
         navigationItem.leftBarButtonItem = addTrackerButton
         navigationItem.rightBarButtonItem = UIBarButtonItem(customView: datePicker)
+    }
+    
+    private func updateCollectionViewPlaceholder() {
+        collectionViewPlaceholderStackView.isHidden = !factory.categories.isEmpty
     }
     
     private func setConstraints() {
@@ -152,18 +156,22 @@ class TrackersViewController: UIViewController {
             make.top.equalToSuperview().offset(136)
         }
         
-        noTrackersStackView.snp.makeConstraints { make in
-            make.centerX.centerY.equalToSuperview()
+        collectionViewPlaceholderStackView.snp.makeConstraints { make in
+            make.centerX.centerY.equalTo(collectionView)
         }
         
         collectionView.snp.makeConstraints { make in
             make.width.equalToSuperview()
-            make.top.equalTo(searchField.snp.bottom).offset(34)
+            make.top.equalTo(searchField.snp.top).inset(70)
             make.leading.equalToSuperview()
             make.trailing.equalToSuperview()
             make.bottom.equalToSuperview()
         }
         
+        collectionViewPlaceholderStackView.snp.makeConstraints { make in
+            make.centerX.centerY.equalToSuperview()
+        }
+
     }
     
     @objc private func datePickerValueDateChanged(_ sender: UIDatePicker) {
@@ -191,6 +199,7 @@ extension TrackersViewController: UICollectionViewDataSource, UICollectionViewDe
     }
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+        updateCollectionViewPlaceholder()
         return factory.categories[section].trackers.count
     }
     

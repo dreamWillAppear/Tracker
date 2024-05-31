@@ -4,8 +4,18 @@ import SnapKit
 class AddHabbitViewController: UIViewController, UITextFieldDelegate {
     
     // MARK: - Private Properties
-    
+    private var categoryName = ""
     private let factory = TrackersFactory.shared
+    
+    private let warningLabel: UILabel = {
+        let label = UILabel()
+        label.text = "Ограничение 38 символов"
+        label.textColor = .trackerRed
+        label.font = .systemFont(ofSize: 17)
+        label.textAlignment = .center
+        label.isHidden = true
+        return label
+    }()
     
     private lazy var addTrackerNameField: UITextField = {
         let textField = UITextField()
@@ -131,6 +141,7 @@ class AddHabbitViewController: UIViewController, UITextFieldDelegate {
         view.addSubview(addTrackerNameField)
         view.addSubview(buttonsStackView)
         view.addSubview(cancelAndCreateButtonsStackView)
+        view.addSubview(warningLabel)
     }
     
     private func configureButtonsStackViews() {
@@ -165,7 +176,7 @@ class AddHabbitViewController: UIViewController, UITextFieldDelegate {
         buttonsStackView.snp.makeConstraints { make in
             make.width.equalToSuperview().inset(16)
             make.height.equalTo(150)
-            make.top.equalTo(addTrackerNameField.snp.bottom).offset(24)
+            make.top.equalTo(warningLabel.snp.bottom).offset(32)
             make.centerX.equalToSuperview()
         }
         
@@ -177,6 +188,12 @@ class AddHabbitViewController: UIViewController, UITextFieldDelegate {
             make.height.equalTo(60)
             make.leading.trailing.equalToSuperview().inset(20)
             make.bottom.equalToSuperview().inset(34)
+        }
+        
+        warningLabel.snp.makeConstraints { make in
+            make.leading.equalTo(addTrackerNameField)
+            make.trailing.equalTo(addTrackerNameField)
+            make.top.equalTo(addTrackerNameField.snp.bottom).offset(8)
         }
 
     }
@@ -191,7 +208,8 @@ class AddHabbitViewController: UIViewController, UITextFieldDelegate {
     
     
     @objc private func didTapCategoryButton() {
-        categoryButton.addSupplementaryTitle(with: "Важное")
+        categoryName = factory.generateCatName()
+        categoryButton.addSupplementaryTitle(with: categoryName)
         createButton.backgroundColor = .trackerBlack
         createButton.isEnabled = true
     }
@@ -201,20 +219,14 @@ class AddHabbitViewController: UIViewController, UITextFieldDelegate {
     }
     
     @objc private func didTapCreateButton() {
-        let categoryName = "Важное"
-        let categoryName2 = "Полезное"
-        let trackerName = addTrackerNameField.text ?? ""
-        let tracker1 = Tracker(id: UUID(), title: trackerName, color: .trackerRed, emoji:"🤡", schedule: [true])
-        let tracker2 = Tracker(id: UUID(), title: "Трекер о Важном 2", color: .trackerRed, emoji:"🍻", schedule: [true])
-        let tracker3 = Tracker(id: UUID(), title: "Трекер о Полезном 1", color: .trackerBlue, emoji:"🐺", schedule: [true])
-        let tracker4 = Tracker(id: UUID(), title: "Трекер о Полезном 2", color: .trackerBlue, emoji:"🥲", schedule: [true])
-        
-        factory.add(tracker: tracker1, in: "Важное")
-        factory.add(tracker: tracker2, in: "Важное")
-        factory.add(tracker: tracker3, in: "Полезное")
-        factory.add(tracker: tracker4, in: "Полезное")
-        
-
+        let tracker = Tracker(
+            id: UUID(),
+            title: addTrackerNameField.text ?? "",
+            color: factory.randomColor(),
+            emoji: factory.randomEmoji(),
+            schedule: [true]
+        )
+        factory.add(tracker: tracker, in: categoryName)
         self.view.window?.rootViewController?.dismiss(animated: true, completion: nil)
     }
     
@@ -235,6 +247,18 @@ extension AddHabbitViewController {
            textField.resignFirstResponder()
            return true
        }
+    
+    func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
+        guard let currentText = addTrackerNameField.text else { return true }
+        let newTextLenght = currentText.count + string.count - range.length
+        if newTextLenght > 38 {
+            warningLabel.isHidden = false
+            return false
+        } else {
+            warningLabel.isHidden = true
+            return true
+        }
+    }
 }
 
 // MARK: - Types
