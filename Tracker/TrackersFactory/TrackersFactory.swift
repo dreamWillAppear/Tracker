@@ -6,8 +6,10 @@ final class TrackersFactory {
     
     static let shared = TrackersFactory()
     static let trackersUpdatedNotification = Notification.Name("trackersUpdatedNotification")
+    let trackersViewController = TrackersViewController()
     
-    // MARK: - Private Properties
+ 
+    var schedule = Array(repeating: false, count: Weekday.allCases.count)
     
     var categories: [TrackerCategory] = [] {
         didSet {
@@ -27,6 +29,23 @@ final class TrackersFactory {
         } else {
             categories.append(TrackerCategory(title: category, trackers: [tracker]))
         }
+        trackersViewController.updateCategoriesForShowing()
+    }
+    
+    func filterTrackers(forDayWithIndex index: Int) -> [TrackerCategory] {
+        var categoriesForShowing: [TrackerCategory] = []
+        for category in categories {
+                for tracker in category.trackers {
+                    if tracker.schedule[trackersViewController.weekdayIndex] == true {
+                        categoriesForShowing.append(category)
+                    }
+                }
+            }
+        return categoriesForShowing
+    }
+    
+    func resetSchedule() {
+        schedule = Array(repeating: false, count: Weekday.allCases.count)
     }
     
     func randomColor() -> UIColor {
@@ -41,6 +60,7 @@ final class TrackersFactory {
     func generateCatName() -> String {
         ["Важное", "Домашний уют", "Cамочувствие", "Мелочи"].randomElement()!
     }
+
     
 }
 

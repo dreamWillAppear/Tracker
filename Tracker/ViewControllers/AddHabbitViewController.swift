@@ -1,11 +1,21 @@
 import UIKit
 import SnapKit
 
+protocol AddHabbitViewControllerDelegate: AnyObject {
+    func updateCategoriesForShowing()
+}
+
 class AddHabbitViewController: UIViewController, UITextFieldDelegate {
     
     // MARK: - Private Properties
+    
+    weak var delegate: AddHabbitViewControllerDelegate?
+    
     private var categoryName = ""
     private let factory = TrackersFactory.shared
+    private var categorySelected = false
+    private var trackerNameEntered = false
+    private var scheduleDidSet = true
     
     private let warningLabel: UILabel = {
         let label = UILabel()
@@ -124,7 +134,7 @@ class AddHabbitViewController: UIViewController, UITextFieldDelegate {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-
+        
         setUI()
         setConstraints()
         configureDismissingKeyboard()
@@ -133,8 +143,7 @@ class AddHabbitViewController: UIViewController, UITextFieldDelegate {
     // MARK: - Private Methods
     private func setUI() {
         view.backgroundColor = .trackerWhite
-        self.navigationController?.navigationBar.titleTextAttributes = [NSAttributedString.Key.font: UIFont.systemFont(ofSize: 16)]
-        title = "Новая привычка"
+        self.navigationController?.navigationBar.titleTextAttributes = [NSAttributedString.Key.font: UIFont.systemFont(ofSize: 16), NSAttributedString.Key.foregroundColor:UIColor.red]
         
         configureButtonsStackViews()
         
@@ -163,6 +172,32 @@ class AddHabbitViewController: UIViewController, UITextFieldDelegate {
         cancelAndCreateButtonsStackView.addArrangedSubview(cancelButton)
         cancelAndCreateButtonsStackView.addArrangedSubview(createButton)
         
+    }
+    
+    private func configureDismissingKeyboard() {
+        let tapAssideKeyboard = UITapGestureRecognizer(target: self, action: #selector(dismissKeyboard))
+        tapAssideKeyboard.cancelsTouchesInView = false
+       view.addGestureRecognizer(tapAssideKeyboard)
+        
+        addTrackerNameField.delegate = self
+        
+    }
+    
+    private func tryEnableCreationButton() {
+        if categorySelected && trackerNameEntered && scheduleDidSet {
+            creationButton(mustBeEnabled: true)
+        } else {
+            creationButton(mustBeEnabled: false)
+        }
+    }
+    
+    private func creationButton(mustBeEnabled: Bool) {
+        self.createButton.isEnabled = mustBeEnabled
+        self.createButton.backgroundColor = mustBeEnabled ? .trackerBlack : .trackerGray
+    }
+    
+    private func createScheduleButtonSupplementaryText()  -> String {
+        "Пн, Вт"
     }
     
     private func setConstraints() {
@@ -198,24 +233,21 @@ class AddHabbitViewController: UIViewController, UITextFieldDelegate {
 
     }
     
-    private func configureDismissingKeyboard() {
-        let tapAssideKeyboard = UITapGestureRecognizer(target: self, action: #selector(dismissKeyboard))
-        tapAssideKeyboard.cancelsTouchesInView = false
-       view.addGestureRecognizer(tapAssideKeyboard)
-        
-        addTrackerNameField.delegate = self
-    }
     
+    //MARK: - ACTIONS
     
     @objc private func didTapCategoryButton() {
+        categorySelected = true
+        tryEnableCreationButton()
         categoryName = factory.generateCatName()
         categoryButton.addSupplementaryTitle(with: categoryName)
-        createButton.backgroundColor = .trackerBlack
-        createButton.isEnabled = true
     }
     
     @objc private func didTapScheduleButton() {
-        
+        factory.resetSchedule()
+        let viewController = ScheduleViewController()
+        present(viewController, animated: true)
+        scheduleButton.addSupplementaryTitle(with: createScheduleButtonSupplementaryText())
     }
     
     @objc private func didTapCreateButton() {
@@ -224,9 +256,10 @@ class AddHabbitViewController: UIViewController, UITextFieldDelegate {
             title: addTrackerNameField.text ?? "",
             color: factory.randomColor(),
             emoji: factory.randomEmoji(),
-            schedule: [true]
+            schedule: []
         )
         factory.add(tracker: tracker, in: categoryName)
+
         self.view.window?.rootViewController?.dismiss(animated: true, completion: nil)
     }
     
@@ -251,6 +284,8 @@ extension AddHabbitViewController {
     func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
         guard let currentText = addTrackerNameField.text else { return true }
         let newTextLenght = currentText.count + string.count - range.length
+        trackerNameEntered = newTextLenght != 0 ? true : false
+        tryEnableCreationButton()
         if newTextLenght > 38 {
             warningLabel.isHidden = false
             return false

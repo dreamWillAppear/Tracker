@@ -1,12 +1,30 @@
 import UIKit
 import SnapKit
 
-class TrackersViewController: UIViewController {
+
+
+class TrackersViewController: UIViewController, AddHabbitViewControllerDelegate {
+    
+    // MARK: - Public Properties
+    
+    var weekdayIndex = 3
     
     // MARK: - Private Properties
+    private let addHabbitViewController = AddHabbitViewController()
+    
+    private let categoriesUpdatedNotification = Notification.Name("categoriesUpdatedNotification")
+    
     private let factory = TrackersFactory.shared
     
     private var completedTrackers: [TrackerRecord] = []
+    
+    private(set) var categoriesForShowing: [TrackerCategory] = [] {
+        didSet {
+            NotificationCenter.default.post(name: categoriesUpdatedNotification, object: nil)
+            print("SDGgfd`ngzf!!!")
+        }
+    }
+    
     
     private lazy var addTrackerButton: UIBarButtonItem = {
         let button = UIBarButtonItem(
@@ -82,28 +100,48 @@ class TrackersViewController: UIViewController {
         view.backgroundColor = .clear
         return view
     }()
+
+    private lazy var filtersButton: UIButton = {
+        let button = UIButton(type: .system)
+        button.backgroundColor = .trackerBlue
+        button.setTitle("Фильтры", for: .normal)
+        button.titleLabel?.font = .systemFont(ofSize: 17)
+        button.tintColor = .trackerWhite
+        button.layer.cornerRadius = 16
+        button.isHidden = true
+        return button
+    }()
     
     // MARK: - Public Methods
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        addHabbitViewController.delegate = self
+        
         configureCollectionView()
         setUI()
         setupObservers()
+        updateCategoriesForShowing()
     }
     
     deinit {
-        NotificationCenter.default.removeObserver(self, name: TrackersFactory.trackersUpdatedNotification, object: nil)
+        NotificationCenter.default.removeObserver(self, name: categoriesUpdatedNotification, object: nil)
+    }
+    
+    
+     func updateCategoriesForShowing() {
+        categoriesForShowing = factory.filterTrackers(forDayWithIndex: weekdayIndex)
     }
     
     // MARK: - Private Methods
     
     private func setupObservers() {
-        NotificationCenter.default.addObserver(self, selector: #selector(trackersUpdated), name: TrackersFactory.trackersUpdatedNotification, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(categoriesUpdated), name: categoriesUpdatedNotification, object: nil)
     }
+
     
-    @objc private func trackersUpdated() {
+    @objc private func categoriesUpdated() {
         collectionView.reloadData()
     }
     
@@ -115,11 +153,13 @@ class TrackersViewController: UIViewController {
     }
     
     private func setUI() {
+        
         view.backgroundColor = .trackerWhite
         view.addSubview(searchField)
         view.addSubview(mainLabel)
         view.addSubview(collectionView)
         view.addSubview(collectionViewPlaceholderStackView)
+        view.addSubview(filtersButton)
         
         collectionViewPlaceholderStackView.addArrangedSubview(noTrackersImageView)
         collectionViewPlaceholderStackView.addArrangedSubview(noTrackersLabel)
@@ -135,6 +175,7 @@ class TrackersViewController: UIViewController {
     
     private func updateCollectionViewPlaceholder() {
         collectionViewPlaceholderStackView.isHidden = !factory.categories.isEmpty
+        filtersButton.isHidden = factory.categories.isEmpty
     }
     
     private func setConstraints() {
@@ -171,6 +212,13 @@ class TrackersViewController: UIViewController {
         collectionViewPlaceholderStackView.snp.makeConstraints { make in
             make.centerX.centerY.equalToSuperview()
         }
+        
+        filtersButton.snp.makeConstraints { make in
+            make.centerX.equalToSuperview()
+            make.bottom.equalToSuperview().inset(100)
+            make.width.equalTo(114)
+            make.height.equalTo(50)
+        }
 
     }
     
@@ -195,17 +243,17 @@ class TrackersViewController: UIViewController {
 extension TrackersViewController: UICollectionViewDataSource, UICollectionViewDelegate, UICollectionViewDelegateFlowLayout {
     
     func numberOfSections(in collectionView: UICollectionView) -> Int {
-        factory.categories.count
+        categoriesForShowing.count
     }
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         updateCollectionViewPlaceholder()
-        return factory.categories[section].trackers.count
+        return categoriesForShowing[section].trackers.count
     }
     
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        let tracker = factory.categories[indexPath.section].trackers[indexPath.item]
+        let tracker = categoriesForShowing[indexPath.section].trackers[indexPath.item]
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: TrackerCell.reuseIdentifier, for: indexPath) as! TrackerCell
         
         cell.configureCell(for: tracker)
@@ -216,6 +264,7 @@ extension TrackersViewController: UICollectionViewDataSource, UICollectionViewDe
         let paddingSpace = (collectionViewLayout as! UICollectionViewFlowLayout).sectionInset.left +
         (collectionViewLayout as! UICollectionViewFlowLayout).sectionInset.right +
         (collectionViewLayout as! UICollectionViewFlowLayout).minimumInteritemSpacing
+        
         let availableWidth = collectionView.frame.width - paddingSpace
         return CGSize(width: availableWidth / 2, height: 148)
     }
@@ -223,7 +272,8 @@ extension TrackersViewController: UICollectionViewDataSource, UICollectionViewDe
     func collectionView(_ collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, at indexPath: IndexPath) -> UICollectionReusableView {
         let header = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: CategoryHeaderView.identifier, for: indexPath) as! CategoryHeaderView
         
-        header.categoryTitle.text = factory.categories[indexPath.section].title
+        header.categoryTitle.text = categoriesForShowing[indexPath.section].title
+        
         return header
     }
     
