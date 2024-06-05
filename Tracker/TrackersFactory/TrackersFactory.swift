@@ -5,15 +5,22 @@ final class TrackersFactory {
     // MARK: - Public Properties
     
     static let shared = TrackersFactory()
-    static let trackersUpdatedNotification = Notification.Name("trackersUpdatedNotification")
-    let trackersViewController = TrackersViewController()
-    
- 
+    static let trackersForShowingUpdatedNotification = Notification.Name("trackersForShowingUpdatedNotification")
+
     var schedule = Array(repeating: false, count: Weekday.allCases.count)
     
-    var categories: [TrackerCategory] = [] {
+    var trackersForShowing: [TrackerCategory] = [] {
         didSet {
-            NotificationCenter.default.post(name: TrackersFactory.trackersUpdatedNotification, object: nil)
+            NotificationCenter.default.post(name: TrackersFactory.trackersForShowingUpdatedNotification, object: nil)
+            print("в trackersForShowing \(trackersForShowing.count) категорий для показа")
+        }
+    }
+    
+    var trackersStorage: [TrackerCategory] = [] {
+        didSet{
+            //приводим к исходному schedule после добавления трекера в хранилище
+            schedule = Array(repeating: false, count: Weekday.allCases.count)
+            print("в trackersStorage \(trackersStorage.count) категорий")
         }
     }
     
@@ -23,29 +30,35 @@ final class TrackersFactory {
     
     // MARK: - Public Methods
     
-    func add(tracker: Tracker, in category: String) {
-        if let index = categories.enumerated().first(where: { $0.element.title == category })?.offset {
-            categories[index].trackers.append(tracker)
+    func addToStorage(tracker: Tracker, for category: String) {
+        if let index = trackersStorage.enumerated().first(where: { $0.element.title == category })?.offset {
+            trackersStorage[index].trackers.append(tracker)
         } else {
-            categories.append(TrackerCategory(title: category, trackers: [tracker]))
+            trackersStorage.append(TrackerCategory(title: category, trackers: [tracker]))
         }
-        trackersViewController.updateCategoriesForShowing()
     }
     
-    func filterTrackers(forDayWithIndex index: Int) -> [TrackerCategory] {
+    
+    func filterTrackers(in categoriesArray: [TrackerCategory],forDayWithIndex weekdayIndex: Int) -> [TrackerCategory] {
         var categoriesForShowing: [TrackerCategory] = []
-        for category in categories {
-                for tracker in category.trackers {
-                    if tracker.schedule[trackersViewController.weekdayIndex] == true {
-                        categoriesForShowing.append(category)
+        for category in categoriesArray {
+            for tracker in category.trackers {
+                
+                if tracker.schedule[weekdayIndex] == true {
+                    if let categoryIndex = categoriesForShowing.enumerated().first(where: { $0.element.title == category.title })?.offset {
+                        categoriesForShowing[categoryIndex].trackers.append(tracker)
+                    } else {
+                        categoriesForShowing.append(TrackerCategory(title: category.title, trackers: [tracker]))
                     }
                 }
+                
             }
+        }
         return categoriesForShowing
     }
     
-    func resetSchedule() {
-        schedule = Array(repeating: false, count: Weekday.allCases.count)
+    func updateTrackersForShowing() {
+        trackersForShowing = filterTrackers(in: trackersStorage, forDayWithIndex: 2)
     }
     
     func randomColor() -> UIColor {
@@ -60,7 +73,6 @@ final class TrackersFactory {
     func generateCatName() -> String {
         ["Важное", "Домашний уют", "Cамочувствие", "Мелочи"].randomElement()!
     }
-
     
 }
 

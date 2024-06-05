@@ -1,27 +1,24 @@
 import UIKit
 import SnapKit
 
-
-
-class TrackersViewController: UIViewController, AddHabbitViewControllerDelegate {
+class TrackersViewController: UIViewController {
     
     // MARK: - Public Properties
     
-    var weekdayIndex = 3
+    var weekdayIndex = 2
     
     // MARK: - Private Properties
-    private let addHabbitViewController = AddHabbitViewController()
+  
     
-    private let categoriesUpdatedNotification = Notification.Name("categoriesUpdatedNotification")
+    private let categoriesUpdatedNotification = TrackersFactory.trackersForShowingUpdatedNotification
     
     private let factory = TrackersFactory.shared
     
     private var completedTrackers: [TrackerRecord] = []
     
-    private(set) var categoriesForShowing: [TrackerCategory] = [] {
+    private var categoriesForShowing: [TrackerCategory] = [] {
         didSet {
             NotificationCenter.default.post(name: categoriesUpdatedNotification, object: nil)
-            print("SDGgfd`ngzf!!!")
         }
     }
     
@@ -117,21 +114,13 @@ class TrackersViewController: UIViewController, AddHabbitViewControllerDelegate 
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        addHabbitViewController.delegate = self
-        
         configureCollectionView()
         setUI()
         setupObservers()
-        updateCategoriesForShowing()
     }
     
     deinit {
         NotificationCenter.default.removeObserver(self, name: categoriesUpdatedNotification, object: nil)
-    }
-    
-    
-     func updateCategoriesForShowing() {
-        categoriesForShowing = factory.filterTrackers(forDayWithIndex: weekdayIndex)
     }
     
     // MARK: - Private Methods
@@ -143,6 +132,7 @@ class TrackersViewController: UIViewController, AddHabbitViewControllerDelegate 
     
     @objc private func categoriesUpdated() {
         collectionView.reloadData()
+        print("collectionViewReloaded перезагружена!")
     }
     
     private func configureCollectionView() {
@@ -174,8 +164,8 @@ class TrackersViewController: UIViewController, AddHabbitViewControllerDelegate 
     }
     
     private func updateCollectionViewPlaceholder() {
-        collectionViewPlaceholderStackView.isHidden = !factory.categories.isEmpty
-        filtersButton.isHidden = factory.categories.isEmpty
+        collectionViewPlaceholderStackView.isHidden = !factory.trackersForShowing.isEmpty
+        filtersButton.isHidden = factory.trackersForShowing.isEmpty
     }
     
     private func setConstraints() {
@@ -243,17 +233,17 @@ class TrackersViewController: UIViewController, AddHabbitViewControllerDelegate 
 extension TrackersViewController: UICollectionViewDataSource, UICollectionViewDelegate, UICollectionViewDelegateFlowLayout {
     
     func numberOfSections(in collectionView: UICollectionView) -> Int {
-        categoriesForShowing.count
+        factory.trackersForShowing.count
     }
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         updateCollectionViewPlaceholder()
-        return categoriesForShowing[section].trackers.count
+        return factory.trackersForShowing[section].trackers.count
     }
     
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        let tracker = categoriesForShowing[indexPath.section].trackers[indexPath.item]
+        let tracker = factory.trackersForShowing[indexPath.section].trackers[indexPath.item]
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: TrackerCell.reuseIdentifier, for: indexPath) as! TrackerCell
         
         cell.configureCell(for: tracker)
@@ -264,7 +254,6 @@ extension TrackersViewController: UICollectionViewDataSource, UICollectionViewDe
         let paddingSpace = (collectionViewLayout as! UICollectionViewFlowLayout).sectionInset.left +
         (collectionViewLayout as! UICollectionViewFlowLayout).sectionInset.right +
         (collectionViewLayout as! UICollectionViewFlowLayout).minimumInteritemSpacing
-        
         let availableWidth = collectionView.frame.width - paddingSpace
         return CGSize(width: availableWidth / 2, height: 148)
     }
@@ -272,14 +261,14 @@ extension TrackersViewController: UICollectionViewDataSource, UICollectionViewDe
     func collectionView(_ collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, at indexPath: IndexPath) -> UICollectionReusableView {
         let header = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: CategoryHeaderView.identifier, for: indexPath) as! CategoryHeaderView
         
-        header.categoryTitle.text = categoriesForShowing[indexPath.section].title
-        
+        header.categoryTitle.text = factory.trackersForShowing[indexPath.section].title
         return header
     }
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, referenceSizeForHeaderInSection section: Int) -> CGSize {
         return CGSize(width: 149, height: 18)
     }
+    
     
 }
 

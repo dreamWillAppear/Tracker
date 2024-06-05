@@ -1,15 +1,11 @@
 import UIKit
 import SnapKit
 
-protocol AddHabbitViewControllerDelegate: AnyObject {
-    func updateCategoriesForShowing()
-}
 
 class AddHabbitViewController: UIViewController, UITextFieldDelegate {
     
     // MARK: - Private Properties
-    
-    weak var delegate: AddHabbitViewControllerDelegate?
+    lazy var  trackersViewController = TrackersViewController()
     
     private var categoryName = ""
     private let factory = TrackersFactory.shared
@@ -244,7 +240,6 @@ class AddHabbitViewController: UIViewController, UITextFieldDelegate {
     }
     
     @objc private func didTapScheduleButton() {
-        factory.resetSchedule()
         let viewController = ScheduleViewController()
         present(viewController, animated: true)
         scheduleButton.addSupplementaryTitle(with: createScheduleButtonSupplementaryText())
@@ -256,10 +251,10 @@ class AddHabbitViewController: UIViewController, UITextFieldDelegate {
             title: addTrackerNameField.text ?? "",
             color: factory.randomColor(),
             emoji: factory.randomEmoji(),
-            schedule: []
+            schedule: factory.schedule
         )
-        factory.add(tracker: tracker, in: categoryName)
-
+        factory.addToStorage(tracker: tracker, for: categoryName)
+        factory.updateTrackersForShowing()
         self.view.window?.rootViewController?.dismiss(animated: true, completion: nil)
     }
     

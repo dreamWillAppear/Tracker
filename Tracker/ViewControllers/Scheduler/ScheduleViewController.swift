@@ -69,8 +69,9 @@ class ScheduleViewController: UIViewController {
         }
     }
     
+    //MARK: - ACTIONS
+    
     @objc private func didTapDoneButton() {
-        print(factory.schedule)
         dismiss(animated: true)
     }
     

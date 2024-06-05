@@ -8,7 +8,7 @@ protocol SwitchCellDelegate: AnyObject {
 class ScheduleTableViewCell: UITableViewCell {
     
     weak var delegate: SwitchCellDelegate?
-    
+
     static let reuseIdentifier = "ScheduleTableViewCell"
     
     let weekdayLabel: UILabel = {
