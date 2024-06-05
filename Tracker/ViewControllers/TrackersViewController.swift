@@ -5,10 +5,10 @@ class TrackersViewController: UIViewController {
     
     // MARK: - Public Properties
     
-    var weekdayIndex = 2
     
     // MARK: - Private Properties
   
+  private  let currentCalendar = Calendar.current
     
     private let categoriesUpdatedNotification = TrackersFactory.trackersForShowingUpdatedNotification
     
@@ -44,7 +44,7 @@ class TrackersViewController: UIViewController {
     private lazy var datePicker: UIDatePicker = {
         let datePicker = UIDatePicker()
         let currentDate = Date()
-        let calendar = Calendar.current
+        let calendar = currentCalendar
         let minDate = calendar.date(byAdding: .year, value: -10, to: currentDate)
         let maxDate = calendar.date(byAdding: .year, value: 10, to: currentDate)
         datePicker.tintColor = .blue
@@ -129,8 +129,8 @@ class TrackersViewController: UIViewController {
         NotificationCenter.default.addObserver(self, selector: #selector(categoriesUpdated), name: categoriesUpdatedNotification, object: nil)
     }
 
-    
     @objc private func categoriesUpdated() {
+        updateCollectionViewPlaceholder()
         collectionView.reloadData()
         print("collectionViewReloaded перезагружена!")
     }
@@ -211,17 +211,17 @@ class TrackersViewController: UIViewController {
         }
 
     }
+
+    //MARK: - Actions
     
     @objc private func datePickerValueDateChanged(_ sender: UIDatePicker) {
         let selectedDate = sender.date
         let dateFormatter = DateFormatter()
-        dateFormatter.dateFormat = "dd.MM.yyyy"
-        let formateDate = dateFormatter.string(from: selectedDate)
-        print("Date from DatePicker = \(formateDate)")
+        let weekday = currentCalendar.component(.weekday, from: selectedDate)
+        factory.weekdayIndex = ((weekday + 5) % 7)
+        factory.updateTrackersForShowing()
     }
-    
-    //MARK: - Actions
-    
+
     @objc private func didTapAddTrackerButton() {
         let viewController = AddTrackerViewController()
         navigationController?.present(viewController, animated: true)

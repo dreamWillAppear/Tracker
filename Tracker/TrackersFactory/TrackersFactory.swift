@@ -7,6 +7,8 @@ final class TrackersFactory {
     static let shared = TrackersFactory()
     static let trackersForShowingUpdatedNotification = Notification.Name("trackersForShowingUpdatedNotification")
 
+    var weekdayIndex = TrackerCalendar.currentDayweekIndex
+    
     var schedule = Array(repeating: false, count: Weekday.allCases.count)
     
     var trackersForShowing: [TrackerCategory] = [] {
@@ -58,7 +60,7 @@ final class TrackersFactory {
     }
     
     func updateTrackersForShowing() {
-        trackersForShowing = filterTrackers(in: trackersStorage, forDayWithIndex: 2)
+        trackersForShowing = filterTrackers(in: trackersStorage, forDayWithIndex: weekdayIndex)
     }
     
     func randomColor() -> UIColor {
