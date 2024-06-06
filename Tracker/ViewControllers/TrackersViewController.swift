@@ -8,7 +8,9 @@ class TrackersViewController: UIViewController {
     
     // MARK: - Private Properties
   
-  private  let currentCalendar = Calendar.current
+    private  let currentCalendar = TrackerCalendar.currentCalendar
+    
+    private var selectedDate: String = ""
     
     private let categoriesUpdatedNotification = TrackersFactory.trackersForShowingUpdatedNotification
     
@@ -215,8 +217,9 @@ class TrackersViewController: UIViewController {
     //MARK: - Actions
     
     @objc private func datePickerValueDateChanged(_ sender: UIDatePicker) {
+        TrackerDateFormatter.dateFormatter.dateFormat = "yyyy-MM-dd"
+        selectedDate = TrackerDateFormatter.dateFormatter.string(from: sender.date)
         let selectedDate = sender.date
-        let dateFormatter = DateFormatter()
         let weekday = currentCalendar.component(.weekday, from: selectedDate)
         factory.weekdayIndex = ((weekday + 5) % 7)
         factory.updateTrackersForShowing()
@@ -241,12 +244,12 @@ extension TrackersViewController: UICollectionViewDataSource, UICollectionViewDe
         return factory.trackersForShowing[section].trackers.count
     }
     
-    
+    //MARK: - ConfigureCell
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let tracker = factory.trackersForShowing[indexPath.section].trackers[indexPath.item]
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: TrackerCell.reuseIdentifier, for: indexPath) as! TrackerCell
         
-        cell.configureCell(for: tracker)
+        cell.configureCell(for: tracker, date: selectedDate)
         return cell
     }
     

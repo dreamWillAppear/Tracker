@@ -24,7 +24,7 @@
 		FD53E1962BF53F580073B644 /* SnapKit in Frameworks */ = {isa = PBXBuildFile; productRef = FD53E1952BF53F580073B644 /* SnapKit */; };
 		FD53E1982BF53F580073B644 /* SnapKit-Dynamic in Frameworks */ = {isa = PBXBuildFile; productRef = FD53E1972BF53F580073B644 /* SnapKit-Dynamic */; };
 		FD53E19A2BF562890073B644 /* StatisticsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = FD53E1992BF562890073B644 /* StatisticsViewController.swift */; };
-		FD8A207B2C111B8D0056A256 /* TrackerCalendar.swift in Sources */ = {isa = PBXBuildFile; fileRef = FD8A207A2C111B8D0056A256 /* TrackerCalendar.swift */; };
+		FD8A207B2C111B8D0056A256 /* TrackerCalendar+DateFormatter.swift in Sources */ = {isa = PBXBuildFile; fileRef = FD8A207A2C111B8D0056A256 /* TrackerCalendar+DateFormatter.swift */; };
 		FDC14C912BFFC8D400198716 /* TrackerCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = FDC14C902BFFC8D400198716 /* TrackerCell.swift */; };
 		FDF6A75E2BF4214E0002827B /* draft.swift in Sources */ = {isa = PBXBuildFile; fileRef = FDF6A75D2BF4214E0002827B /* draft.swift */; };
 /* End PBXBuildFile section */
@@ -47,7 +47,7 @@
 		FD42042D2BF17E7E0007A254 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		FD42042F2BF17E7E0007A254 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		FD53E1992BF562890073B644 /* StatisticsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatisticsViewController.swift; sourceTree = "<group>"; };
-		FD8A207A2C111B8D0056A256 /* TrackerCalendar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrackerCalendar.swift; sourceTree = "<group>"; };
+		FD8A207A2C111B8D0056A256 /* TrackerCalendar+DateFormatter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "TrackerCalendar+DateFormatter.swift"; sourceTree = "<group>"; };
 		FDC14C902BFFC8D400198716 /* TrackerCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrackerCell.swift; sourceTree = "<group>"; };
 		FDF6A75D2BF4214E0002827B /* draft.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = draft.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -112,7 +112,7 @@
 			children = (
 				FD4204212BF17E7C0007A254 /* AppDelegate.swift */,
 				1631E0992BF40A85003986AE /* TabBarController.swift */,
-				FD8A207A2C111B8D0056A256 /* TrackerCalendar.swift */,
+				FD8A207A2C111B8D0056A256 /* TrackerCalendar+DateFormatter.swift */,
 				167212A12C05365400B78FE8 /* UIButton Extension.swift */,
 				1645C9B12BF8A5A600CC7B90 /* UI Models */,
 				FD53E19B2BF5657C0073B644 /* ViewControllers */,
@@ -217,7 +217,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				167A2E7A2C0B4A5F00437041 /* ScheduleViewController.swift in Sources */,
-				FD8A207B2C111B8D0056A256 /* TrackerCalendar.swift in Sources */,
+				FD8A207B2C111B8D0056A256 /* TrackerCalendar+DateFormatter.swift in Sources */,
 				1645C9B32BF8A5ED00CC7B90 /* Tracker.swift in Sources */,
 				1631E09A2BF40A85003986AE /* TabBarController.swift in Sources */,
 				16947A512C036E0800426968 /* CategoryHaderView.swift in Sources */,

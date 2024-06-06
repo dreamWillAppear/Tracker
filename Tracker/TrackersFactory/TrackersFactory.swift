@@ -26,6 +26,8 @@ final class TrackersFactory {
         }
     }
     
+    var trackerRecords: [TrackerRecord] = []
+    
     // MARK: - Initializers
     
     private  init() {}
@@ -45,7 +47,6 @@ final class TrackersFactory {
         var categoriesForShowing: [TrackerCategory] = []
         for category in categoriesArray {
             for tracker in category.trackers {
-                
                 if tracker.schedule[weekdayIndex] == true {
                     if let categoryIndex = categoriesForShowing.enumerated().first(where: { $0.element.title == category.title })?.offset {
                         categoriesForShowing[categoryIndex].trackers.append(tracker)
@@ -53,7 +54,6 @@ final class TrackersFactory {
                         categoriesForShowing.append(TrackerCategory(title: category.title, trackers: [tracker]))
                     }
                 }
-                
             }
         }
         return categoriesForShowing
@@ -61,6 +61,28 @@ final class TrackersFactory {
     
     func updateTrackersForShowing() {
         trackersForShowing = filterTrackers(in: trackersStorage, forDayWithIndex: weekdayIndex)
+    }
+    
+    func markTrackerAsCompleted(trackerID: UUID, on date: String) {
+        let record = TrackerRecord(trackerID: trackerID, date: date)
+        if !trackerRecords.contains(where: { $0.trackerID == trackerID && $0.date == date }) {
+            trackerRecords.append(record)
+        }
+    }
+    
+    func unmarkTrackerAsCompleted(trackerID: UUID, on date: String) {
+        if let index = trackerRecords.firstIndex(where: {$0.trackerID == trackerID && $0.date == date } ) {
+            trackerRecords.remove(at: index)
+        }
+    }
+    
+    func isTrackerCompleted(trackerID: UUID, on date: String) -> Bool {
+        return trackerRecords.contains { $0.trackerID == trackerID && $0.date == date }
+    }
+    
+    func getRecordsCount(for tracker: Tracker) -> Int {
+        let trackerID = tracker.id
+        return trackerRecords.filter( {$0.trackerID == trackerID} ).count
     }
     
     func randomColor() -> UIColor {
