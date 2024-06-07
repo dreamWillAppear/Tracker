@@ -6,10 +6,15 @@ final class TrackersFactory {
     
     static let shared = TrackersFactory()
     static let trackersForShowingUpdatedNotification = Notification.Name("trackersForShowingUpdatedNotification")
+    static let scheduleUpdatedNotification = Notification.Name("scheduleUpdatedNotification")
 
     var weekdayIndex = TrackerCalendar.currentDayweekIndex
     
-    var schedule = Array(repeating: false, count: Weekday.allCases.count)
+    var schedule = Array(repeating: false, count: Weekday.allCases.count) {
+        didSet {
+            NotificationCenter.default.post(name: TrackersFactory.scheduleUpdatedNotification, object: nil)
+        }
+    }
     
     var trackersForShowing: [TrackerCategory] = [] {
         didSet {

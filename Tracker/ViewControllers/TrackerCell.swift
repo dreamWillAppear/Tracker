@@ -77,8 +77,6 @@ class TrackerCell: UICollectionViewCell {
         guard let tracker = tracker else { return }
         
         let daysCount = factory.getRecordsCount(for: tracker)
-        let daysCountString = String(daysCount)
-        
         var counterLabel = ""
         
         let lastTwoDigits = daysCount % 100

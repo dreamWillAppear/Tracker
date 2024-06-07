@@ -13,6 +13,8 @@ class AddHabbitViewController: UIViewController, UITextFieldDelegate {
     private var trackerNameEntered = false
     private var scheduleDidSet = true
     
+    private var scheduleUpdateNotification = TrackersFactory.scheduleUpdatedNotification
+    
     private let warningLabel: UILabel = {
         let label = UILabel()
         label.text = "Ограничение 38 символов"
@@ -134,9 +136,19 @@ class AddHabbitViewController: UIViewController, UITextFieldDelegate {
         setUI()
         setConstraints()
         configureDismissingKeyboard()
+        setupObservers()
+    }
+    
+    deinit {
+        NotificationCenter.default.removeObserver(self, name: scheduleUpdateNotification, object: nil)
     }
     
     // MARK: - Private Methods
+    
+    private func setupObservers() {
+        NotificationCenter.default.addObserver(self, selector: #selector(addScheduleButtonSupplementaryText), name: scheduleUpdateNotification, object: nil)
+    }
+    
     private func setUI() {
         view.backgroundColor = .trackerWhite
         self.navigationController?.navigationBar.titleTextAttributes = [NSAttributedString.Key.font: UIFont.systemFont(ofSize: 16), NSAttributedString.Key.foregroundColor:UIColor.red]
@@ -191,11 +203,7 @@ class AddHabbitViewController: UIViewController, UITextFieldDelegate {
         self.createButton.isEnabled = mustBeEnabled
         self.createButton.backgroundColor = mustBeEnabled ? .trackerBlack : .trackerGray
     }
-    
-    private func createScheduleButtonSupplementaryText()  -> String {
-        "Пн, Вт"
-    }
-    
+  
     private func setConstraints() {
         addTrackerNameField.snp.makeConstraints { make in
             make.width.equalToSuperview().inset(16)
@@ -240,9 +248,9 @@ class AddHabbitViewController: UIViewController, UITextFieldDelegate {
     }
     
     @objc private func didTapScheduleButton() {
+        scheduleButton.removeSupplementaryTitle()
         let viewController = ScheduleViewController()
         present(viewController, animated: true)
-        scheduleButton.addSupplementaryTitle(with: createScheduleButtonSupplementaryText())
     }
     
     @objc private func didTapCreateButton() {
@@ -258,6 +266,15 @@ class AddHabbitViewController: UIViewController, UITextFieldDelegate {
         self.view.window?.rootViewController?.dismiss(animated: true, completion: nil)
     }
     
+    @objc private func addScheduleButtonSupplementaryText() {
+        let weekdays = ["Пн", "Вт", "Ср", "Чт", "Пт", "Сб", "Вс"]
+        let selectedDays = factory.schedule.enumerated()
+            .filter { $0.element }
+            .map { weekdays[$0.offset] }
+
+        scheduleButton.addSupplementaryTitle(with: selectedDays.joined(separator: ", "))
+    }
+    
     @objc private func didTapCancelButton() {
         self.dismiss(animated: true)
     }
@@ -265,6 +282,8 @@ class AddHabbitViewController: UIViewController, UITextFieldDelegate {
     @objc private  func dismissKeyboard() {
         view.endEditing(true)
     }
+    
+    
     
 }
 

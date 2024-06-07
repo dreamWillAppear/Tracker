@@ -11,7 +11,7 @@
 		1631E09A2BF40A85003986AE /* TabBarController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1631E0992BF40A85003986AE /* TabBarController.swift */; };
 		16343C402BFE603E00838829 /* AddHabbitViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16343C3F2BFE603E00838829 /* AddHabbitViewController.swift */; };
 		1645C9B32BF8A5ED00CC7B90 /* Tracker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1645C9B22BF8A5ED00CC7B90 /* Tracker.swift */; };
-		167212A22C05365400B78FE8 /* UIButton Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 167212A12C05365400B78FE8 /* UIButton Extension.swift */; };
+		167212A22C05365400B78FE8 /* UIButton+UIView Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 167212A12C05365400B78FE8 /* UIButton+UIView Extension.swift */; };
 		167A2E7A2C0B4A5F00437041 /* ScheduleViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 167A2E792C0B4A5F00437041 /* ScheduleViewController.swift */; };
 		167A2E7D2C0B4AB000437041 /* WeekdayEnum.swift in Sources */ = {isa = PBXBuildFile; fileRef = 167A2E7C2C0B4AB000437041 /* WeekdayEnum.swift */; };
 		167A2E7F2C0B4BE700437041 /* ScheduleTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 167A2E7E2C0B4BE700437041 /* ScheduleTableViewCell.swift */; };
@@ -34,7 +34,7 @@
 		1631E0992BF40A85003986AE /* TabBarController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TabBarController.swift; sourceTree = "<group>"; };
 		16343C3F2BFE603E00838829 /* AddHabbitViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddHabbitViewController.swift; sourceTree = "<group>"; };
 		1645C9B22BF8A5ED00CC7B90 /* Tracker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Tracker.swift; sourceTree = "<group>"; };
-		167212A12C05365400B78FE8 /* UIButton Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIButton Extension.swift"; sourceTree = "<group>"; };
+		167212A12C05365400B78FE8 /* UIButton+UIView Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIButton+UIView Extension.swift"; sourceTree = "<group>"; };
 		167A2E792C0B4A5F00437041 /* ScheduleViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScheduleViewController.swift; sourceTree = "<group>"; };
 		167A2E7C2C0B4AB000437041 /* WeekdayEnum.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeekdayEnum.swift; sourceTree = "<group>"; };
 		167A2E7E2C0B4BE700437041 /* ScheduleTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScheduleTableViewCell.swift; sourceTree = "<group>"; };
@@ -113,7 +113,7 @@
 				FD4204212BF17E7C0007A254 /* AppDelegate.swift */,
 				1631E0992BF40A85003986AE /* TabBarController.swift */,
 				FD8A207A2C111B8D0056A256 /* TrackerCalendar+DateFormatter.swift */,
-				167212A12C05365400B78FE8 /* UIButton Extension.swift */,
+				167212A12C05365400B78FE8 /* UIButton+UIView Extension.swift */,
 				1645C9B12BF8A5A600CC7B90 /* UI Models */,
 				FD53E19B2BF5657C0073B644 /* ViewControllers */,
 				16947A4D2C033C8300426968 /* TrackersFactory */,
@@ -226,7 +226,7 @@
 				167A2E7D2C0B4AB000437041 /* WeekdayEnum.swift in Sources */,
 				16947A4F2C033CA800426968 /* TrackersFactory.swift in Sources */,
 				FDC14C912BFFC8D400198716 /* TrackerCell.swift in Sources */,
-				167212A22C05365400B78FE8 /* UIButton Extension.swift in Sources */,
+				167212A22C05365400B78FE8 /* UIButton+UIView Extension.swift in Sources */,
 				FD53E19A2BF562890073B644 /* StatisticsViewController.swift in Sources */,
 				FD4204262BF17E7C0007A254 /* TrackersViewController.swift in Sources */,
 				FD4204222BF17E7C0007A254 /* AppDelegate.swift in Sources */,

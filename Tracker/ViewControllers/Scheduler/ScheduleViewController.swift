@@ -72,6 +72,7 @@ class ScheduleViewController: UIViewController {
     //MARK: - ACTIONS
     
     @objc private func didTapDoneButton() {
+        NotificationCenter.default.post(name: TrackersFactory.scheduleUpdatedNotification, object: nil)
         dismiss(animated: true)
     }
     
@@ -97,7 +98,7 @@ extension ScheduleViewController: UITableViewDelegate, UITableViewDataSource {
         }
         
         let weekday = Weekday.allCases[indexPath.row]
-        let isOn = switchStates[indexPath.row]
+        let isOn = factory.schedule[indexPath.row]
         
         cell.delegate = self
         cell.configure(weekday: weekday, isOn: isOn)
