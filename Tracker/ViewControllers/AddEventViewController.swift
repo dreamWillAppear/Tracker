@@ -2,7 +2,7 @@ import UIKit
 import SnapKit
 
 
-class AddHabbitViewController: UIViewController, UITextFieldDelegate {
+class AddEventViewController: UIViewController, UITextFieldDelegate {
     
     // MARK: - Private Properties
     lazy var  trackersViewController = TrackersViewController()
@@ -11,9 +11,6 @@ class AddHabbitViewController: UIViewController, UITextFieldDelegate {
     private let factory = TrackersFactory.shared
     private var categorySelected = false
     private var trackerNameEntered = false
-    private var scheduleDidSet = true
-    
-    private var scheduleUpdateNotification = TrackersFactory.scheduleUpdatedNotification
     
     private let warningLabel: UILabel = {
         let label = UILabel()
@@ -42,60 +39,31 @@ class AddHabbitViewController: UIViewController, UITextFieldDelegate {
         return textField
     }()
     
-    private lazy var buttonsStackView: UIStackView = {
-        let image = UIImage(named: "Chevron")?.withRenderingMode(.alwaysOriginal).withTintColor(.trackerGray)
-        let imageViewTop = UIImageView()
-        imageViewTop.image = image
-        let imageViewBottom = UIImageView()
-        imageViewBottom.image = image
-        
-        let view = UIStackView()
-        view.axis = .vertical
-        view.spacing = 0
-        view.backgroundColor = .trackerBackground
-        view.layer.cornerRadius = 16
-        view.addSubview(imageViewTop)
-        view.addSubview(imageViewBottom)
-        
-        imageViewTop.snp.makeConstraints { make in
-            make.height.equalTo(12)
-            make.width.equalTo(7)
-            make.trailing.equalToSuperview().inset(24)
-            make.top.equalToSuperview().inset(32)
-        }
-        
-        imageViewBottom.snp.makeConstraints { make in
-            make.height.equalTo(12)
-            make.width.equalTo(7)
-            make.trailing.equalToSuperview().inset(24)
-            make.bottom.equalToSuperview().inset(31)
-        }
-        return view
-    }()
-    
     private lazy var categoryButton: UIButton = {
         let button = UIButton(type: .system)
+        let imageView = UIImageView()
+        let image = UIImage(named: "Chevron")?.withRenderingMode(.alwaysOriginal).withTintColor(.trackerGray)
+        imageView.image = image
+        button.addSubview(imageView)
+        
+        button.backgroundColor = .trackerBackground
+        button.layer.cornerRadius = 16
+        button.layer.masksToBounds = true
         button.contentHorizontalAlignment = .leading
         button.setTitle("Категория", for: .normal)
         button.titleLabel?.font = .systemFont(ofSize: 17)
         button.titleEdgeInsets = UIEdgeInsets(top: 0, left: 16, bottom: 0, right: 0)
         button.tintColor = .trackerBlack
         button.addTarget(self, action: #selector(didTapCategoryButton), for: .touchUpInside)
-        return button
-    }()
-    
-    private lazy var scheduleButton: UIButton = {
-        let button = UIButton(type: .system)
-        button.contentHorizontalAlignment = .leading
-        button.setTitle("Раписание", for: .normal)
-        button.titleLabel?.font = .systemFont(ofSize: 17)
-        button.titleEdgeInsets = UIEdgeInsets(top: 0, left: 16, bottom: 0, right: 0)
-        button.tintColor = .trackerBlack
-        button.addTarget(self, action: #selector(didTapScheduleButton), for: .touchUpInside)
+        
+        imageView.snp.makeConstraints { make in
+            make.trailing.equalToSuperview().inset(24)
+            make.centerY.equalToSuperview()
+        }
         
         return button
     }()
-    
+        
     private lazy var cancelAndCreateButtonsStackView: UIStackView = {
         let view = UIStackView()
         view.axis = .horizontal
@@ -136,52 +104,27 @@ class AddHabbitViewController: UIViewController, UITextFieldDelegate {
         setUI()
         setConstraints()
         configureDismissingKeyboard()
-        setupObservers()
     }
     
-    deinit {
-        NotificationCenter.default.removeObserver(self, name: scheduleUpdateNotification, object: nil)
-    }
-    
+
     // MARK: - Private Methods
     
-    private func setupObservers() {
-        NotificationCenter.default.addObserver(self, selector: #selector(addScheduleButtonSupplementaryText), name: scheduleUpdateNotification, object: nil)
-    }
+
     
     private func setUI() {
         view.backgroundColor = .trackerWhite
         self.navigationController?.navigationBar.titleTextAttributes = [NSAttributedString.Key.font: UIFont.systemFont(ofSize: 16), NSAttributedString.Key.foregroundColor:UIColor.red]
         
-        configureButtonsStackViews()
         
         view.addSubview(addTrackerNameField)
-        view.addSubview(buttonsStackView)
+        view.addSubview(categoryButton)
         view.addSubview(cancelAndCreateButtonsStackView)
         view.addSubview(warningLabel)
-    }
-    
-    private func configureButtonsStackViews() {
-        
-        let separatorLine = UIView()
-        separatorLine.backgroundColor = .trackerGray
-        
-        buttonsStackView.addArrangedSubview(categoryButton)
-        buttonsStackView.addArrangedSubview(separatorLine)
-        buttonsStackView.addArrangedSubview(scheduleButton)
-        
-        separatorLine.snp.makeConstraints { make in
-            make.center.equalTo(buttonsStackView)
-            make.height.equalTo(1)
-            make.leading.equalTo(buttonsStackView).offset(16)
-            make.trailing.equalTo(buttonsStackView).offset(-16)
-        }
-        
         cancelAndCreateButtonsStackView.addArrangedSubview(cancelButton)
         cancelAndCreateButtonsStackView.addArrangedSubview(createButton)
-        
     }
     
+   
     private func configureDismissingKeyboard() {
         let tapAssideKeyboard = UITapGestureRecognizer(target: self, action: #selector(dismissKeyboard))
         tapAssideKeyboard.cancelsTouchesInView = false
@@ -192,7 +135,7 @@ class AddHabbitViewController: UIViewController, UITextFieldDelegate {
     }
     
     private func tryEnableCreationButton() {
-        if categorySelected && trackerNameEntered && scheduleDidSet {
+        if categorySelected && trackerNameEntered {
             creationButton(mustBeEnabled: true)
         } else {
             creationButton(mustBeEnabled: false)
@@ -212,10 +155,10 @@ class AddHabbitViewController: UIViewController, UITextFieldDelegate {
             make.top.equalToSuperview().inset(81)
         }
         
-        buttonsStackView.snp.makeConstraints { make in
+        categoryButton.snp.makeConstraints { make in
             make.width.equalToSuperview().inset(16)
-            make.height.equalTo(150)
-            make.top.equalTo(warningLabel.snp.bottom).offset(32)
+            make.height.equalTo(75)
+            make.top.equalTo(addTrackerNameField.snp.bottom).offset(24)
             make.centerX.equalToSuperview()
         }
         
@@ -247,12 +190,6 @@ class AddHabbitViewController: UIViewController, UITextFieldDelegate {
         categoryButton.addSupplementaryTitle(with: categoryName)
     }
     
-    @objc private func didTapScheduleButton() {
-        scheduleButton.removeSupplementaryTitle()
-        let viewController = ScheduleViewController()
-        present(viewController, animated: true)
-    }
-    
     @objc private func didTapCreateButton() {
         let tracker = Tracker(
             id: UUID(),
@@ -266,15 +203,6 @@ class AddHabbitViewController: UIViewController, UITextFieldDelegate {
         self.view.window?.rootViewController?.dismiss(animated: true, completion: nil)
     }
     
-    @objc private func addScheduleButtonSupplementaryText() {
-        let weekdays = ["Пн", "Вт", "Ср", "Чт", "Пт", "Сб", "Вс"]
-        let selectedDays = factory.schedule.enumerated()
-            .filter { $0.element }
-            .map { weekdays[$0.offset] }
-
-        scheduleButton.addSupplementaryTitle(with: selectedDays.joined(separator: ", "))
-    }
-    
     @objc private func didTapCancelButton() {
         self.dismiss(animated: true)
     }
@@ -282,14 +210,10 @@ class AddHabbitViewController: UIViewController, UITextFieldDelegate {
     @objc private  func dismissKeyboard() {
         view.endEditing(true)
     }
-    
-    
-    
 }
 
 //MARK: - textField Delegate
-
-extension AddHabbitViewController {
+extension AddEventViewController {
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
            textField.resignFirstResponder()
            return true

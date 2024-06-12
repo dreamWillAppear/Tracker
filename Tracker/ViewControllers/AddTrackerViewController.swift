@@ -96,7 +96,8 @@ class AddTrackerViewController: UIViewController {
     }
     
     @objc private func didTapAddEventButton(){
-        
+        let viewController = AddEventViewController()
+        present(UINavigationController(rootViewController: viewController), animated: true)
     }
     
 }
