@@ -64,6 +64,26 @@ final class TrackersFactory {
         return categoriesForShowing
     }
     
+    func filterTrackers(in categoriesArray: [TrackerCategory], by name: String) -> [TrackerCategory] {
+        var categoriesForShowing: [TrackerCategory] = []
+        for category in categoriesArray {
+            for tracker in category.trackers {
+                let trackerName = tracker.title.lowercased()
+                let searchText = name.lowercased()
+                if trackerName.contains(searchText) {
+                    if let categoryIndex = categoriesForShowing.enumerated().first(where: { $0.element.title == category.title })?.offset {
+                        categoriesForShowing[categoryIndex].trackers.append(tracker)
+                    } else {
+                        categoriesForShowing.append(TrackerCategory(title: category.title, trackers: [tracker]))
+                    }
+                }
+            }
+        }
+        
+        
+        return categoriesForShowing
+    }
+    
     func updateTrackersForShowing() {
         trackersForShowing = filterTrackers(in: trackersStorage, forDayWithIndex: weekdayIndex)
     }

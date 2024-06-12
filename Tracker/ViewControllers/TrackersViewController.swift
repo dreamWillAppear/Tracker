@@ -3,11 +3,8 @@ import SnapKit
 
 class TrackersViewController: UIViewController {
     
-    // MARK: - Public Properties
-    
-    
     // MARK: - Private Properties
-  
+    
     private  let currentCalendar = TrackerCalendar.currentCalendar
     
     private var selectedDate: String = ""
@@ -99,7 +96,7 @@ class TrackersViewController: UIViewController {
         view.backgroundColor = .clear
         return view
     }()
-
+    
     private lazy var filtersButton: UIButton = {
         let button = UIButton(type: .system)
         button.backgroundColor = .trackerBlue
@@ -116,6 +113,7 @@ class TrackersViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        searchField.delegate = self
         configureCollectionView()
         setUI()
         setupObservers()
@@ -130,9 +128,8 @@ class TrackersViewController: UIViewController {
     private func setupObservers() {
         NotificationCenter.default.addObserver(self, selector: #selector(categoriesUpdated), name: categoriesUpdatedNotification, object: nil)
     }
-
+    
     @objc private func categoriesUpdated() {
-        updateCollectionViewPlaceholder()
         collectionView.reloadData()
         print("collectionViewReloaded перезагружена!")
     }
@@ -165,9 +162,17 @@ class TrackersViewController: UIViewController {
         navigationItem.rightBarButtonItem = UIBarButtonItem(customView: datePicker)
     }
     
-    private func updateCollectionViewPlaceholder() {
+    private func updateCollectionViewPlaceholder(forSearch: Bool) {
         collectionViewPlaceholderStackView.isHidden = !factory.trackersForShowing.isEmpty
         filtersButton.isHidden = factory.trackersForShowing.isEmpty
+        
+        if forSearch {
+            noTrackersImageView.image = .noSearchResult
+            noTrackersLabel.text = "Ничего не найдено"
+        } else {
+            noTrackersImageView.image = .noTrackers
+            noTrackersLabel.text = "Что будем отслеживать?"
+        }
     }
     
     private func setConstraints() {
@@ -211,12 +216,16 @@ class TrackersViewController: UIViewController {
             make.width.equalTo(114)
             make.height.equalTo(50)
         }
-
+        
     }
-
+    
     //MARK: - Actions
     
     @objc private func datePickerValueDateChanged(_ sender: UIDatePicker) {
+        DispatchQueue.main.async {
+            self.updateCollectionViewPlaceholder(forSearch: false)
+        }
+        
         TrackerDateFormatter.dateFormatter.dateFormat = "yyyy-MM-dd"
         selectedDate = TrackerDateFormatter.dateFormatter.string(from: sender.date)
         let selectedDate = sender.date
@@ -224,7 +233,7 @@ class TrackersViewController: UIViewController {
         factory.weekdayIndex = ((weekday + 5) % 7)
         factory.updateTrackersForShowing()
     }
-
+    
     @objc private func didTapAddTrackerButton() {
         let viewController = AddTrackerViewController()
         navigationController?.present(viewController, animated: true)
@@ -240,7 +249,7 @@ extension TrackersViewController: UICollectionViewDataSource, UICollectionViewDe
     }
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        updateCollectionViewPlaceholder()
+        updateCollectionViewPlaceholder(forSearch: false)
         return factory.trackersForShowing[section].trackers.count
     }
     
@@ -271,8 +280,38 @@ extension TrackersViewController: UICollectionViewDataSource, UICollectionViewDe
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, referenceSizeForHeaderInSection section: Int) -> CGSize {
         return CGSize(width: 149, height: 18)
     }
+}
+
+extension TrackersViewController: UISearchBarDelegate {
     
+    func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
+        
+        switch searchText{
+        case "":
+            updateCollectionViewPlaceholder(forSearch: false)
+            searchBar.setShowsCancelButton(false, animated: true)
+            factory.trackersForShowing = factory.filterTrackers(in: factory.trackersStorage, forDayWithIndex: factory.weekdayIndex)
+        default:
+            DispatchQueue.main.async {
+                self.updateCollectionViewPlaceholder(forSearch: true)
+            }
+            searchBar.setShowsCancelButton(true, animated: true)
+            factory.trackersForShowing = factory.filterTrackers(in: factory.trackersStorage, by: searchText)
+        }
+    }
     
+    func searchBarCancelButtonClicked(_ searchBar: UISearchBar) {
+        updateCollectionViewPlaceholder(forSearch: false)
+        searchBar.text = ""
+        searchBar.setShowsCancelButton(false, animated: true)
+        searchBar.endEditing(true)
+        factory.trackersForShowing = factory.filterTrackers(in: factory.trackersStorage, forDayWithIndex: factory.weekdayIndex)
+    }
+    
+    func searchBarShouldBeginEditing(_ searchBar: UISearchBar) -> Bool {
+        searchBar.setShowsCancelButton(true, animated: true)
+        return true
+    }
 }
 
 
