@@ -85,13 +85,13 @@ class AddTrackerViewController: UIViewController {
             make.width.equalTo(335)
             make.height.equalTo(60)
         }
-
+        
     }
     
     //MARK: - Actions
     
     @objc private func didTapAddHabbitButton(){
-       let viewController = AddHabbitViewController()
+        let viewController = AddHabbitViewController()
         present(UINavigationController(rootViewController: viewController), animated: true)
     }
     
@@ -99,26 +99,4 @@ class AddTrackerViewController: UIViewController {
         let viewController = AddEventViewController()
         present(UINavigationController(rootViewController: viewController), animated: true)
     }
-    
 }
-
-// MARK: - Types
-
-// MARK: - Constants
-
-// MARK: - Public Properties
-
-// MARK: - IBOutlet
-
-// MARK: - Private Properties
-
-// MARK: - Initializers
-
-// MARK: - UIViewController(*)
-
-// MARK: - Public Methods
-
-// MARK: - IBAction
-
-// MARK: - Private Methods
-

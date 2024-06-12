@@ -7,7 +7,7 @@ final class TrackersFactory {
     static let shared = TrackersFactory()
     static let trackersForShowingUpdatedNotification = Notification.Name("trackersForShowingUpdatedNotification")
     static let scheduleUpdatedNotification = Notification.Name("scheduleUpdatedNotification")
-
+    
     var weekdayIndex = TrackerCalendar.currentDayweekIndex
     
     var schedule = Array(repeating: false, count: Weekday.allCases.count) {
@@ -115,36 +115,12 @@ final class TrackersFactory {
     }
     
     func randomEmoji() -> String {
-    ["💎","🚀","🌙","🎁","⛄","🌊","⛵","🏀","🎱","💰","👄","🚲","🍉","💛","💚"].randomElement()!
-
+        ["💎","🚀","🌙","🎁","⛄","🌊","⛵","🏀","🎱","💰","👄","🚲","🍉","💛","💚"].randomElement()!
+        
     }
     
     func generateCatName() -> String {
         ["Важное", "Домашний уют", "Cамочувствие", "Мелочи"].randomElement()!
     }
-    
 }
-
-
-
-// MARK: - Types
-
-// MARK: - Constants
-
-// MARK: - Public Properties
-
-// MARK: - IBOutlet
-
-// MARK: - Private Properties
-
-// MARK: - Initializers
-
-// MARK: - UIViewController(*)
-
-// MARK: - Public Methods
-
-// MARK: - IBAction
-
-// MARK: - Private Methods
-
 

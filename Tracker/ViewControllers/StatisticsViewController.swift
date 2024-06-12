@@ -49,7 +49,7 @@ class StatisticsViewController: UIViewController {
         
         view.addSubview(mainLabel)
         view.addSubview(noStatisticsStackView)
- 
+        
         noStatisticsStackView.addArrangedSubview(noStatisticsImageView)
         noStatisticsStackView.addArrangedSubview(noStatisticsLabel)
         

@@ -27,7 +27,6 @@
 		FD53E19A2BF562890073B644 /* StatisticsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = FD53E1992BF562890073B644 /* StatisticsViewController.swift */; };
 		FD8A207B2C111B8D0056A256 /* TrackerCalendar+DateFormatter.swift in Sources */ = {isa = PBXBuildFile; fileRef = FD8A207A2C111B8D0056A256 /* TrackerCalendar+DateFormatter.swift */; };
 		FDC14C912BFFC8D400198716 /* TrackerCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = FDC14C902BFFC8D400198716 /* TrackerCell.swift */; };
-		FDF6A75E2BF4214E0002827B /* draft.swift in Sources */ = {isa = PBXBuildFile; fileRef = FDF6A75D2BF4214E0002827B /* draft.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -51,7 +50,6 @@
 		FD53E1992BF562890073B644 /* StatisticsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatisticsViewController.swift; sourceTree = "<group>"; };
 		FD8A207A2C111B8D0056A256 /* TrackerCalendar+DateFormatter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "TrackerCalendar+DateFormatter.swift"; sourceTree = "<group>"; };
 		FDC14C902BFFC8D400198716 /* TrackerCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrackerCell.swift; sourceTree = "<group>"; };
-		FDF6A75D2BF4214E0002827B /* draft.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = draft.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -122,7 +120,6 @@
 				FD42042A2BF17E7E0007A254 /* Assets.xcassets */,
 				FD42042C2BF17E7E0007A254 /* LaunchScreen.storyboard */,
 				FD42042F2BF17E7E0007A254 /* Info.plist */,
-				FDF6A75D2BF4214E0002827B /* draft.swift */,
 			);
 			path = Tracker;
 			sourceTree = "<group>";
@@ -234,7 +231,6 @@
 				FD53E19A2BF562890073B644 /* StatisticsViewController.swift in Sources */,
 				FD4204262BF17E7C0007A254 /* TrackersViewController.swift in Sources */,
 				FD4204222BF17E7C0007A254 /* AppDelegate.swift in Sources */,
-				FDF6A75E2BF4214E0002827B /* draft.swift in Sources */,
 				1629E74A2BFB331E00A50F54 /* AddTrackerViewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

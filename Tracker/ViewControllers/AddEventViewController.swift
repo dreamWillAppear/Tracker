@@ -63,7 +63,7 @@ class AddEventViewController: UIViewController, UITextFieldDelegate {
         
         return button
     }()
-        
+    
     private lazy var cancelAndCreateButtonsStackView: UIStackView = {
         let view = UIStackView()
         view.axis = .horizontal
@@ -106,10 +106,10 @@ class AddEventViewController: UIViewController, UITextFieldDelegate {
         configureDismissingKeyboard()
     }
     
-
+    
     // MARK: - Private Methods
     
-
+    
     
     private func setUI() {
         view.backgroundColor = .trackerWhite
@@ -124,11 +124,11 @@ class AddEventViewController: UIViewController, UITextFieldDelegate {
         cancelAndCreateButtonsStackView.addArrangedSubview(createButton)
     }
     
-   
+    
     private func configureDismissingKeyboard() {
         let tapAssideKeyboard = UITapGestureRecognizer(target: self, action: #selector(dismissKeyboard))
         tapAssideKeyboard.cancelsTouchesInView = false
-       view.addGestureRecognizer(tapAssideKeyboard)
+        view.addGestureRecognizer(tapAssideKeyboard)
         
         addTrackerNameField.delegate = self
         
@@ -146,7 +146,7 @@ class AddEventViewController: UIViewController, UITextFieldDelegate {
         self.createButton.isEnabled = mustBeEnabled
         self.createButton.backgroundColor = mustBeEnabled ? .trackerBlack : .trackerGray
     }
-  
+    
     private func setConstraints() {
         addTrackerNameField.snp.makeConstraints { make in
             make.width.equalToSuperview().inset(16)
@@ -177,7 +177,7 @@ class AddEventViewController: UIViewController, UITextFieldDelegate {
             make.trailing.equalTo(addTrackerNameField)
             make.top.equalTo(addTrackerNameField.snp.bottom).offset(8)
         }
-
+        
     }
     
     
@@ -215,9 +215,9 @@ class AddEventViewController: UIViewController, UITextFieldDelegate {
 //MARK: - textField Delegate
 extension AddEventViewController {
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
-           textField.resignFirstResponder()
-           return true
-       }
+        textField.resignFirstResponder()
+        return true
+    }
     
     func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
         guard let currentText = addTrackerNameField.text else { return true }
@@ -233,24 +233,3 @@ extension AddEventViewController {
         }
     }
 }
-
-// MARK: - Types
-
-// MARK: - Constants
-
-// MARK: - Public Properties
-
-// MARK: - IBOutlet
-
-// MARK: - Private Properties
-
-// MARK: - Initializers
-
-// MARK: - UIViewController(*)
-
-// MARK: - Public Methods
-
-// MARK: - IBAction
-
-// MARK: - Private Methods
-

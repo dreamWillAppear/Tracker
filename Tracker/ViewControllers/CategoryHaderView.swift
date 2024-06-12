@@ -10,7 +10,7 @@ final class CategoryHeaderView: UICollectionReusableView {
         label.textColor = .trackerBlack
         label.font = .systemFont(ofSize: 19, weight: .bold)
         return label
-        }()
+    }()
     
     override init(frame: CGRect) {
         super.init(frame: frame)

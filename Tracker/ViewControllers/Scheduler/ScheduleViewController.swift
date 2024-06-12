@@ -119,33 +119,10 @@ extension ScheduleViewController: SwitchCellDelegate {
         guard let indexPath = tableView.indexPath(for: cell) else { return }
         
         if sender.isOn {
-           factory.schedule[indexPath.item] = true
+            factory.schedule[indexPath.item] = true
         } else {
-          factory.schedule[indexPath.item] = false
+            factory.schedule[indexPath.item] = false
         }
     }
-    
 }
-
-
-// MARK: - Types
-
-// MARK: - Constants
-
-// MARK: - Public Properties
-
-// MARK: - IBOutlet
-
-// MARK: - Private Properties
-
-// MARK: - Initializers
-
-// MARK: - UIViewController(*)
-
-// MARK: - Public Methods
-
-// MARK: - IBAction
-
-// MARK: - Private Methods
-
 

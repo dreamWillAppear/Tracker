@@ -116,7 +116,7 @@ class TrackersViewController: UIViewController {
         configureCollectionView()
         setUI()
         setupObservers()
-        configureDismissingKeyboard() 
+        configureDismissingKeyboard()
     }
     
     deinit {
@@ -144,7 +144,7 @@ class TrackersViewController: UIViewController {
     private func configureDismissingKeyboard() {
         let tapAssideKeyboard = UITapGestureRecognizer(target: self, action: #selector(dismissKeyboard))
         tapAssideKeyboard.cancelsTouchesInView = false
-       view.addGestureRecognizer(tapAssideKeyboard)
+        view.addGestureRecognizer(tapAssideKeyboard)
         
         searchField.delegate = self
     }
@@ -298,16 +298,16 @@ extension TrackersViewController: UISearchBarDelegate {
     func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
         
         switch searchText{
-        case "":
-            updateCollectionViewPlaceholder(forSearch: false)
-            searchBar.setShowsCancelButton(false, animated: true)
-            factory.trackersForShowing = factory.filterTrackers(in: factory.trackersStorage, forDayWithIndex: factory.weekdayIndex)
-        default:
-            DispatchQueue.main.async {
-                self.updateCollectionViewPlaceholder(forSearch: true)
-            }
-            searchBar.setShowsCancelButton(true, animated: true)
-            factory.trackersForShowing = factory.filterTrackers(in: factory.trackersStorage, by: searchText)
+            case "":
+                updateCollectionViewPlaceholder(forSearch: false)
+                searchBar.setShowsCancelButton(false, animated: true)
+                factory.trackersForShowing = factory.filterTrackers(in: factory.trackersStorage, forDayWithIndex: factory.weekdayIndex)
+            default:
+                DispatchQueue.main.async {
+                    self.updateCollectionViewPlaceholder(forSearch: true)
+                }
+                searchBar.setShowsCancelButton(true, animated: true)
+                factory.trackersForShowing = factory.filterTrackers(in: factory.trackersStorage, by: searchText)
         }
     }
     
@@ -324,25 +324,4 @@ extension TrackersViewController: UISearchBarDelegate {
         return true
     }
 }
-
-
-// MARK: - Types
-
-// MARK: - Constants
-
-// MARK: - Public Properties
-
-// MARK: - IBOutlet
-
-// MARK: - Private Properties
-
-// MARK: - Initializers
-
-// MARK: - UIViewController(*)
-
-// MARK: - Public Methods
-
-// MARK: - IBAction
-
-// MARK: - Private Methods
 

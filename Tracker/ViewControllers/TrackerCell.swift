@@ -166,5 +166,4 @@ class TrackerCell: UICollectionViewCell {
         configureIncreaseButton(tracker: tracker, date: date)
         configureCounterLabel()
     }
-    
 }

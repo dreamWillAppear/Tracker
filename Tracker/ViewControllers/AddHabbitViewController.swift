@@ -186,7 +186,7 @@ class AddHabbitViewController: UIViewController, UITextFieldDelegate {
     private func configureDismissingKeyboard() {
         let tapAssideKeyboard = UITapGestureRecognizer(target: self, action: #selector(dismissKeyboard))
         tapAssideKeyboard.cancelsTouchesInView = false
-       view.addGestureRecognizer(tapAssideKeyboard)
+        view.addGestureRecognizer(tapAssideKeyboard)
         
         addTrackerNameField.delegate = self
         
@@ -204,7 +204,7 @@ class AddHabbitViewController: UIViewController, UITextFieldDelegate {
         self.createButton.isEnabled = mustBeEnabled
         self.createButton.backgroundColor = mustBeEnabled ? .trackerBlack : .trackerGray
     }
-  
+    
     private func setConstraints() {
         addTrackerNameField.snp.makeConstraints { make in
             make.width.equalToSuperview().inset(16)
@@ -235,7 +235,7 @@ class AddHabbitViewController: UIViewController, UITextFieldDelegate {
             make.trailing.equalTo(addTrackerNameField)
             make.top.equalTo(addTrackerNameField.snp.bottom).offset(8)
         }
-
+        
     }
     
     
@@ -272,7 +272,7 @@ class AddHabbitViewController: UIViewController, UITextFieldDelegate {
         let selectedDays = factory.schedule.enumerated()
             .filter { $0.element }
             .map { weekdays[$0.offset] }
-
+        
         scheduleButton.addSupplementaryTitle(with: selectedDays.joined(separator: ", "))
     }
     
@@ -292,9 +292,9 @@ class AddHabbitViewController: UIViewController, UITextFieldDelegate {
 
 extension AddHabbitViewController {
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
-           textField.resignFirstResponder()
-           return true
-       }
+        textField.resignFirstResponder()
+        return true
+    }
     
     func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
         guard let currentText = addTrackerNameField.text else { return true }
@@ -310,24 +310,4 @@ extension AddHabbitViewController {
         }
     }
 }
-
-// MARK: - Types
-
-// MARK: - Constants
-
-// MARK: - Public Properties
-
-// MARK: - IBOutlet
-
-// MARK: - Private Properties
-
-// MARK: - Initializers
-
-// MARK: - UIViewController(*)
-
-// MARK: - Public Methods
-
-// MARK: - IBAction
-
-// MARK: - Private Methods
 
