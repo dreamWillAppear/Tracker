@@ -236,7 +236,7 @@ class TrackersViewController: UIViewController {
     
     @objc private func didTapAddTrackerButton() {
         let viewController = AddTrackerViewController()
-        navigationController?.present(viewController, animated: true)
+        present(UINavigationController(rootViewController: viewController), animated: true)
     }
     
 }

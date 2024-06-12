@@ -92,7 +92,7 @@ class AddTrackerViewController: UIViewController {
     
     @objc private func didTapAddHabbitButton(){
        let viewController = AddHabbitViewController()
-        present(viewController, animated: true)
+        present(UINavigationController(rootViewController: viewController), animated: true)
     }
     
     @objc private func didTapAddEventButton(){

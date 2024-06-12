@@ -113,8 +113,8 @@ class AddEventViewController: UIViewController, UITextFieldDelegate {
     
     private func setUI() {
         view.backgroundColor = .trackerWhite
-        self.navigationController?.navigationBar.titleTextAttributes = [NSAttributedString.Key.font: UIFont.systemFont(ofSize: 16), NSAttributedString.Key.foregroundColor:UIColor.red]
-        
+        self.navigationController?.navigationBar.titleTextAttributes = [NSAttributedString.Key.font: UIFont.systemFont(ofSize: 16, weight: .medium)]
+        title = "Новое нерегулярное событие"
         
         view.addSubview(addTrackerNameField)
         view.addSubview(categoryButton)
