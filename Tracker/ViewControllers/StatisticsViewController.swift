@@ -72,27 +72,5 @@ class StatisticsViewController: UIViewController {
         noStatisticsImageView.snp.makeConstraints { make in
             make.width.height.equalTo(80)
         }
-        
-        
     }
 }
-
-// MARK: - Types
-
-// MARK: - Constants
-
-// MARK: - Public Properties
-
-// MARK: - IBOutlet
-
-// MARK: - Private Properties
-
-// MARK: - Initializers
-
-// MARK: - UIViewController(*)
-
-// MARK: - Public Methods
-
-// MARK: - IBAction
-
-// MARK: - Private Methods

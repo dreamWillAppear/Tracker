@@ -113,10 +113,10 @@ class TrackersViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        searchField.delegate = self
         configureCollectionView()
         setUI()
         setupObservers()
+        configureDismissingKeyboard() 
     }
     
     deinit {
@@ -139,6 +139,14 @@ class TrackersViewController: UIViewController {
         collectionView.dataSource = self
         collectionView.register(CategoryHeaderView.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: CategoryHeaderView.identifier)
         collectionView.register(TrackerCell.self, forCellWithReuseIdentifier: TrackerCell.reuseIdentifier)
+    }
+    
+    private func configureDismissingKeyboard() {
+        let tapAssideKeyboard = UITapGestureRecognizer(target: self, action: #selector(dismissKeyboard))
+        tapAssideKeyboard.cancelsTouchesInView = false
+       view.addGestureRecognizer(tapAssideKeyboard)
+        
+        searchField.delegate = self
     }
     
     private func setUI() {
@@ -239,6 +247,9 @@ class TrackersViewController: UIViewController {
         present(UINavigationController(rootViewController: viewController), animated: true)
     }
     
+    @objc private  func dismissKeyboard() {
+        view.endEditing(true)
+    }
 }
 
 //MARK: - UICollectionViewDataSource & UICollectionViewDelegate
