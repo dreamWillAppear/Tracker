@@ -41,9 +41,14 @@ final class TrackersFactory {
     
     func addToStorage(tracker: Tracker, for category: String) {
         if let index = trackersStorage.enumerated().first(where: { $0.element.title == category })?.offset {
-            trackersStorage[index].trackers.append(tracker)
+            let updatedCategory = trackersStorage[index]
+            var updatedTrackers = updatedCategory.trackers
+            updatedTrackers.append(tracker)
+            let newCategory = TrackerCategory(title: category, trackers: [tracker])
+            trackersStorage[index] = newCategory
         } else {
-            trackersStorage.append(TrackerCategory(title: category, trackers: [tracker]))
+            let newCategory = TrackerCategory(title: category, trackers: [tracker])
+            trackersStorage.append(newCategory)
         }
     }
     
@@ -54,7 +59,10 @@ final class TrackersFactory {
             for tracker in category.trackers {
                 if tracker.schedule[weekdayIndex] == true {
                     if let categoryIndex = categoriesForShowing.enumerated().first(where: { $0.element.title == category.title })?.offset {
-                        categoriesForShowing[categoryIndex].trackers.append(tracker)
+                        let updatedCategory = trackersForShowing[categoryIndex]
+                        var updatedTrackers = updatedCategory.trackers
+                        updatedTrackers.append(tracker)
+                       categoriesForShowing[categoryIndex] = updatedCategory
                     } else {
                         categoriesForShowing.append(TrackerCategory(title: category.title, trackers: [tracker]))
                     }
@@ -72,15 +80,16 @@ final class TrackersFactory {
                 let searchText = name.lowercased()
                 if trackerName.contains(searchText) {
                     if let categoryIndex = categoriesForShowing.enumerated().first(where: { $0.element.title == category.title })?.offset {
-                        categoriesForShowing[categoryIndex].trackers.append(tracker)
+                        let updatedCategory = trackersForShowing[categoryIndex]
+                        var updatedTrackers = updatedCategory.trackers
+                        updatedTrackers.append(tracker)
+                       categoriesForShowing[categoryIndex] = updatedCategory
                     } else {
                         categoriesForShowing.append(TrackerCategory(title: category.title, trackers: [tracker]))
                     }
                 }
             }
         }
-        
-        
         return categoriesForShowing
     }
     
