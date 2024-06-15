@@ -47,11 +47,15 @@ class StatisticsViewController: UIViewController {
     private func setUI() {
         view.backgroundColor = .trackerWhite
         
-        view.addSubview(mainLabel)
-        view.addSubview(noStatisticsStackView)
+        [mainLabel,
+         noStatisticsStackView].forEach {
+            view.addSubview($0)
+        }
         
-        noStatisticsStackView.addArrangedSubview(noStatisticsImageView)
-        noStatisticsStackView.addArrangedSubview(noStatisticsLabel)
+        [noStatisticsImageView,
+         noStatisticsLabel].forEach {
+            noStatisticsStackView.addArrangedSubview($0)
+        }
         
         setConstraints()
     }

@@ -1,12 +1,10 @@
 import UIKit
 import SnapKit
 
-
 class AddEventViewController: UIViewController, UITextFieldDelegate {
     
     // MARK: - Private Properties
-    lazy var  trackersViewController = TrackersViewController()
-    
+
     private var categoryName = ""
     private let factory = TrackersFactory.shared
     private var categorySelected = false
@@ -60,7 +58,6 @@ class AddEventViewController: UIViewController, UITextFieldDelegate {
             make.trailing.equalToSuperview().inset(24)
             make.centerY.equalToSuperview()
         }
-        
         return button
     }()
     
@@ -106,32 +103,31 @@ class AddEventViewController: UIViewController, UITextFieldDelegate {
         configureDismissingKeyboard()
     }
     
-    
     // MARK: - Private Methods
-    
-    
     
     private func setUI() {
         view.backgroundColor = .trackerWhite
         self.navigationController?.navigationBar.titleTextAttributes = [NSAttributedString.Key.font: UIFont.systemFont(ofSize: 16, weight: .medium)]
         title = "Новое нерегулярное событие"
         
-        view.addSubview(addTrackerNameField)
-        view.addSubview(categoryButton)
-        view.addSubview(cancelAndCreateButtonsStackView)
-        view.addSubview(warningLabel)
-        cancelAndCreateButtonsStackView.addArrangedSubview(cancelButton)
-        cancelAndCreateButtonsStackView.addArrangedSubview(createButton)
+        [addTrackerNameField,
+         categoryButton,
+         cancelAndCreateButtonsStackView,
+         warningLabel].forEach {
+            view.addSubview($0)
+        }
+       
+        [cancelButton,
+         createButton].forEach {
+            cancelAndCreateButtonsStackView.addArrangedSubview($0)
+        }
     }
-    
     
     private func configureDismissingKeyboard() {
         let tapAssideKeyboard = UITapGestureRecognizer(target: self, action: #selector(dismissKeyboard))
         tapAssideKeyboard.cancelsTouchesInView = false
         view.addGestureRecognizer(tapAssideKeyboard)
-        
         addTrackerNameField.delegate = self
-        
     }
     
     private func tryEnableCreationButton() {
@@ -180,7 +176,6 @@ class AddEventViewController: UIViewController, UITextFieldDelegate {
         
     }
     
-    
     //MARK: - ACTIONS
     
     @objc private func didTapCategoryButton() {
@@ -213,6 +208,7 @@ class AddEventViewController: UIViewController, UITextFieldDelegate {
 }
 
 //MARK: - textField Delegate
+
 extension AddEventViewController {
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
         textField.resignFirstResponder()

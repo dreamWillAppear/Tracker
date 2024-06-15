@@ -5,8 +5,7 @@ class TrackerCell: UICollectionViewCell {
     
     static let reuseIdentifier = "trackerCell"
     
-    let factory = TrackersFactory.shared
-    
+    private let factory = TrackersFactory.shared
     private var tracker: Tracker?
     private var date: String?
     private var trackerColor: UIColor?
@@ -43,7 +42,7 @@ class TrackerCell: UICollectionViewCell {
         return label
     }()
     
-    lazy var increaseButton: UIButton = {
+    private lazy var increaseButton: UIButton = {
         let button = UIButton(type: .custom)
         button.layer.cornerRadius = 17
         button.addTarget(self, action: #selector(didTapIncreaseButton), for: .touchUpInside)
@@ -52,7 +51,14 @@ class TrackerCell: UICollectionViewCell {
     
     override init(frame: CGRect) {
         super.init(frame: frame)
-        [colorFilledView, trackerTitle, emojiView, dayCounter, increaseButton].forEach { contentView.addSubview($0) }
+        
+        [colorFilledView,
+         trackerTitle,
+         emojiView,
+         dayCounter,
+         increaseButton].forEach {
+            contentView.addSubview($0)
+        }
         setConstraints()
     }
     
@@ -86,12 +92,12 @@ class TrackerCell: UICollectionViewCell {
             counterLabel = "\(daysCount) дней"
         } else {
             switch lastDigit {
-                case 1:
-                    counterLabel = "\(daysCount) день"
-                case 2, 3, 4:
-                    counterLabel = "\(daysCount) дня"
-                default:
-                    counterLabel = "\(daysCount) дней"
+            case 1:
+                counterLabel = "\(daysCount) день"
+            case 2, 3, 4:
+                counterLabel = "\(daysCount) дня"
+            default:
+                counterLabel = "\(daysCount) дней"
             }
         }
         
@@ -148,6 +154,7 @@ class TrackerCell: UICollectionViewCell {
     }
     
     //MARK: - ACTIONS
+    
     private func mark(tracker: Tracker, onDate: String) {
         if factory.isTrackerCompleted(trackerID: tracker.id, on: onDate) {
             factory.unmarkTrackerAsCompleted(trackerID: tracker.id, on: onDate)
@@ -161,7 +168,7 @@ class TrackerCell: UICollectionViewCell {
             let tracker = tracker,
             let date = date
         else { return }
-
+        
         mark(tracker: tracker, onDate: date)
         configureIncreaseButton(tracker: tracker, date: date)
         configureCounterLabel()

@@ -5,7 +5,6 @@ import SnapKit
 class AddHabbitViewController: UIViewController, UITextFieldDelegate {
     
     // MARK: - Private Properties
-    lazy var  trackersViewController = TrackersViewController()
     
     private var categoryName = ""
     private let factory = TrackersFactory.shared
@@ -92,7 +91,6 @@ class AddHabbitViewController: UIViewController, UITextFieldDelegate {
         button.titleEdgeInsets = UIEdgeInsets(top: 0, left: 16, bottom: 0, right: 0)
         button.tintColor = .trackerBlack
         button.addTarget(self, action: #selector(didTapScheduleButton), for: .touchUpInside)
-        
         return button
     }()
     
@@ -156,20 +154,23 @@ class AddHabbitViewController: UIViewController, UITextFieldDelegate {
         
         configureButtonsStackViews()
         
-        view.addSubview(addTrackerNameField)
-        view.addSubview(buttonsStackView)
-        view.addSubview(cancelAndCreateButtonsStackView)
-        view.addSubview(warningLabel)
+        [addTrackerNameField,
+         buttonsStackView,
+         cancelAndCreateButtonsStackView,
+         warningLabel].forEach {
+            view.addSubview($0)
+        }
     }
     
     private func configureButtonsStackViews() {
-        
         let separatorLine = UIView()
         separatorLine.backgroundColor = .trackerGray
         
-        buttonsStackView.addArrangedSubview(categoryButton)
-        buttonsStackView.addArrangedSubview(separatorLine)
-        buttonsStackView.addArrangedSubview(scheduleButton)
+        [cancelButton,
+         separatorLine,
+         scheduleButton].forEach {
+            buttonsStackView.addArrangedSubview($0)
+        }
         
         separatorLine.snp.makeConstraints { make in
             make.center.equalTo(buttonsStackView)
@@ -178,9 +179,10 @@ class AddHabbitViewController: UIViewController, UITextFieldDelegate {
             make.trailing.equalTo(buttonsStackView).offset(-16)
         }
         
-        cancelAndCreateButtonsStackView.addArrangedSubview(cancelButton)
-        cancelAndCreateButtonsStackView.addArrangedSubview(createButton)
-        
+        [cancelButton,
+         createButton].forEach {
+            cancelAndCreateButtonsStackView.addArrangedSubview($0)
+        }
     }
     
     private func configureDismissingKeyboard() {
@@ -189,7 +191,6 @@ class AddHabbitViewController: UIViewController, UITextFieldDelegate {
         view.addGestureRecognizer(tapAssideKeyboard)
         
         addTrackerNameField.delegate = self
-        
     }
     
     private func tryEnableCreationButton() {
@@ -235,9 +236,7 @@ class AddHabbitViewController: UIViewController, UITextFieldDelegate {
             make.trailing.equalTo(addTrackerNameField)
             make.top.equalTo(addTrackerNameField.snp.bottom).offset(8)
         }
-        
     }
-    
     
     //MARK: - ACTIONS
     
@@ -283,9 +282,6 @@ class AddHabbitViewController: UIViewController, UITextFieldDelegate {
     @objc private  func dismissKeyboard() {
         view.endEditing(true)
     }
-    
-    
-    
 }
 
 //MARK: - textField Delegate

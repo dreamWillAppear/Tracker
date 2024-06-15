@@ -42,7 +42,6 @@ class AddTrackerViewController: UIViewController {
         return button
     }()
     
-    
     // MARK: - Public Methods
     
     override func viewDidLoad() {
@@ -54,8 +53,6 @@ class AddTrackerViewController: UIViewController {
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        
-        
     }
     
     // MARK: - Private Methods
@@ -65,8 +62,10 @@ class AddTrackerViewController: UIViewController {
         self.navigationController?.navigationBar.titleTextAttributes = [NSAttributedString.Key.font: UIFont.systemFont(ofSize: 16, weight: .medium)]
         title = "Создание трекера"
         
-        buttonsStackView.addArrangedSubview(addHabbitButton)
-        buttonsStackView.addArrangedSubview(addEventButton)
+        [addHabbitButton,
+         addEventButton].forEach {
+            buttonsStackView.addArrangedSubview($0)
+        }
         view.addSubview(buttonsStackView)
     }
     

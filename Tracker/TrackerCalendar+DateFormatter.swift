@@ -1,12 +1,12 @@
 import Foundation
 
-enum TrackerCalendar  {
+enum TrackerCalendar {
     static let currentCalendar = Calendar.current
-    static let currentDayweek = currentCalendar.component(.weekday, from: Date())
-    static let currentDayweekIndex  = (currentDayweek + 5) % 7
+    static let currentDayWeek = currentCalendar.component(.weekday, from: Date())
+    static let currentDayWeekIndex  = (currentDayWeek + 5) % 7
 }
 
-enum TrackerDateFormatter  {
+enum TrackerDateFormatter {
     static let dateFormatter = DateFormatter()
 }
 

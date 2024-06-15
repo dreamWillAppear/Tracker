@@ -21,7 +21,6 @@ class TrackersViewController: UIViewController {
         }
     }
     
-    
     private lazy var addTrackerButton: UIBarButtonItem = {
         let button = UIBarButtonItem(
             image: UIImage(systemName: "plus")?.withTintColor(.trackerBlack, renderingMode: .alwaysOriginal),
@@ -131,7 +130,6 @@ class TrackersViewController: UIViewController {
     
     @objc private func categoriesUpdated() {
         collectionView.reloadData()
-        print("collectionViewReloaded перезагружена!")
     }
     
     private func configureCollectionView() {
@@ -150,17 +148,22 @@ class TrackersViewController: UIViewController {
     }
     
     private func setUI() {
-        
         view.backgroundColor = .trackerWhite
-        view.addSubview(searchField)
-        view.addSubview(mainLabel)
-        view.addSubview(collectionView)
-        view.addSubview(collectionViewPlaceholderStackView)
-        view.addSubview(filtersButton)
         
-        collectionViewPlaceholderStackView.addArrangedSubview(noTrackersImageView)
-        collectionViewPlaceholderStackView.addArrangedSubview(noTrackersLabel)
+        [searchField,
+         mainLabel,
+         collectionView,
+         collectionViewPlaceholderStackView,
+         collectionViewPlaceholderStackView,
+         filtersButton].forEach {
+            view.addSubview($0)
+        }
         
+        [noTrackersImageView,
+         noTrackersLabel].forEach {
+            collectionViewPlaceholderStackView.addArrangedSubview($0)
+        }
+       
         configureNavBar()
         setConstraints()
     }
@@ -247,7 +250,7 @@ class TrackersViewController: UIViewController {
         present(UINavigationController(rootViewController: viewController), animated: true)
     }
     
-    @objc private  func dismissKeyboard() {
+    @objc private func dismissKeyboard() {
         view.endEditing(true)
     }
 }
@@ -298,16 +301,16 @@ extension TrackersViewController: UISearchBarDelegate {
     func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
         
         switch searchText{
-            case "":
-                updateCollectionViewPlaceholder(forSearch: false)
-                searchBar.setShowsCancelButton(false, animated: true)
-                factory.trackersForShowing = factory.filterTrackers(in: factory.trackersStorage, forDayWithIndex: factory.weekdayIndex)
-            default:
-                DispatchQueue.main.async {
-                    self.updateCollectionViewPlaceholder(forSearch: true)
-                }
-                searchBar.setShowsCancelButton(true, animated: true)
-                factory.trackersForShowing = factory.filterTrackers(in: factory.trackersStorage, by: searchText)
+        case "":
+            updateCollectionViewPlaceholder(forSearch: false)
+            searchBar.setShowsCancelButton(false, animated: true)
+            factory.trackersForShowing = factory.filterTrackers(in: factory.trackersStorage, forDayWithIndex: factory.weekdayIndex)
+        default:
+            DispatchQueue.main.async {
+                self.updateCollectionViewPlaceholder(forSearch: true)
+            }
+            searchBar.setShowsCancelButton(true, animated: true)
+            factory.trackersForShowing = factory.filterTrackers(in: factory.trackersStorage, by: searchText)
         }
     }
     

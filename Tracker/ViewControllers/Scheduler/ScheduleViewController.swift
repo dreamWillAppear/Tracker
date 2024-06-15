@@ -44,8 +44,10 @@ class ScheduleViewController: UIViewController {
     private func setUI(){
         view.backgroundColor = .trackerWhite
         
-        view.addSubview(tableView)
-        view.addSubview(doneButton)
+        [tableView,
+         doneButton].forEach {
+            view.addSubview($0)
+        }
         
         tableView.layer.cornerRadius = 16
         tableView.separatorStyle = .singleLine
@@ -75,11 +77,9 @@ class ScheduleViewController: UIViewController {
         NotificationCenter.default.post(name: TrackersFactory.scheduleUpdatedNotification, object: nil)
         dismiss(animated: true)
     }
-    
 }
 
 extension ScheduleViewController: UITableViewDelegate, UITableViewDataSource {
-    
     func numberOfSections(in tableView: UITableView) -> Int {
         return 1
     }
@@ -102,7 +102,7 @@ extension ScheduleViewController: UITableViewDelegate, UITableViewDataSource {
         
         cell.delegate = self
         cell.configure(weekday: weekday, isOn: isOn)
-        
+    
         return cell
     }
     

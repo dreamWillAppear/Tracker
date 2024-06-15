@@ -8,9 +8,9 @@ final class TrackersFactory {
     static let trackersForShowingUpdatedNotification = Notification.Name("trackersForShowingUpdatedNotification")
     static let scheduleUpdatedNotification = Notification.Name("scheduleUpdatedNotification")
     
-    var weekdayIndex = TrackerCalendar.currentDayweekIndex
+    var weekdayIndex = TrackerCalendar.currentDayWeekIndex
     
-    var schedule = Array(repeating: false, count: Weekday.allCases.count) {
+    var schedule = Array(repeating: false, count: WeekDay.allCases.count) {
         didSet {
             NotificationCenter.default.post(name: TrackersFactory.scheduleUpdatedNotification, object: nil)
         }
@@ -19,15 +19,13 @@ final class TrackersFactory {
     var trackersForShowing: [TrackerCategory] = [] {
         didSet {
             NotificationCenter.default.post(name: TrackersFactory.trackersForShowingUpdatedNotification, object: nil)
-            print("в trackersForShowing \(trackersForShowing.count) категорий для показа")
         }
     }
     
     var trackersStorage: [TrackerCategory] = [] {
         didSet{
             //приводим к исходному schedule после добавления трекера в хранилище
-            schedule = Array(repeating: false, count: Weekday.allCases.count)
-            print("в trackersStorage \(trackersStorage.count) категорий")
+            schedule = Array(repeating: false, count: WeekDay.allCases.count)
         }
     }
     
