@@ -1,13 +1,13 @@
 import UIKit
 import SnapKit
 
-class TrackersViewController: UIViewController {
+final class TrackersViewController: UIViewController {
     
     // MARK: - Private Properties
     
-    private  let currentCalendar = TrackerCalendar.currentCalendar
+    private let currentCalendar = TrackerCalendar.currentCalendar
     
-    private var selectedDate: String = ""
+    private var currentDate: Date = Date()
     
     private let categoriesUpdatedNotification = TrackersFactory.trackersForShowingUpdatedNotification
     
@@ -236,11 +236,9 @@ class TrackersViewController: UIViewController {
         DispatchQueue.main.async {
             self.updateCollectionViewPlaceholder(forSearch: false)
         }
-        
         TrackerDateFormatter.dateFormatter.dateFormat = "yyyy-MM-dd"
-        selectedDate = TrackerDateFormatter.dateFormatter.string(from: sender.date)
-        let selectedDate = sender.date
-        let weekday = currentCalendar.component(.weekday, from: selectedDate)
+        currentDate = sender.date
+        let weekday = currentCalendar.component(.weekday, from: currentDate)
         factory.weekdayIndex = ((weekday + 5) % 7)
         factory.updateTrackersForShowing()
     }
@@ -269,10 +267,11 @@ extension TrackersViewController: UICollectionViewDataSource, UICollectionViewDe
     
     //MARK: - ConfigureCell
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+        let currentDateString = TrackerDateFormatter.dateFormatter.string(from: currentDate)
         let tracker = factory.trackersForShowing[indexPath.section].trackers[indexPath.item]
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: TrackerCell.reuseIdentifier, for: indexPath) as! TrackerCell
         
-        cell.configureCell(for: tracker, date: selectedDate)
+        cell.configureCell(for: tracker, date: currentDateString)
         return cell
     }
     

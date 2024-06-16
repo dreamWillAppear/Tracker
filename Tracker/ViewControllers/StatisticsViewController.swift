@@ -1,7 +1,7 @@
 import UIKit
 import SnapKit
 
-class StatisticsViewController: UIViewController {
+final class StatisticsViewController: UIViewController {
     
     // MARK: - Private Properties
     

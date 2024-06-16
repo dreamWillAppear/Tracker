@@ -1,7 +1,7 @@
 import UIKit
 import SnapKit
 
-class ScheduleViewController: UIViewController {
+final class ScheduleViewController: UIViewController {
     
     // MARK: - Private Properties
     
@@ -25,7 +25,7 @@ class ScheduleViewController: UIViewController {
         return button
     }()
     
-    private var switchStates = Array(repeating: false, count: Weekday.allCases.count)
+    private var switchStates = Array(repeating: false, count: WeekDay.allCases.count)
     
     // MARK: - Public Methods
     
@@ -85,11 +85,11 @@ extension ScheduleViewController: UITableViewDelegate, UITableViewDataSource {
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return Weekday.allCases.count
+        return WeekDay.allCases.count
     }
     
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        return tableView.bounds.height / CGFloat(Weekday.allCases.count)
+        return tableView.bounds.height / CGFloat(WeekDay.allCases.count)
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
@@ -97,17 +97,17 @@ extension ScheduleViewController: UITableViewDelegate, UITableViewDataSource {
             return UITableViewCell()
         }
         
-        let weekday = Weekday.allCases[indexPath.row]
+        let weekDay = WeekDay.allCases[indexPath.row]
         let isOn = factory.schedule[indexPath.row]
         
         cell.delegate = self
-        cell.configure(weekday: weekday, isOn: isOn)
+        cell.configure(weekDay: weekDay, isOn: isOn)
     
         return cell
     }
     
     func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
-        if indexPath.row == Weekday.allCases.count - 1 {
+        if indexPath.row == WeekDay.allCases.count - 1 {
             cell.separatorInset = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: .greatestFiniteMagnitude)
         }
     }

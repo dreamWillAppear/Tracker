@@ -1,7 +1,7 @@
 import UIKit
 import SnapKit
 
-class TrackerCell: UICollectionViewCell {
+final class TrackerCell: UICollectionViewCell {
     
     static let reuseIdentifier = "trackerCell"
     

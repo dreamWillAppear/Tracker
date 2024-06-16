@@ -2,7 +2,7 @@ import UIKit
 import SnapKit
 
 
-class AddHabbitViewController: UIViewController, UITextFieldDelegate {
+final class AddHabbitViewController: UIViewController, UITextFieldDelegate {
     
     // MARK: - Private Properties
     
@@ -166,7 +166,7 @@ class AddHabbitViewController: UIViewController, UITextFieldDelegate {
         let separatorLine = UIView()
         separatorLine.backgroundColor = .trackerGray
         
-        [cancelButton,
+        [categoryButton,
          separatorLine,
          scheduleButton].forEach {
             buttonsStackView.addArrangedSubview($0)

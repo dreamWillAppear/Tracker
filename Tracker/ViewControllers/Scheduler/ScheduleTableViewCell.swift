@@ -5,7 +5,7 @@ protocol SwitchCellDelegate: AnyObject {
     func switchValueChanded(_ sender: UISwitch, cell: ScheduleTableViewCell)
 }
 
-class ScheduleTableViewCell: UITableViewCell {
+final class ScheduleTableViewCell: UITableViewCell {
     
     weak var delegate: SwitchCellDelegate?
     

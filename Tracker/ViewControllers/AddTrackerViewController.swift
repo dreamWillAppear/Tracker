@@ -1,7 +1,7 @@
 import UIKit
 import SnapKit
 
-class AddTrackerViewController: UIViewController {
+final class AddTrackerViewController: UIViewController {
     
     // MARK: - Private Properties
     

@@ -1,7 +1,7 @@
 import UIKit
 import SnapKit
 
-class AddEventViewController: UIViewController, UITextFieldDelegate {
+final class AddEventViewController: UIViewController, UITextFieldDelegate {
     
     // MARK: - Private Properties
 
