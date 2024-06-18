@@ -4,7 +4,7 @@ import SnapKit
 final class AddEventViewController: UIViewController, UITextFieldDelegate {
     
     // MARK: - Private Properties
-
+    
     private var categoryName = ""
     private let factory = TrackersFactory.shared
     private var categorySelected = false
@@ -37,8 +37,8 @@ final class AddEventViewController: UIViewController, UITextFieldDelegate {
         return textField
     }()
     
-    private lazy var categoryButton: UIButton = {
-        let button = UIButton(type: .system)
+    private lazy var categoryButton: TrackerButton = {
+        let button = TrackerButton(type: .system)
         let imageView = UIImageView()
         let image = UIImage(named: "Chevron")?.withRenderingMode(.alwaysOriginal).withTintColor(.trackerGray)
         imageView.image = image
@@ -69,8 +69,8 @@ final class AddEventViewController: UIViewController, UITextFieldDelegate {
         return view
     }()
     
-    private lazy var cancelButton: UIButton = {
-        let button = UIButton(type: .system)
+    private lazy var cancelButton: TrackerButton = {
+        let button = TrackerButton(type: .system)
         button.setTitle("Отменить", for: .normal)
         button.titleLabel?.font = .systemFont(ofSize: 16, weight: .medium)
         button.tintColor = .trackerRed
@@ -81,8 +81,8 @@ final class AddEventViewController: UIViewController, UITextFieldDelegate {
         return button
     }()
     
-    private lazy var createButton: UIButton = {
-        let button = UIButton(type: .system)
+    private lazy var createButton: TrackerButton = {
+        let button = TrackerButton(type: .system)
         button.setTitle("Создать", for: .normal)
         button.titleLabel?.font = .systemFont(ofSize: 16, weight: .medium)
         button.tintColor = .trackerWhite
@@ -116,7 +116,7 @@ final class AddEventViewController: UIViewController, UITextFieldDelegate {
          warningLabel].forEach {
             view.addSubview($0)
         }
-       
+        
         [cancelButton,
          createButton].forEach {
             cancelAndCreateButtonsStackView.addArrangedSubview($0)
@@ -182,7 +182,7 @@ final class AddEventViewController: UIViewController, UITextFieldDelegate {
         categorySelected = true
         tryEnableCreationButton()
         categoryName = factory.generateCatName()
-        categoryButton.addSupplementaryTitle(with: categoryName)
+        categoryButton.addSupplementaryView(with: categoryName)
     }
     
     @objc private func didTapCreateButton() {

@@ -72,8 +72,8 @@ final class AddHabbitViewController: UIViewController, UITextFieldDelegate {
         return view
     }()
     
-    private lazy var categoryButton: UIButton = {
-        let button = UIButton(type: .system)
+    private lazy var categoryButton: TrackerButton = {
+        let button = TrackerButton(type: .system)
         button.contentHorizontalAlignment = .leading
         button.setTitle("Категория", for: .normal)
         button.titleLabel?.font = .systemFont(ofSize: 17)
@@ -83,8 +83,8 @@ final class AddHabbitViewController: UIViewController, UITextFieldDelegate {
         return button
     }()
     
-    private lazy var scheduleButton: UIButton = {
-        let button = UIButton(type: .system)
+    private lazy var scheduleButton: TrackerButton = {
+        let button = TrackerButton(type: .system)
         button.contentHorizontalAlignment = .leading
         button.setTitle("Раписание", for: .normal)
         button.titleLabel?.font = .systemFont(ofSize: 17)
@@ -102,8 +102,8 @@ final class AddHabbitViewController: UIViewController, UITextFieldDelegate {
         return view
     }()
     
-    private lazy var cancelButton: UIButton = {
-        let button = UIButton(type: .system)
+    private lazy var cancelButton: TrackerButton = {
+        let button = TrackerButton(type: .system)
         button.setTitle("Отменить", for: .normal)
         button.titleLabel?.font = .systemFont(ofSize: 16, weight: .medium)
         button.tintColor = .trackerRed
@@ -114,8 +114,8 @@ final class AddHabbitViewController: UIViewController, UITextFieldDelegate {
         return button
     }()
     
-    private lazy var createButton: UIButton = {
-        let button = UIButton(type: .system)
+    private lazy var createButton: TrackerButton = {
+        let button = TrackerButton(type: .system)
         button.setTitle("Создать", for: .normal)
         button.titleLabel?.font = .systemFont(ofSize: 16, weight: .medium)
         button.tintColor = .trackerWhite
@@ -244,11 +244,12 @@ final class AddHabbitViewController: UIViewController, UITextFieldDelegate {
         categorySelected = true
         tryEnableCreationButton()
         categoryName = factory.generateCatName()
-        categoryButton.addSupplementaryTitle(with: categoryName)
+        categoryButton.addSupplementaryView(with: categoryName)
+      //  categoryButton.addSupplementaryTitle(with: categoryName)
     }
     
     @objc private func didTapScheduleButton() {
-        scheduleButton.removeSupplementaryTitle()
+     //   scheduleButton.removeSupplementaryTitle()
         let viewController = ScheduleViewController()
         present(viewController, animated: true)
     }
@@ -271,8 +272,8 @@ final class AddHabbitViewController: UIViewController, UITextFieldDelegate {
         let selectedDays = factory.schedule.enumerated()
             .filter { $0.element }
             .map { weekdays[$0.offset] }
-        
-        scheduleButton.addSupplementaryTitle(with: selectedDays.joined(separator: ", "))
+        scheduleButton.addSupplementaryView(with: selectedDays.joined(separator: ", "))
+      //  scheduleButton.addSupplementaryTitle(with: selectedDays.joined(separator: ", "))
     }
     
     @objc private func didTapCancelButton() {

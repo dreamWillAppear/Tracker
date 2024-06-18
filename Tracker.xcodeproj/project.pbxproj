@@ -12,12 +12,12 @@
 		16343C402BFE603E00838829 /* AddHabbitViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16343C3F2BFE603E00838829 /* AddHabbitViewController.swift */; };
 		1645C9B32BF8A5ED00CC7B90 /* Tracker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1645C9B22BF8A5ED00CC7B90 /* Tracker.swift */; };
 		165A61B32C19A361000F8C66 /* AddEventViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 165A61B22C19A361000F8C66 /* AddEventViewController.swift */; };
-		167212A22C05365400B78FE8 /* UIButton+UIView Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 167212A12C05365400B78FE8 /* UIButton+UIView Extension.swift */; };
 		167A2E7A2C0B4A5F00437041 /* ScheduleViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 167A2E792C0B4A5F00437041 /* ScheduleViewController.swift */; };
 		167A2E7D2C0B4AB000437041 /* WeekdayEnum.swift in Sources */ = {isa = PBXBuildFile; fileRef = 167A2E7C2C0B4AB000437041 /* WeekdayEnum.swift */; };
 		167A2E7F2C0B4BE700437041 /* ScheduleTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 167A2E7E2C0B4BE700437041 /* ScheduleTableViewCell.swift */; };
 		16947A4F2C033CA800426968 /* TrackersFactory.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16947A4E2C033CA800426968 /* TrackersFactory.swift */; };
 		16947A512C036E0800426968 /* CategoryHaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16947A502C036E0800426968 /* CategoryHaderView.swift */; };
+		16D1F78D2C1F9ECE007601DE /* TrackerButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16D1F78C2C1F9ECE007601DE /* TrackerButton.swift */; };
 		16F0FD112C1DEFE8004C854A /* TrackerCategory.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16F0FD102C1DEFE8004C854A /* TrackerCategory.swift */; };
 		16F0FD132C1DF01A004C854A /* TrackerRecord.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16F0FD122C1DF01A004C854A /* TrackerRecord.swift */; };
 		FD4204222BF17E7C0007A254 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = FD4204212BF17E7C0007A254 /* AppDelegate.swift */; };
@@ -37,12 +37,12 @@
 		16343C3F2BFE603E00838829 /* AddHabbitViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddHabbitViewController.swift; sourceTree = "<group>"; };
 		1645C9B22BF8A5ED00CC7B90 /* Tracker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Tracker.swift; sourceTree = "<group>"; };
 		165A61B22C19A361000F8C66 /* AddEventViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddEventViewController.swift; sourceTree = "<group>"; };
-		167212A12C05365400B78FE8 /* UIButton+UIView Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIButton+UIView Extension.swift"; sourceTree = "<group>"; };
 		167A2E792C0B4A5F00437041 /* ScheduleViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScheduleViewController.swift; sourceTree = "<group>"; };
 		167A2E7C2C0B4AB000437041 /* WeekdayEnum.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeekdayEnum.swift; sourceTree = "<group>"; };
 		167A2E7E2C0B4BE700437041 /* ScheduleTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScheduleTableViewCell.swift; sourceTree = "<group>"; };
 		16947A4E2C033CA800426968 /* TrackersFactory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrackersFactory.swift; sourceTree = "<group>"; };
 		16947A502C036E0800426968 /* CategoryHaderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CategoryHaderView.swift; sourceTree = "<group>"; };
+		16D1F78C2C1F9ECE007601DE /* TrackerButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrackerButton.swift; sourceTree = "<group>"; };
 		16F0FD102C1DEFE8004C854A /* TrackerCategory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrackerCategory.swift; sourceTree = "<group>"; };
 		16F0FD122C1DF01A004C854A /* TrackerRecord.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrackerRecord.swift; sourceTree = "<group>"; };
 		FD42041E2BF17E7C0007A254 /* Tracker.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Tracker.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -97,6 +97,16 @@
 			path = TrackersFactory;
 			sourceTree = "<group>";
 		};
+		16D1F78E2C1F9F03007601DE /* AddHabbitOrEventViewController */ = {
+			isa = PBXGroup;
+			children = (
+				16D1F78C2C1F9ECE007601DE /* TrackerButton.swift */,
+				16343C3F2BFE603E00838829 /* AddHabbitViewController.swift */,
+				165A61B22C19A361000F8C66 /* AddEventViewController.swift */,
+			);
+			path = AddHabbitOrEventViewController;
+			sourceTree = "<group>";
+		};
 		16F0FD142C1DF0F6004C854A /* TrackersViewController */ = {
 			isa = PBXGroup;
 			children = (
@@ -129,7 +139,6 @@
 				FD4204212BF17E7C0007A254 /* AppDelegate.swift */,
 				1631E0992BF40A85003986AE /* TabBarController.swift */,
 				FD8A207A2C111B8D0056A256 /* TrackerCalendar+DateFormatter.swift */,
-				167212A12C05365400B78FE8 /* UIButton+UIView Extension.swift */,
 				1645C9B12BF8A5A600CC7B90 /* Models */,
 				FD53E19B2BF5657C0073B644 /* ViewControllers */,
 				16947A4D2C033C8300426968 /* TrackersFactory */,
@@ -143,11 +152,10 @@
 		FD53E19B2BF5657C0073B644 /* ViewControllers */ = {
 			isa = PBXGroup;
 			children = (
-				16F0FD142C1DF0F6004C854A /* TrackersViewController */,
-				1629E7492BFB331E00A50F54 /* AddTrackerViewController.swift */,
-				16343C3F2BFE603E00838829 /* AddHabbitViewController.swift */,
-				165A61B22C19A361000F8C66 /* AddEventViewController.swift */,
 				FD53E1992BF562890073B644 /* StatisticsViewController.swift */,
+				1629E7492BFB331E00A50F54 /* AddTrackerViewController.swift */,
+				16F0FD142C1DF0F6004C854A /* TrackersViewController */,
+				16D1F78E2C1F9F03007601DE /* AddHabbitOrEventViewController */,
 				167A2E7B2C0B4A8D00437041 /* Scheduler */,
 			);
 			path = ViewControllers;
@@ -242,10 +250,10 @@
 				167A2E7D2C0B4AB000437041 /* WeekdayEnum.swift in Sources */,
 				16947A4F2C033CA800426968 /* TrackersFactory.swift in Sources */,
 				FDC14C912BFFC8D400198716 /* TrackerCell.swift in Sources */,
-				167212A22C05365400B78FE8 /* UIButton+UIView Extension.swift in Sources */,
 				FD53E19A2BF562890073B644 /* StatisticsViewController.swift in Sources */,
 				FD4204262BF17E7C0007A254 /* TrackersViewController.swift in Sources */,
 				FD4204222BF17E7C0007A254 /* AppDelegate.swift in Sources */,
+				16D1F78D2C1F9ECE007601DE /* TrackerButton.swift in Sources */,
 				16F0FD112C1DEFE8004C854A /* TrackerCategory.swift in Sources */,
 				1629E74A2BFB331E00A50F54 /* AddTrackerViewController.swift in Sources */,
 			);
