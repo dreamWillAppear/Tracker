@@ -29,7 +29,7 @@ final class TrackersFactory {
         }
     }
     
-    var trackerRecords: [TrackerRecord] = []
+    var completedTrackers: [TrackerRecord] = []
     
     // MARK: - Initializers
     
@@ -97,24 +97,24 @@ final class TrackersFactory {
     
     func markTrackerAsCompleted(trackerID: UUID, on date: String) {
         let record = TrackerRecord(trackerID: trackerID, date: date)
-        if !trackerRecords.contains(where: { $0.trackerID == trackerID && $0.date == date }) {
-            trackerRecords.append(record)
+        if !completedTrackers.contains(where: { $0.trackerID == trackerID && $0.date == date }) {
+            completedTrackers.append(record)
         }
     }
     
     func unmarkTrackerAsCompleted(trackerID: UUID, on date: String) {
-        if let index = trackerRecords.firstIndex(where: {$0.trackerID == trackerID && $0.date == date } ) {
-            trackerRecords.remove(at: index)
+        if let index = completedTrackers.firstIndex(where: {$0.trackerID == trackerID && $0.date == date } ) {
+            completedTrackers.remove(at: index)
         }
     }
     
     func isTrackerCompleted(trackerID: UUID, on date: String) -> Bool {
-        return trackerRecords.contains { $0.trackerID == trackerID && $0.date == date }
+        return completedTrackers.contains { $0.trackerID == trackerID && $0.date == date }
     }
     
     func getRecordsCount(for tracker: Tracker) -> Int {
         let trackerID = tracker.id
-        return trackerRecords.filter( {$0.trackerID == trackerID} ).count
+        return completedTrackers.filter( {$0.trackerID == trackerID} ).count
     }
     
     func randomColor() -> UIColor {
