@@ -1,7 +1,7 @@
 import UIKit
 import SnapKit
 
-class TrackerButton: UIButton {
+final class TrackerButton: UIButton {
     
     // не понимаю как сдвинуть родной titleLabel - он игнорирует snp, поэтому родной удаляется и его роль выполняет mainLabel
     private var mainLabel: UILabel?
