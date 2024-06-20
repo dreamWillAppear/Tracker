@@ -267,11 +267,10 @@ extension TrackersViewController: UICollectionViewDataSource, UICollectionViewDe
     
     //MARK: - ConfigureCell
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        let currentDateString = TrackerDateFormatter.dateFormatter.string(from: currentDate)
         let tracker = factory.trackersForShowing[indexPath.section].trackers[indexPath.item]
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: TrackerCell.reuseIdentifier, for: indexPath) as! TrackerCell
         
-        cell.configureCell(for: tracker, date: currentDateString)
+        cell.configureCell(for: tracker, date: currentDate)
         return cell
     }
     

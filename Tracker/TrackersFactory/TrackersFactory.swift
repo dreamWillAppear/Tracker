@@ -50,7 +50,6 @@ final class TrackersFactory {
         }
     }
     
-    
     func filterTrackers(in categoriesArray: [TrackerCategory],forDayWithIndex weekdayIndex: Int) -> [TrackerCategory] {
         var categoriesForShowing: [TrackerCategory] = []
         for category in categoriesArray {
@@ -95,20 +94,20 @@ final class TrackersFactory {
         trackersForShowing = filterTrackers(in: trackersStorage, forDayWithIndex: weekdayIndex)
     }
     
-    func markTrackerAsCompleted(trackerID: UUID, on date: String) {
+    func markTrackerAsCompleted(trackerID: UUID, on date: Date) {
         let record = TrackerRecord(trackerID: trackerID, date: date)
         if !completedTrackers.contains(where: { $0.trackerID == trackerID && $0.date == date }) {
             completedTrackers.append(record)
         }
     }
     
-    func unmarkTrackerAsCompleted(trackerID: UUID, on date: String) {
-        if let index = completedTrackers.firstIndex(where: {$0.trackerID == trackerID && $0.date == date } ) {
+    func unmarkTrackerAsCompleted(trackerID: UUID, on date: Date) {
+        if let index = completedTrackers.firstIndex(where: { $0.trackerID == trackerID && $0.date == date } ) {
             completedTrackers.remove(at: index)
         }
     }
     
-    func isTrackerCompleted(trackerID: UUID, on date: String) -> Bool {
+    func isTrackerCompleted(trackerID: UUID, on date: Date) -> Bool {
         return completedTrackers.contains { $0.trackerID == trackerID && $0.date == date }
     }
     

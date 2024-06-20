@@ -2,5 +2,5 @@ import Foundation
 
 struct TrackerRecord {
     let trackerID: UUID
-    let date: String
+    let date: Date
 }

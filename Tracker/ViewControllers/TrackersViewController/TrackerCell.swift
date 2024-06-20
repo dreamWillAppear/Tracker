@@ -7,7 +7,7 @@ final class TrackerCell: UICollectionViewCell {
     
     private let factory = TrackersFactory.shared
     private var tracker: Tracker?
-    private var date: String?
+    private var selectedDate: Date?
     private var trackerColor: UIColor?
     
     private lazy var colorFilledView: UIView = {
@@ -66,9 +66,9 @@ final class TrackerCell: UICollectionViewCell {
         fatalError("init(coder:) has not been implemented")
     }
     
-    func configureCell(for tracker: Tracker, date: String) {
+    func configureCell(for tracker: Tracker, date: Date) {
         self.tracker = tracker
-        self.date = date
+        self.selectedDate = date
         trackerColor = tracker.color
         
         colorFilledView.backgroundColor = tracker.color
@@ -92,19 +92,36 @@ final class TrackerCell: UICollectionViewCell {
             counterLabel = "\(daysCount) дней"
         } else {
             switch lastDigit {
-            case 1:
-                counterLabel = "\(daysCount) день"
-            case 2, 3, 4:
-                counterLabel = "\(daysCount) дня"
-            default:
-                counterLabel = "\(daysCount) дней"
+                case 1:
+                    counterLabel = "\(daysCount) день"
+                case 2, 3, 4:
+                    counterLabel = "\(daysCount) дня"
+                default:
+                    counterLabel = "\(daysCount) дней"
             }
         }
         
         dayCounter.text = counterLabel
     }
     
-    private func configureIncreaseButton(tracker: Tracker, date: String) {
+    private func selectedDateIsFuture() -> Bool {
+        guard let selectedDate = selectedDate else {
+            return true
+        }
+        return selectedDate > Date()
+    }
+    
+    private func configureIncreaseButton(tracker: Tracker, date: Date) {
+        guard !selectedDateIsFuture() else {
+            increaseButton.isEnabled = false
+            increaseButton.backgroundColor = trackerColor?.withAlphaComponent(0.2)
+            increaseButton.setImage(UIImage(systemName: "plus")?.withTintColor(.trackerWhite, renderingMode: .alwaysOriginal), for: .normal)
+            return
+        }
+        
+        //почему-то если явно не включить, то кнопка и не включится, если хотя бы раз была выключена в guard
+        increaseButton.isEnabled = true
+        
         if factory.isTrackerCompleted(trackerID: tracker.id, on: date) {
             increaseButton.backgroundColor = trackerColor?.withAlphaComponent(0.2)
             increaseButton.setImage(UIImage(named: "Cell Button Done")?.withTintColor(.trackerWhite, renderingMode: .alwaysOriginal), for: .normal)
@@ -155,7 +172,7 @@ final class TrackerCell: UICollectionViewCell {
     
     //MARK: - ACTIONS
     
-    private func mark(tracker: Tracker, onDate: String) {
+    private func mark(tracker: Tracker, onDate: Date) {
         if factory.isTrackerCompleted(trackerID: tracker.id, on: onDate) {
             factory.unmarkTrackerAsCompleted(trackerID: tracker.id, on: onDate)
         } else {
@@ -166,7 +183,7 @@ final class TrackerCell: UICollectionViewCell {
     @objc private func didTapIncreaseButton() {
         guard
             let tracker = tracker,
-            let date = date
+            let date = selectedDate
         else { return }
         
         mark(tracker: tracker, onDate: date)
