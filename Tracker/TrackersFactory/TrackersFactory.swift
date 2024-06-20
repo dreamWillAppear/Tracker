@@ -42,7 +42,7 @@ final class TrackersFactory {
             let updatedCategory = trackersStorage[index]
             var updatedTrackers = updatedCategory.trackers
             updatedTrackers.append(tracker)
-            let newCategory = TrackerCategory(title: category, trackers: [tracker])
+            let newCategory = TrackerCategory(title: category, trackers: updatedTrackers)
             trackersStorage[index] = newCategory
         } else {
             let newCategory = TrackerCategory(title: category, trackers: [tracker])
@@ -50,18 +50,20 @@ final class TrackersFactory {
         }
     }
     
-    func filterTrackers(in categoriesArray: [TrackerCategory],forDayWithIndex weekdayIndex: Int) -> [TrackerCategory] {
+    func filterTrackers(in categoriesArray: [TrackerCategory], forDayWithIndex weekdayIndex: Int) -> [TrackerCategory] {
         var categoriesForShowing: [TrackerCategory] = []
-        for category in categoriesArray {
+        for category in trackersStorage {
             for tracker in category.trackers {
                 if tracker.schedule[weekdayIndex] == true {
-                    if let categoryIndex = categoriesForShowing.enumerated().first(where: { $0.element.title == category.title })?.offset {
-                        let updatedCategory = trackersForShowing[categoryIndex]
+                    if let index = categoriesForShowing.enumerated().first(where:  { $0.element.title == category.title })?.offset {
+                        let updatedCategory = categoriesForShowing[index]
                         var updatedTrackers = updatedCategory.trackers
                         updatedTrackers.append(tracker)
-                       categoriesForShowing[categoryIndex] = updatedCategory
+                        let newCategory = TrackerCategory(title: category.title, trackers: updatedTrackers)
+                        categoriesForShowing[index] = newCategory
                     } else {
-                        categoriesForShowing.append(TrackerCategory(title: category.title, trackers: [tracker]))
+                        let newCategory = TrackerCategory(title: category.title, trackers: [tracker])
+                        categoriesForShowing.append(newCategory)
                     }
                 }
             }
@@ -77,7 +79,7 @@ final class TrackersFactory {
                 let searchText = name.lowercased()
                 if trackerName.contains(searchText) {
                     if let categoryIndex = categoriesForShowing.enumerated().first(where: { $0.element.title == category.title })?.offset {
-                        let updatedCategory = trackersForShowing[categoryIndex]
+                        let updatedCategory = categoriesForShowing[categoryIndex]
                         var updatedTrackers = updatedCategory.trackers
                         updatedTrackers.append(tracker)
                        categoriesForShowing[categoryIndex] = updatedCategory

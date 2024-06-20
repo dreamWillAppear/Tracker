@@ -143,7 +143,6 @@ final class TrackersViewController: UIViewController {
         let tapAssideKeyboard = UITapGestureRecognizer(target: self, action: #selector(dismissKeyboard))
         tapAssideKeyboard.cancelsTouchesInView = false
         view.addGestureRecognizer(tapAssideKeyboard)
-        
         searchField.delegate = self
     }
     
@@ -163,7 +162,7 @@ final class TrackersViewController: UIViewController {
          noTrackersLabel].forEach {
             collectionViewPlaceholderStackView.addArrangedSubview($0)
         }
-       
+        
         configureNavBar()
         setConstraints()
     }
@@ -267,48 +266,66 @@ extension TrackersViewController: UICollectionViewDataSource, UICollectionViewDe
     
     //MARK: - ConfigureCell
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        let tracker = factory.trackersForShowing[indexPath.section].trackers[indexPath.item]
-        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: TrackerCell.reuseIdentifier, for: indexPath) as! TrackerCell
+        guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: TrackerCell.reuseIdentifier, for: indexPath) as? TrackerCell else {
+            return .init()
+        }
         
+        let tracker = factory.trackersForShowing[indexPath.section].trackers[indexPath.item]
+    
         cell.configureCell(for: tracker, date: currentDate)
         return cell
     }
     
-    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-        let paddingSpace = (collectionViewLayout as! UICollectionViewFlowLayout).sectionInset.left +
-        (collectionViewLayout as! UICollectionViewFlowLayout).sectionInset.right +
-        (collectionViewLayout as! UICollectionViewFlowLayout).minimumInteritemSpacing
+    func collectionView(
+        _ collectionView: UICollectionView,
+        layout collectionViewLayout: UICollectionViewLayout,
+        sizeForItemAt indexPath: IndexPath
+    ) -> CGSize {
+        guard let layout = collectionViewLayout as? UICollectionViewFlowLayout else { return .init() }
+        let paddingSpace = layout.sectionInset.left + layout.sectionInset.right + layout.minimumInteritemSpacing
         let availableWidth = collectionView.frame.width - paddingSpace
         return CGSize(width: availableWidth / 2, height: 148)
     }
     
-    func collectionView(_ collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, at indexPath: IndexPath) -> UICollectionReusableView {
-        let header = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: CategoryHeaderView.identifier, for: indexPath) as! CategoryHeaderView
+    func collectionView(
+        _ collectionView: UICollectionView,
+        viewForSupplementaryElementOfKind kind: String,
+        at indexPath: IndexPath
+    ) -> UICollectionReusableView {
+        guard let header = collectionView.dequeueReusableSupplementaryView(
+            ofKind: kind,
+            withReuseIdentifier: CategoryHeaderView.identifier,
+            for: indexPath
+        ) as? CategoryHeaderView else { return .init() }
         
         header.categoryTitle.text = factory.trackersForShowing[indexPath.section].title
         return header
     }
     
-    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, referenceSizeForHeaderInSection section: Int) -> CGSize {
-        return CGSize(width: 149, height: 18)
+    func collectionView(
+        _ collectionView: UICollectionView,
+        layout collectionViewLayout: UICollectionViewLayout,
+        referenceSizeForHeaderInSection section: Int
+    ) -> CGSize {
+        .init(width: 149, height: 18)
     }
 }
 
 extension TrackersViewController: UISearchBarDelegate {
     
     func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
-        
         switch searchText{
-        case "":
-            updateCollectionViewPlaceholder(forSearch: false)
-            searchBar.setShowsCancelButton(false, animated: true)
-            factory.trackersForShowing = factory.filterTrackers(in: factory.trackersStorage, forDayWithIndex: factory.weekdayIndex)
-        default:
-            DispatchQueue.main.async {
-                self.updateCollectionViewPlaceholder(forSearch: true)
-            }
-            searchBar.setShowsCancelButton(true, animated: true)
-            factory.trackersForShowing = factory.filterTrackers(in: factory.trackersStorage, by: searchText)
+            case "":
+                updateCollectionViewPlaceholder(forSearch: false)
+                searchBar.setShowsCancelButton(false, animated: true)
+                factory.trackersForShowing = factory.filterTrackers(in: factory.trackersStorage, forDayWithIndex: factory.weekdayIndex)
+            default:
+                //без асинхронного вызова заглушка появляется только после ввода второго символа. Видимо потому что trackersForShowing: [TrackerCategory] уже пуст, но UI еще обновился?
+                DispatchQueue.main.async {
+                    self.updateCollectionViewPlaceholder(forSearch: true)
+                }
+                searchBar.setShowsCancelButton(true, animated: true)
+                factory.trackersForShowing = factory.filterTrackers(in: factory.trackersStorage, by: searchText)
         }
     }
     
