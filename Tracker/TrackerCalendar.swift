@@ -6,8 +6,3 @@ enum TrackerCalendar {
     static let currentDayWeekIndex  = (currentDayWeek + 5) % 7
 }
 
-enum TrackerDateFormatter {
-    static let dateFormatter = DateFormatter()
-}
-
-

@@ -112,23 +112,23 @@ final class TrackerCell: UICollectionViewCell {
     }
     
     private func configureIncreaseButton(tracker: Tracker, date: Date) {
+        
         guard !selectedDateIsFuture() else {
             increaseButton.isEnabled = false
             increaseButton.backgroundColor = trackerColor?.withAlphaComponent(0.2)
-            increaseButton.setImage(UIImage(systemName: "plus")?.withTintColor(.trackerWhite, renderingMode: .alwaysOriginal), for: .normal)
+            increaseButton.setImage(UIImage(systemName: "plus")?
+                .withTintColor(.trackerWhite, renderingMode: .alwaysOriginal), for: .normal)
             return
         }
         
         //почему-то если явно не включить, то кнопка и не включится, если хотя бы раз была выключена в guard
         increaseButton.isEnabled = true
-        
-        if factory.isTrackerCompleted(trackerID: tracker.id, on: date) {
-            increaseButton.backgroundColor = trackerColor?.withAlphaComponent(0.2)
-            increaseButton.setImage(UIImage(named: "Cell Button Done")?.withTintColor(.trackerWhite, renderingMode: .alwaysOriginal), for: .normal)
-        } else {
-            increaseButton.backgroundColor = trackerColor
-            increaseButton.setImage(UIImage(systemName: "plus")?.withTintColor(.trackerWhite, renderingMode: .alwaysOriginal), for: .normal)
-        }
+        let isCompleted = factory.isTrackerCompleted(trackerID: tracker.id, on: date)
+        let image = isCompleted ? UIImage(named: "Cell Button Done") : UIImage(systemName: "plus")
+        increaseButton.backgroundColor = isCompleted ? trackerColor?.withAlphaComponent(0.2) : trackerColor
+        increaseButton.setImage(image?
+            . withRenderingMode(.alwaysOriginal)
+            .withTintColor(.trackerWhite), for: .normal)
     }
     
     private func setConstraints() {

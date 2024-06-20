@@ -16,13 +16,15 @@ final class TabBarController: UITabBarController {
     private func configureTabBarButtons(trackersViewControler: UIViewController, and statisticsViewController: UIViewController) {
         trackersViewControler.tabBarItem = UITabBarItem(
             title: "Трекеры",
-            image: UIImage(systemName: "record.circle.fill")?.withTintColor(.trackerGray, renderingMode: .alwaysOriginal),
+            image: UIImage(systemName: "record.circle.fill")?
+                .withTintColor(.trackerGray, renderingMode: .alwaysOriginal),
             selectedImage: UIImage(systemName: "record.circle.fill")
         )
         
         statisticsViewController.tabBarItem = UITabBarItem(
             title: "Статистика",
-            image: UIImage(systemName: "hare.fill")?.withTintColor(.trackerGray, renderingMode: .alwaysOriginal),
+            image: UIImage(systemName: "hare.fill")?
+                .withTintColor(.trackerGray, renderingMode: .alwaysOriginal),
             selectedImage: UIImage(systemName: "hare.fill")
         )
         

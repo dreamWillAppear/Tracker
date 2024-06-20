@@ -42,7 +42,9 @@ final class AddHabbitViewController: UIViewController, UITextFieldDelegate {
     }()
     
     private lazy var buttonsStackView: UIStackView = {
-        let image = UIImage(named: "Chevron")?.withRenderingMode(.alwaysOriginal).withTintColor(.trackerGray)
+        let image = UIImage(named: "Chevron")?
+            .withRenderingMode(.alwaysOriginal)
+            .withTintColor(.trackerGray)
         let imageViewTop = UIImageView()
         imageViewTop.image = image
         let imageViewBottom = UIImageView()
@@ -194,11 +196,8 @@ final class AddHabbitViewController: UIViewController, UITextFieldDelegate {
     }
     
     private func tryEnableCreationButton() {
-        if categorySelected && trackerNameEntered && scheduleDidSet {
-            creationButton(mustBeEnabled: true)
-        } else {
-            creationButton(mustBeEnabled: false)
-        }
+        let isEnabled = categorySelected && trackerNameEntered && scheduleDidSet
+        creationButton(mustBeEnabled: isEnabled)
     }
     
     private func creationButton(mustBeEnabled: Bool) {
@@ -245,11 +244,9 @@ final class AddHabbitViewController: UIViewController, UITextFieldDelegate {
         tryEnableCreationButton()
         categoryName = factory.generateCatName()
         categoryButton.addSupplementaryView(with: categoryName)
-      //  categoryButton.addSupplementaryTitle(with: categoryName)
     }
     
     @objc private func didTapScheduleButton() {
-     //   scheduleButton.removeSupplementaryTitle()
         let viewController = ScheduleViewController()
         present(viewController, animated: true)
     }
@@ -273,7 +270,6 @@ final class AddHabbitViewController: UIViewController, UITextFieldDelegate {
             .filter { $0.element }
             .map { weekdays[$0.offset] }
         scheduleButton.addSupplementaryView(with: selectedDays.joined(separator: ", "))
-      //  scheduleButton.addSupplementaryTitle(with: selectedDays.joined(separator: ", "))
     }
     
     @objc private func didTapCancelButton() {
@@ -298,13 +294,10 @@ extension AddHabbitViewController {
         let newTextLenght = currentText.count + string.count - range.length
         trackerNameEntered = newTextLenght != 0 ? true : false
         tryEnableCreationButton()
-        if newTextLenght > 38 {
-            warningLabel.isHidden = false
-            return false
-        } else {
-            warningLabel.isHidden = true
-            return true
-        }
+        
+        let isBiggerThen = newTextLenght > 38
+        warningLabel.isHidden = !isBiggerThen
+        return !isBiggerThen
     }
 }
 

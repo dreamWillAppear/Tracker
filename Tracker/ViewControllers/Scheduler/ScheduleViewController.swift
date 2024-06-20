@@ -10,7 +10,10 @@ final class ScheduleViewController: UIViewController {
     private lazy var tableView: UITableView = {
         let table = UITableView()
         table.backgroundColor = .trackerBackground
-        table.register(ScheduleTableViewCell.self, forCellReuseIdentifier: ScheduleTableViewCell.reuseIdentifier)
+        table.register(
+            ScheduleTableViewCell.self,
+            forCellReuseIdentifier: ScheduleTableViewCell.reuseIdentifier)
+        
         return table
     }()
     
@@ -81,48 +84,53 @@ final class ScheduleViewController: UIViewController {
 
 extension ScheduleViewController: UITableViewDelegate, UITableViewDataSource {
     func numberOfSections(in tableView: UITableView) -> Int {
-        return 1
+        1
     }
     
-    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return WeekDay.allCases.count
-    }
-    
-    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        return tableView.bounds.height / CGFloat(WeekDay.allCases.count)
-    }
-    
-    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        guard let cell = tableView.dequeueReusableCell(withIdentifier: ScheduleTableViewCell.reuseIdentifier, for: indexPath) as? ScheduleTableViewCell else {
-            return UITableViewCell()
+    func tableView(
+        _ tableView: UITableView,
+        numberOfRowsInSection section: Int) -> Int {
+            WeekDay.allCases.count
         }
-        
-        let weekDay = WeekDay.allCases[indexPath.row]
-        let isOn = factory.schedule[indexPath.row]
-        
-        cell.delegate = self
-        cell.configure(weekDay: weekDay, isOn: isOn)
     
-        return cell
-    }
-    
-    func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
-        if indexPath.row == WeekDay.allCases.count - 1 {
-            cell.separatorInset = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: .greatestFiniteMagnitude)
+    func tableView(
+        _ tableView: UITableView,
+        heightForRowAt indexPath: IndexPath) -> CGFloat {
+            tableView.bounds.height / CGFloat(WeekDay.allCases.count)
         }
-    }
+    
+    func tableView(
+        _ tableView: UITableView,
+        cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+            guard let cell = tableView.dequeueReusableCell(withIdentifier: ScheduleTableViewCell.reuseIdentifier, for: indexPath) as? ScheduleTableViewCell else {
+                return UITableViewCell()
+            }
+            
+            let weekDay = WeekDay.allCases[indexPath.row]
+            let isOn = factory.schedule[indexPath.row]
+            
+            cell.delegate = self
+            cell.configure(weekDay: weekDay, isOn: isOn)
+            
+            return cell
+        }
+    
+    func tableView(
+        _ tableView: UITableView,
+        willDisplay cell: UITableViewCell,
+        forRowAt indexPath: IndexPath) {
+            if indexPath.row == WeekDay.allCases.count - 1 {
+                cell.separatorInset = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: .greatestFiniteMagnitude)
+            }
+        }
 }
 
 extension ScheduleViewController: SwitchCellDelegate {
-    func switchValueChanded(_ sender: UISwitch, cell: ScheduleTableViewCell) {
-        
-        guard let indexPath = tableView.indexPath(for: cell) else { return }
-        
-        if sender.isOn {
-            factory.schedule[indexPath.item] = true
-        } else {
-            factory.schedule[indexPath.item] = false
+    func switchValueChanded(
+        _ sender: UISwitch,
+        cell: ScheduleTableViewCell) {
+            guard let indexPath = tableView.indexPath(for: cell) else { return }
+            factory.schedule[indexPath.item] = sender.isOn
         }
-    }
 }
 

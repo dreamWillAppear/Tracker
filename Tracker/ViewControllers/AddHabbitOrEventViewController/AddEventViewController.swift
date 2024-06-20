@@ -40,7 +40,9 @@ final class AddEventViewController: UIViewController, UITextFieldDelegate {
     private lazy var categoryButton: TrackerButton = {
         let button = TrackerButton(type: .system)
         let imageView = UIImageView()
-        let image = UIImage(named: "Chevron")?.withRenderingMode(.alwaysOriginal).withTintColor(.trackerGray)
+        let image = UIImage(named: "Chevron")?
+            .withRenderingMode(.alwaysOriginal)
+            .withTintColor(.trackerGray)
         imageView.image = image
         button.addSubview(imageView)
         
@@ -131,11 +133,8 @@ final class AddEventViewController: UIViewController, UITextFieldDelegate {
     }
     
     private func tryEnableCreationButton() {
-        if categorySelected && trackerNameEntered {
-            creationButton(mustBeEnabled: true)
-        } else {
-            creationButton(mustBeEnabled: false)
-        }
+        let isEnabled = categorySelected && trackerNameEntered
+        creationButton(mustBeEnabled: isEnabled)
     }
     
     private func creationButton(mustBeEnabled: Bool) {
@@ -220,12 +219,9 @@ extension AddEventViewController {
         let newTextLenght = currentText.count + string.count - range.length
         trackerNameEntered = newTextLenght != 0 ? true : false
         tryEnableCreationButton()
-        if newTextLenght > 38 {
-            warningLabel.isHidden = false
-            return false
-        } else {
-            warningLabel.isHidden = true
-            return true
-        }
+        
+        let isBiggerThen = newTextLenght > 38
+        warningLabel.isHidden = !isBiggerThen
+        return !isBiggerThen
     }
 }

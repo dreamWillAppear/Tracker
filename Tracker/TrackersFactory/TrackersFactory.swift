@@ -82,7 +82,7 @@ final class TrackersFactory {
                         let updatedCategory = categoriesForShowing[categoryIndex]
                         var updatedTrackers = updatedCategory.trackers
                         updatedTrackers.append(tracker)
-                       categoriesForShowing[categoryIndex] = updatedCategory
+                        categoriesForShowing[categoryIndex] = updatedCategory
                     } else {
                         categoriesForShowing.append(TrackerCategory(title: category.title, trackers: [tracker]))
                     }

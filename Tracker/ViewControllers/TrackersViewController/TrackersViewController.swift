@@ -5,14 +5,11 @@ final class TrackersViewController: UIViewController {
     
     // MARK: - Private Properties
     
+    private let dateFormatter = DateFormatter()
     private let currentCalendar = TrackerCalendar.currentCalendar
-    
     private var currentDate: Date = Date()
-    
     private let categoriesUpdatedNotification = TrackersFactory.trackersForShowingUpdatedNotification
-    
     private let factory = TrackersFactory.shared
-    
     private var completedTrackers: [TrackerRecord] = []
     
     private var categoriesForShowing: [TrackerCategory] = [] {
@@ -23,7 +20,8 @@ final class TrackersViewController: UIViewController {
     
     private lazy var addTrackerButton: UIBarButtonItem = {
         let button = UIBarButtonItem(
-            image: UIImage(systemName: "plus")?.withTintColor(.trackerBlack, renderingMode: .alwaysOriginal),
+            image: UIImage(systemName: "plus")?
+                .withTintColor(.trackerBlack, renderingMode: .alwaysOriginal),
             style: .plain,
             target: self,
             action: #selector(didTapAddTrackerButton)
@@ -135,8 +133,14 @@ final class TrackersViewController: UIViewController {
     private func configureCollectionView() {
         collectionView.delegate = self
         collectionView.dataSource = self
-        collectionView.register(CategoryHeaderView.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: CategoryHeaderView.identifier)
-        collectionView.register(TrackerCell.self, forCellWithReuseIdentifier: TrackerCell.reuseIdentifier)
+        collectionView.register(
+            CategoryHeaderView.self,
+            forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader,
+            withReuseIdentifier: CategoryHeaderView.identifier)
+        
+        collectionView.register(
+            TrackerCell.self,
+            forCellWithReuseIdentifier: TrackerCell.reuseIdentifier)
     }
     
     private func configureDismissingKeyboard() {
@@ -235,7 +239,7 @@ final class TrackersViewController: UIViewController {
         DispatchQueue.main.async {
             self.updateCollectionViewPlaceholder(forSearch: false)
         }
-        TrackerDateFormatter.dateFormatter.dateFormat = "yyyy-MM-dd"
+        dateFormatter.dateFormat = "yyyy-MM-dd"
         currentDate = sender.date
         let weekday = currentCalendar.component(.weekday, from: currentDate)
         factory.weekdayIndex = ((weekday + 5) % 7)
@@ -271,7 +275,7 @@ extension TrackersViewController: UICollectionViewDataSource, UICollectionViewDe
         }
         
         let tracker = factory.trackersForShowing[indexPath.section].trackers[indexPath.item]
-    
+        
         cell.configureCell(for: tracker, date: currentDate)
         return cell
     }
@@ -284,7 +288,7 @@ extension TrackersViewController: UICollectionViewDataSource, UICollectionViewDe
         guard let layout = collectionViewLayout as? UICollectionViewFlowLayout else { return .init() }
         let paddingSpace = layout.sectionInset.left + layout.sectionInset.right + layout.minimumInteritemSpacing
         let availableWidth = collectionView.frame.width - paddingSpace
-        return CGSize(width: availableWidth / 2, height: 148)
+        return .init(width: availableWidth / 2, height: 148)
     }
     
     func collectionView(
@@ -315,6 +319,7 @@ extension TrackersViewController: UISearchBarDelegate {
     
     func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
         switch searchText{
+                
             case "":
                 updateCollectionViewPlaceholder(forSearch: false)
                 searchBar.setShowsCancelButton(false, animated: true)
