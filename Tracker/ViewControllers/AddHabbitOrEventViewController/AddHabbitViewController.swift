@@ -98,6 +98,7 @@ final class AddHabbitViewController: UIViewController, UITextFieldDelegate {
     
     private lazy var cancelAndCreateButtonsStackView: UIStackView = {
         let view = UIStackView()
+        view.backgroundColor = self.view.backgroundColor
         view.axis = .horizontal
         view.spacing = 8
         view.distribution = .fillEqually
@@ -128,6 +129,14 @@ final class AddHabbitViewController: UIViewController, UITextFieldDelegate {
         return button
     }()
     
+    private lazy var  emojiCollectionView: UICollectionView = {
+        let layout = UICollectionViewFlowLayout()
+        layout.sectionInset = UIEdgeInsets(top: 24, left: 18, bottom: 24, right: 18)
+        layout.minimumLineSpacing = 0
+        layout.minimumInteritemSpacing = 5
+        let collectionView = UICollectionView(frame: .zero, collectionViewLayout: layout)
+        return collectionView
+    }()
     // MARK: - Public Methods
     
     override func viewDidLoad() {
@@ -136,6 +145,7 @@ final class AddHabbitViewController: UIViewController, UITextFieldDelegate {
         setUI()
         setConstraints()
         configureDismissingKeyboard()
+        configureCollectionView()
         setupObservers()
     }
     
@@ -144,6 +154,20 @@ final class AddHabbitViewController: UIViewController, UITextFieldDelegate {
     }
     
     // MARK: - Private Methods
+    
+    private func configureCollectionView() {
+        emojiCollectionView.delegate = self
+        emojiCollectionView.dataSource = self
+        
+        emojiCollectionView.register(
+            EmojiCell.self,
+            forCellWithReuseIdentifier: EmojiCell.reuseIdentifier)
+        
+        emojiCollectionView.register(
+            EmojiCollectionHeader.self,
+            forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader,
+            withReuseIdentifier: EmojiCollectionHeader.identifier)
+    }
     
     private func setupObservers() {
         NotificationCenter.default.addObserver(self, selector: #selector(addScheduleButtonSupplementaryText), name: scheduleUpdateNotification, object: nil)
@@ -158,8 +182,9 @@ final class AddHabbitViewController: UIViewController, UITextFieldDelegate {
         
         [addTrackerNameField,
          buttonsStackView,
-         cancelAndCreateButtonsStackView,
-         warningLabel].forEach {
+         warningLabel,
+         emojiCollectionView,
+         cancelAndCreateButtonsStackView].forEach {
             view.addSubview($0)
         }
     }
@@ -216,7 +241,7 @@ final class AddHabbitViewController: UIViewController, UITextFieldDelegate {
         buttonsStackView.snp.makeConstraints { make in
             make.width.equalToSuperview().inset(16)
             make.height.equalTo(150)
-            make.top.equalTo(warningLabel.snp.bottom).offset(32)
+            make.top.equalTo(addTrackerNameField.snp.bottom).offset(24)
             make.centerX.equalToSuperview()
         }
         
@@ -234,6 +259,12 @@ final class AddHabbitViewController: UIViewController, UITextFieldDelegate {
             make.leading.equalTo(addTrackerNameField)
             make.trailing.equalTo(addTrackerNameField)
             make.top.equalTo(addTrackerNameField.snp.bottom).offset(8)
+        }
+        
+        emojiCollectionView.snp.makeConstraints { make in
+            make.top.equalTo(buttonsStackView.snp.bottom).offset(50 - 18)
+            make.height.equalTo(204 + 18)
+            make.width.equalToSuperview()
         }
     }
     
@@ -299,5 +330,53 @@ extension AddHabbitViewController {
         warningLabel.isHidden = !isBiggerThen
         return !isBiggerThen
     }
+    
+}
+
+//MARK: - Emoji UICollectionViewDataSource & UICollectionViewDelegate
+
+extension AddHabbitViewController: UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
+    
+    func collectionView(
+        _ collectionView: UICollectionView,
+        cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+            let cell = collectionView.dequeueReusableCell(withReuseIdentifier: EmojiCell.reuseIdentifier, for: indexPath) as! EmojiCell
+            cell.configureCell(with: EmojiCell.emojiArray[indexPath.item])
+            return cell
+        }
+    
+    func numberOfSections(in collectionView: UICollectionView) -> Int {
+        1
+    }
+    
+    func collectionView(
+        _ collectionView: UICollectionView,
+        numberOfItemsInSection section: Int) -> Int {
+            EmojiCell.emojiArray.count
+        }
+    
+    func collectionView(
+        _ collectionView: UICollectionView,
+        viewForSupplementaryElementOfKind kind: String,
+        at indexPath: IndexPath) -> UICollectionReusableView {
+            
+            guard let header = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: EmojiCollectionHeader.identifier, for: indexPath) as? EmojiCollectionHeader else {
+                return .init()
+            }
+            
+            return header
+        }
+    
+    func collectionView(
+        _ collectionView: UICollectionView,
+        layout collectionViewLayout: UICollectionViewLayout,
+        referenceSizeForHeaderInSection section: Int) -> CGSize {
+            .init(width: 52, height: 18)
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        print(indexPath.item)
+    }
+    
 }
 

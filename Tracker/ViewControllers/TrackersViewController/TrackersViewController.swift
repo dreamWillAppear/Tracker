@@ -137,7 +137,7 @@ final class TrackersViewController: UIViewController {
             CategoryHeaderView.self,
             forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader,
             withReuseIdentifier: CategoryHeaderView.identifier)
-        
+
         collectionView.register(
             TrackerCell.self,
             forCellWithReuseIdentifier: TrackerCell.reuseIdentifier)
@@ -269,7 +269,9 @@ extension TrackersViewController: UICollectionViewDataSource, UICollectionViewDe
     }
     
     //MARK: - ConfigureCell
-    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+    func collectionView(
+        _ collectionView: UICollectionView,
+        cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: TrackerCell.reuseIdentifier, for: indexPath) as? TrackerCell else {
             return .init()
         }

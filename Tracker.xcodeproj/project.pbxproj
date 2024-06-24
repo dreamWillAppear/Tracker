@@ -15,8 +15,10 @@
 		167A2E7A2C0B4A5F00437041 /* ScheduleViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 167A2E792C0B4A5F00437041 /* ScheduleViewController.swift */; };
 		167A2E7D2C0B4AB000437041 /* WeekdayEnum.swift in Sources */ = {isa = PBXBuildFile; fileRef = 167A2E7C2C0B4AB000437041 /* WeekdayEnum.swift */; };
 		167A2E7F2C0B4BE700437041 /* ScheduleTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 167A2E7E2C0B4BE700437041 /* ScheduleTableViewCell.swift */; };
+		167C6D752C2885AC0013F9BC /* EmojiCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 167C6D742C2885AC0013F9BC /* EmojiCell.swift */; };
 		16947A4F2C033CA800426968 /* TrackersFactory.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16947A4E2C033CA800426968 /* TrackersFactory.swift */; };
 		16947A512C036E0800426968 /* CategoryHaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16947A502C036E0800426968 /* CategoryHaderView.swift */; };
+		16AE20E52C2A1D600043A3D3 /* EmojiCollectionHeader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16AE20E42C2A1D600043A3D3 /* EmojiCollectionHeader.swift */; };
 		16D1F78D2C1F9ECE007601DE /* TrackerButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16D1F78C2C1F9ECE007601DE /* TrackerButton.swift */; };
 		16F0FD112C1DEFE8004C854A /* TrackerCategory.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16F0FD102C1DEFE8004C854A /* TrackerCategory.swift */; };
 		16F0FD132C1DF01A004C854A /* TrackerRecord.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16F0FD122C1DF01A004C854A /* TrackerRecord.swift */; };
@@ -40,8 +42,10 @@
 		167A2E792C0B4A5F00437041 /* ScheduleViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScheduleViewController.swift; sourceTree = "<group>"; };
 		167A2E7C2C0B4AB000437041 /* WeekdayEnum.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeekdayEnum.swift; sourceTree = "<group>"; };
 		167A2E7E2C0B4BE700437041 /* ScheduleTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScheduleTableViewCell.swift; sourceTree = "<group>"; };
+		167C6D742C2885AC0013F9BC /* EmojiCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmojiCell.swift; sourceTree = "<group>"; };
 		16947A4E2C033CA800426968 /* TrackersFactory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrackersFactory.swift; sourceTree = "<group>"; };
 		16947A502C036E0800426968 /* CategoryHaderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CategoryHaderView.swift; sourceTree = "<group>"; };
+		16AE20E42C2A1D600043A3D3 /* EmojiCollectionHeader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmojiCollectionHeader.swift; sourceTree = "<group>"; };
 		16D1F78C2C1F9ECE007601DE /* TrackerButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrackerButton.swift; sourceTree = "<group>"; };
 		16F0FD102C1DEFE8004C854A /* TrackerCategory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrackerCategory.swift; sourceTree = "<group>"; };
 		16F0FD122C1DF01A004C854A /* TrackerRecord.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrackerRecord.swift; sourceTree = "<group>"; };
@@ -100,9 +104,11 @@
 		16D1F78E2C1F9F03007601DE /* AddHabbitOrEventViewController */ = {
 			isa = PBXGroup;
 			children = (
+				165A61B22C19A361000F8C66 /* AddEventViewController.swift */,
 				16D1F78C2C1F9ECE007601DE /* TrackerButton.swift */,
 				16343C3F2BFE603E00838829 /* AddHabbitViewController.swift */,
-				165A61B22C19A361000F8C66 /* AddEventViewController.swift */,
+				167C6D742C2885AC0013F9BC /* EmojiCell.swift */,
+				16AE20E42C2A1D600043A3D3 /* EmojiCollectionHeader.swift */,
 			);
 			path = AddHabbitOrEventViewController;
 			sourceTree = "<group>";
@@ -253,7 +259,9 @@
 				FD53E19A2BF562890073B644 /* StatisticsViewController.swift in Sources */,
 				FD4204262BF17E7C0007A254 /* TrackersViewController.swift in Sources */,
 				FD4204222BF17E7C0007A254 /* AppDelegate.swift in Sources */,
+				167C6D752C2885AC0013F9BC /* EmojiCell.swift in Sources */,
 				16D1F78D2C1F9ECE007601DE /* TrackerButton.swift in Sources */,
+				16AE20E52C2A1D600043A3D3 /* EmojiCollectionHeader.swift in Sources */,
 				16F0FD112C1DEFE8004C854A /* TrackerCategory.swift in Sources */,
 				1629E74A2BFB331E00A50F54 /* AddTrackerViewController.swift in Sources */,
 			);
