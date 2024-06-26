@@ -189,7 +189,7 @@ final class AddEventViewController: UIViewController, UITextFieldDelegate {
             id: UUID(),
             title: addTrackerNameField.text ?? "",
             color: factory.randomColor(),
-            emoji: factory.randomEmoji(),
+            emoji: factory.selectedEmoji,
             schedule: Array.init(repeating: true, count: 7)
         )
         factory.addToStorage(tracker: tracker, for: categoryName)

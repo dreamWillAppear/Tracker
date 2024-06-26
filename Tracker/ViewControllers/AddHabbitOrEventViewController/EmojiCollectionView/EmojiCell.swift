@@ -1,4 +1,5 @@
 import UIKit
+import SnapKit
 
 final class EmojiCell: UICollectionViewCell {
     
@@ -7,11 +8,13 @@ final class EmojiCell: UICollectionViewCell {
     static let emojiArray = ["🙂", "😻", "🌺", "🐶", "❤️", "😱",
                              "😇", "😡", "🥶", "🤔", "🙌", "🍔",
                              "🥦", "🏓", "🥇", "🎸", "🏝", "😪"]
-
+    
     private lazy var label: UILabel = {
         let label = UILabel()
         label.font = UIFont.systemFont(ofSize: 32)
         label.textAlignment = .center
+        label.layer.masksToBounds = true
+        label.layer.cornerRadius = 16
         return label
     }()
     
@@ -26,10 +29,11 @@ final class EmojiCell: UICollectionViewCell {
         fatalError("init(coder:) has not been implemented")
     }
     
-    func configureCell(with emoji: String) {
+    func configureCell(with emoji: String, isSelected: Bool) {
         label.text = emoji
+        label.backgroundColor = isSelected ? .trackerLightGray : .clear
     }
-    
+
     private func configureConstraints(){
         
         contentView.snp.makeConstraints { make in
@@ -40,9 +44,5 @@ final class EmojiCell: UICollectionViewCell {
             make.leading.trailing.top.bottom.equalToSuperview()
         }
     }
-    
-    
-    
-    
     
 }

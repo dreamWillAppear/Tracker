@@ -8,6 +8,9 @@ final class TrackersFactory {
     static let trackersForShowingUpdatedNotification = Notification.Name("trackersForShowingUpdatedNotification")
     static let scheduleUpdatedNotification = Notification.Name("scheduleUpdatedNotification")
     
+    var selectedEmoji = ""
+    var selectedColor = UIColor()
+    
     var weekdayIndex = TrackerCalendar.currentDayWeekIndex
     
     var schedule = Array(repeating: false, count: WeekDay.allCases.count) {
@@ -122,10 +125,6 @@ final class TrackersFactory {
         UIColor(named: "Color selection \(String(Int.random(in: 1...18)))")!
     }
     
-    func randomEmoji() -> String {
-        ["💎","🚀","🌙","🎁","⛄","🌊","⛵","🏀","🎱","💰","👄","🚲","🍉","💛","💚"].randomElement()!
-        
-    }
     
     func generateCatName() -> String {
         ["Важное", "Домашний уют", "Cамочувствие", "Мелочи"].randomElement()!
