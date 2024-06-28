@@ -9,7 +9,7 @@ final class ColorSelectCollectionHeader: UICollectionReusableView {
             let label = UILabel()
             label.textColor = .trackerBlack
             label.font = .systemFont(ofSize: 19, weight: .bold)
-            label.text = "Color"
+            label.text = "Цвет"
             return label
         }()
         

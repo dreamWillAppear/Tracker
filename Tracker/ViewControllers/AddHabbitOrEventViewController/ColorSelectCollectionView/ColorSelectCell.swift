@@ -21,8 +21,8 @@ final class ColorSelectCell: UICollectionViewCell {
     override init(frame: CGRect) {
         super.init(frame: frame)
         
-        colorView.layer.cornerRadius = 8
         contentView.addSubview(colorView)
+        configureConstraints()
     }
     
     required init?(coder: NSCoder) {
@@ -30,20 +30,20 @@ final class ColorSelectCell: UICollectionViewCell {
     }
     
     func configureCell(color: UIColor, isSelected: Bool) {
+        contentView.layer.cornerRadius = 8
         contentView.layer.borderColor = color.withAlphaComponent(0.3).cgColor
         contentView.layer.borderWidth = isSelected ? 3 : 0
-        contentView.backgroundColor = color
+        colorView.backgroundColor = color
     }
     
     private func configureConstraints(){
-        
-        contentView.snp.makeConstraints { make in
-            make.leading.trailing.top.bottom.equalToSuperview()
-        }
-        
-        colorView.snp.makeConstraints { make in
-            make.leading.trailing.top.bottom.equalToSuperview()
-        }
-    }
+           contentView.snp.makeConstraints { make in
+               make.edges.equalToSuperview()
+           }
+           
+           colorView.snp.makeConstraints { make in
+               make.edges.equalToSuperview().inset(6)
+           }
+       }
     
 }

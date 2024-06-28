@@ -15,6 +15,12 @@ final class AddHabbitViewController: UIViewController, UITextFieldDelegate {
     private var colorSelected = false
     private var scheduleUpdateNotification = TrackersFactory.scheduleUpdatedNotification
     
+    private lazy var mainScrollView: UIScrollView = {
+        let scrollView = UIScrollView()
+    
+        return scrollView
+    }()
+    
     private let warningLabel: UILabel = {
         let label = UILabel()
         label.text = "Ограничение 38 символов"
@@ -216,8 +222,10 @@ final class AddHabbitViewController: UIViewController, UITextFieldDelegate {
          emojiCollectionView,
          colorSelectCollectionView,
          cancelAndCreateButtonsStackView].forEach {
-            view.addSubview($0)
+            mainScrollView.addSubview($0)
         }
+    
+        view.addSubview(mainScrollView)
     }
     
     private func configureButtonsStackViews() {
@@ -262,17 +270,29 @@ final class AddHabbitViewController: UIViewController, UITextFieldDelegate {
     }
     
     private func setConstraints() {
+        
+        mainScrollView.snp.makeConstraints { make in
+            make.edges.equalToSuperview()
+            make.width.equalToSuperview()
+        }
+        
         addTrackerNameField.snp.makeConstraints { make in
             make.width.equalToSuperview().inset(16)
             make.height.equalTo(75)
             make.centerX.equalToSuperview()
-            make.top.equalToSuperview().inset(81)
+            make.top.equalToSuperview().inset(24)
+        }
+        
+        warningLabel.snp.makeConstraints { make in
+            make.leading.equalTo(addTrackerNameField)
+            make.trailing.equalTo(addTrackerNameField)
+            make.top.equalTo(addTrackerNameField.snp.bottom).offset(6)
         }
         
         buttonsStackView.snp.makeConstraints { make in
+            make.top.equalTo(addTrackerNameField.snp.bottom).offset(24)
             make.width.equalToSuperview().inset(16)
             make.height.equalTo(150)
-            make.top.equalTo(addTrackerNameField.snp.bottom).offset(24)
             make.centerX.equalToSuperview()
         }
         
@@ -280,28 +300,24 @@ final class AddHabbitViewController: UIViewController, UITextFieldDelegate {
             make.width.equalToSuperview()
         }
         
-        cancelAndCreateButtonsStackView.snp.makeConstraints { make in
-            make.height.equalTo(60)
-            make.leading.trailing.equalToSuperview().inset(20)
-            make.bottom.equalToSuperview().inset(34)
-        }
-        
-        warningLabel.snp.makeConstraints { make in
-            make.leading.equalTo(addTrackerNameField)
-            make.trailing.equalTo(addTrackerNameField)
-            make.top.equalTo(addTrackerNameField.snp.bottom).offset(8)
-        }
-        
         emojiCollectionView.snp.makeConstraints { make in
-            make.top.equalTo(buttonsStackView.snp.bottom).offset(50 - 18)
+            make.top.equalTo(buttonsStackView.snp.bottom).offset(32)
             make.height.equalTo(204 + 18)
             make.width.equalToSuperview()
         }
         
         colorSelectCollectionView.snp.makeConstraints { make in
-            make.top.equalTo(emojiCollectionView.snp.bottom).offset(50 - 18)
+            make.top.equalTo(emojiCollectionView.snp.bottom).offset(40 - 24)
             make.height.equalTo(204 + 18)
             make.width.equalToSuperview()
+        }
+        
+        cancelAndCreateButtonsStackView.snp.makeConstraints { make in
+            make.top.equalTo(colorSelectCollectionView.snp.bottom)
+            make.height.equalTo(60)
+            make.centerX.equalToSuperview()
+            make.width.equalToSuperview().inset(20)
+            make.bottom.equalToSuperview().inset(34)
         }
     }
     
