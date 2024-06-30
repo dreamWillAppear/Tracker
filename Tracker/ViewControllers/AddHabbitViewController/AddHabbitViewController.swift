@@ -4,6 +4,10 @@ import SnapKit
 
 final class AddHabbitViewController: UIViewController, UITextFieldDelegate {
     
+    //MARK: - Public Properties
+    
+    var isHabbit = false
+    
     // MARK: - Private Properties
     
     private var categoryName = ""
@@ -17,7 +21,7 @@ final class AddHabbitViewController: UIViewController, UITextFieldDelegate {
     
     private lazy var mainScrollView: UIScrollView = {
         let scrollView = UIScrollView()
-    
+        
         return scrollView
     }()
     
@@ -49,6 +53,7 @@ final class AddHabbitViewController: UIViewController, UITextFieldDelegate {
     }()
     
     private lazy var buttonsStackView: UIStackView = {
+        
         let image = UIImage(named: "Chevron")?
             .withRenderingMode(.alwaysOriginal)
             .withTintColor(.trackerGray)
@@ -56,6 +61,8 @@ final class AddHabbitViewController: UIViewController, UITextFieldDelegate {
         imageViewTop.image = image
         let imageViewBottom = UIImageView()
         imageViewBottom.image = image
+        imageViewBottom.isHidden = !isHabbit
+        
         
         let view = UIStackView()
         view.axis = .vertical
@@ -63,7 +70,7 @@ final class AddHabbitViewController: UIViewController, UITextFieldDelegate {
         view.backgroundColor = .trackerBackground
         view.layer.cornerRadius = 16
         view.addSubview(imageViewTop)
-        view.addSubview(imageViewBottom)
+        isHabbit ? view.addSubview(imageViewBottom) : ()
         
         imageViewTop.snp.makeConstraints { make in
             make.height.equalTo(12)
@@ -72,6 +79,10 @@ final class AddHabbitViewController: UIViewController, UITextFieldDelegate {
             make.top.equalToSuperview().inset(32)
         }
         
+        guard isHabbit else {
+            factory.schedule =  Array(repeating: true, count: WeekDay.allCases.count) //MOCK
+            return view
+        }
         imageViewBottom.snp.makeConstraints { make in
             make.height.equalTo(12)
             make.width.equalTo(7)
@@ -163,6 +174,8 @@ final class AddHabbitViewController: UIViewController, UITextFieldDelegate {
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        scheduleDidSet = !isHabbit
+        
         setUI()
         setConstraints()
         configureDismissingKeyboard()
@@ -177,6 +190,25 @@ final class AddHabbitViewController: UIViewController, UITextFieldDelegate {
     
     // MARK: - Private Methods
     
+    private func setUI() {
+        view.backgroundColor = .trackerWhite
+        self.navigationController?.navigationBar.titleTextAttributes = [NSAttributedString.Key.font: UIFont.systemFont(ofSize: 16, weight: .medium)]
+        title = isHabbit ? "Новая привычка" : "Новое нерегулярное событие"
+        
+        configureButtonsStackViews()
+        
+        [addTrackerNameField,
+         buttonsStackView,
+         warningLabel,
+         emojiCollectionView,
+         colorSelectCollectionView,
+         cancelAndCreateButtonsStackView].forEach {
+            mainScrollView.addSubview($0)
+        }
+        
+        view.addSubview(mainScrollView)
+    }
+    
     private func configureEmojiCollectionView() {
         emojiCollectionView.delegate = self
         emojiCollectionView.dataSource = self
@@ -189,6 +221,10 @@ final class AddHabbitViewController: UIViewController, UITextFieldDelegate {
             EmojiCollectionHeader.self,
             forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader,
             withReuseIdentifier: EmojiCollectionHeader.identifier)
+    }
+    
+    private func setupObservers() {
+        NotificationCenter.default.addObserver(self, selector: #selector(addScheduleButtonSupplementaryText), name: scheduleUpdateNotification, object: nil)
     }
     
     private func configureColorSelectCollectionView() {
@@ -205,45 +241,28 @@ final class AddHabbitViewController: UIViewController, UITextFieldDelegate {
             withReuseIdentifier: ColorSelectCollectionHeader.identifier)
     }
     
-    private func setupObservers() {
-        NotificationCenter.default.addObserver(self, selector: #selector(addScheduleButtonSupplementaryText), name: scheduleUpdateNotification, object: nil)
-    }
-    
-    private func setUI() {
-        view.backgroundColor = .trackerWhite
-        self.navigationController?.navigationBar.titleTextAttributes = [NSAttributedString.Key.font: UIFont.systemFont(ofSize: 16, weight: .medium)]
-        title = "Новая привычка"
-        
-        configureButtonsStackViews()
-        
-        [addTrackerNameField,
-         buttonsStackView,
-         warningLabel,
-         emojiCollectionView,
-         colorSelectCollectionView,
-         cancelAndCreateButtonsStackView].forEach {
-            mainScrollView.addSubview($0)
-        }
-    
-        view.addSubview(mainScrollView)
-    }
-    
     private func configureButtonsStackViews() {
         let separatorLine = UIView()
         separatorLine.backgroundColor = .trackerGray
         
-        [categoryButton,
-         separatorLine,
-         scheduleButton].forEach {
-            buttonsStackView.addArrangedSubview($0)
+        if isHabbit {
+            
+            [categoryButton,
+             separatorLine,
+             scheduleButton].forEach {
+                buttonsStackView.addArrangedSubview($0)
+            }
+            
+            separatorLine.snp.makeConstraints { make in
+                make.center.equalTo(buttonsStackView)
+                make.height.equalTo(1)
+                make.leading.equalTo(buttonsStackView).offset(16)
+                make.trailing.equalTo(buttonsStackView).offset(-16)
+            }
+        } else {
+            buttonsStackView.addArrangedSubview(categoryButton)
         }
         
-        separatorLine.snp.makeConstraints { make in
-            make.center.equalTo(buttonsStackView)
-            make.height.equalTo(1)
-            make.leading.equalTo(buttonsStackView).offset(16)
-            make.trailing.equalTo(buttonsStackView).offset(-16)
-        }
         
         [cancelButton,
          createButton].forEach {
@@ -292,7 +311,7 @@ final class AddHabbitViewController: UIViewController, UITextFieldDelegate {
         buttonsStackView.snp.makeConstraints { make in
             make.top.equalTo(addTrackerNameField.snp.bottom).offset(24)
             make.width.equalToSuperview().inset(16)
-            make.height.equalTo(150)
+            make.height.equalTo(isHabbit ? 150 : 75)
             make.centerX.equalToSuperview()
         }
         
@@ -444,7 +463,7 @@ extension AddHabbitViewController: UICollectionViewDelegate, UICollectionViewDat
                     return .init()
                 }
                 return header
-
+                
             default:
                 guard let header = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: ColorSelectCollectionHeader.identifier, for: indexPath) as? ColorSelectCollectionHeader else {
                     return .init()
@@ -458,7 +477,7 @@ extension AddHabbitViewController: UICollectionViewDelegate, UICollectionViewDat
         layout collectionViewLayout: UICollectionViewLayout,
         referenceSizeForHeaderInSection section: Int) -> CGSize {
             .init(width: 52, height: 18)
-    }
+        }
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         
