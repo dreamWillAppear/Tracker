@@ -1,5 +1,4 @@
 import UIKit
-import CoreData
 
 final class TrackersFactory {
     
@@ -8,20 +7,6 @@ final class TrackersFactory {
     static let shared = TrackersFactory()
     static let trackersForShowingUpdatedNotification = Notification.Name("trackersForShowingUpdatedNotification")
     static let scheduleUpdatedNotification = Notification.Name("scheduleUpdatedNotification")
-    
-    lazy var persistantContainer: NSPersistentContainer = {
-        let container = NSPersistentContainer(name: "Storage")
-        container.loadPersistentStores { (storageDescription, error) in
-            if let error = error as NSError? {
-                print("Ошибка  Core Data Stack - \(error.localizedDescription)")
-            }
-        }
-       return container
-    }()
-    
-    lazy var context: NSManagedObjectContext = {
-        persistantContainer.viewContext
-    }()
     
     var selectedEmoji = ""
     var selectedColor = UIColor()
@@ -56,13 +41,7 @@ final class TrackersFactory {
     // MARK: - Public Methods
     
     func addToStorage(tracker: Tracker, for category: String) {
-        
-        let categoryEntity = TrackerCategoryCoreData(context: context)
-    
         if let index = trackersStorage.enumerated().first(where: { $0.element.title == category })?.offset {
-            
-            categoryEntity.categoryName = category
-            
             let updatedCategory = trackersStorage[index]
             var updatedTrackers = updatedCategory.trackers
             updatedTrackers.append(tracker)

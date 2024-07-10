@@ -13,10 +13,19 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         let window = UIWindow()
         window.rootViewController = TabBarController()
         window.makeKeyAndVisible()
-        
         self.window = window
-        
         return true
     }
+    
+    lazy var persistentContainer: NSPersistentContainer = {
+        let container = NSPersistentContainer(name: "Model")
+        container.loadPersistentStores(completionHandler: { (storeDescription, error) in
+            if let error = error as NSError? {
+                fatalError("Unresolved error \(error), \(error.userInfo)")
+            }
+        })
+        return container
+    }()
+    
 }
 
