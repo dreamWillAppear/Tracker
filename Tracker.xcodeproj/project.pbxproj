@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		16279ECF2C3854E800722E41 /* Storage.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 16279ECD2C3854E800722E41 /* Storage.xcdatamodeld */; };
 		1629E74A2BFB331E00A50F54 /* AddTrackerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1629E7492BFB331E00A50F54 /* AddTrackerViewController.swift */; };
 		1631E09A2BF40A85003986AE /* TabBarController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1631E0992BF40A85003986AE /* TabBarController.swift */; };
 		16343C402BFE603E00838829 /* AddHabbitViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16343C3F2BFE603E00838829 /* AddHabbitViewController.swift */; };
@@ -35,6 +36,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		16279ECE2C3854E800722E41 /* Storage.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = Storage.xcdatamodel; sourceTree = "<group>"; };
 		1629E7492BFB331E00A50F54 /* AddTrackerViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddTrackerViewController.swift; sourceTree = "<group>"; };
 		1631E0992BF40A85003986AE /* TabBarController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TabBarController.swift; sourceTree = "<group>"; };
 		16343C3F2BFE603E00838829 /* AddHabbitViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddHabbitViewController.swift; sourceTree = "<group>"; };
@@ -177,6 +179,7 @@
 				16947A4D2C033C8300426968 /* TrackersFactory */,
 				FD42042A2BF17E7E0007A254 /* Assets.xcassets */,
 				FD42042C2BF17E7E0007A254 /* LaunchScreen.storyboard */,
+				16279ECD2C3854E800722E41 /* Storage.xcdatamodeld */,
 				FD42042F2BF17E7E0007A254 /* Info.plist */,
 			);
 			path = Tracker;
@@ -280,6 +283,7 @@
 				169602D72C2CB3BC003DB1BC /* ColorSelectCollectionHeader.swift in Sources */,
 				16343C402BFE603E00838829 /* AddHabbitViewController.swift in Sources */,
 				167A2E7F2C0B4BE700437041 /* ScheduleTableViewCell.swift in Sources */,
+				16279ECF2C3854E800722E41 /* Storage.xcdatamodeld in Sources */,
 				167A2E7D2C0B4AB000437041 /* WeekdayEnum.swift in Sources */,
 				16947A4F2C033CA800426968 /* TrackersFactory.swift in Sources */,
 				FDC14C912BFFC8D400198716 /* TrackerCell.swift in Sources */,
@@ -538,6 +542,19 @@
 			productName = "SnapKit-Dynamic";
 		};
 /* End XCSwiftPackageProductDependency section */
+
+/* Begin XCVersionGroup section */
+		16279ECD2C3854E800722E41 /* Storage.xcdatamodeld */ = {
+			isa = XCVersionGroup;
+			children = (
+				16279ECE2C3854E800722E41 /* Storage.xcdatamodel */,
+			);
+			currentVersion = 16279ECE2C3854E800722E41 /* Storage.xcdatamodel */;
+			path = Storage.xcdatamodeld;
+			sourceTree = "<group>";
+			versionGroupType = wrapper.xcdatamodel;
+		};
+/* End XCVersionGroup section */
 	};
 	rootObject = FD4204162BF17E7C0007A254 /* Project object */;
 }
