@@ -2,16 +2,24 @@ import UIKit
 import CoreData
 
 final class TrackerCategoryStore {
-    private let context: NSManagedObjectContext
     
-    convenience init?() {
-        guard let appDelegate = UIApplication.shared.delegate as? AppDelegate else { return nil }
-        let context = appDelegate.persistentContainer.viewContext
-        self.init(context: context)
+    private let appDelegate = AppDelegate()
+    private lazy var context = appDelegate.context
+    
+    func fetchAllRecords() -> [TrackerCategoryCoreData] {
+        let fetchRequest: NSFetchRequest<TrackerCategoryCoreData> = TrackerCategoryCoreData.fetchRequest()
+        do {
+            return try context.fetch(fetchRequest)
+        } catch {
+            print("Failed to fetch records - \(error.localizedDescription)")
+            return []
+        }
     }
     
-    init(context: NSManagedObjectContext) {
-        self.context = context
+    func addCategory(title: String) {
+        let category = TrackerCategoryCoreData(context: context)
+        category.title = title
+        appDelegate.saveContext()
     }
     
 }
