@@ -106,9 +106,7 @@
 		16947A4D2C033C8300426968 /* TrackersFactory */ = {
 			isa = PBXGroup;
 			children = (
-				FD80C2852C3ECAA000885B41 /* TrackerStore.swift */,
-				FD80C2882C3F38BB00885B41 /* TrackerCategoryStore.swift */,
-				FD80C28A2C3F38DC00885B41 /* TrackerRecordStore.swift */,
+				16947A4E2C033CA800426968 /* TrackersFactory.swift */,
 			);
 			path = TrackersFactory;
 			sourceTree = "<group>";
@@ -209,7 +207,9 @@
 			isa = PBXGroup;
 			children = (
 				16279ECD2C3854E800722E41 /* Storage.xcdatamodeld */,
-				16947A4E2C033CA800426968 /* TrackersFactory.swift */,
+				FD80C2852C3ECAA000885B41 /* TrackerStore.swift */,
+				FD80C2882C3F38BB00885B41 /* TrackerCategoryStore.swift */,
+				FD80C28A2C3F38DC00885B41 /* TrackerRecordStore.swift */,
 			);
 			path = CoreData;
 			sourceTree = "<group>";

@@ -34,6 +34,8 @@ final class TrackersFactory {
     
     var completedTrackers: [TrackerRecord] = []
     
+    private let categoryStore = TrackerCategoryStore()
+    
     // MARK: - Initializers
     
     private  init() {}
@@ -41,6 +43,9 @@ final class TrackersFactory {
     // MARK: - Public Methods
     
     func addToStorage(tracker: Tracker, for category: String) {
+        
+        categoryStore.addCategory(title: category)
+        
         if let index = trackersStorage.enumerated().first(where: { $0.element.title == category })?.offset {
             let updatedCategory = trackersStorage[index]
             var updatedTrackers = updatedCategory.trackers
