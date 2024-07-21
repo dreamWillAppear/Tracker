@@ -376,9 +376,9 @@ final class AddHabbitViewController: UIViewController, UITextFieldDelegate {
             .map { weekdays[$0.offset] }
         scheduleButton.addSupplementaryView(with: selectedDays.joined(separator: ", "))
     }
-    let trackerCategoryStore = TrackerCategoryStore()
+private let appDelegate = AppDelegate()
+    
     @objc private func didTapCancelButton() {
-        trackerCategoryStore.deleteAllRecords()
         self.dismiss(animated: true)
     }
     

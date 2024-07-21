@@ -102,6 +102,7 @@ final class TrackersViewController: UIViewController {
         button.tintColor = .trackerWhite
         button.layer.cornerRadius = 16
         button.isHidden = true
+        button.target(forAction: #selector (didTapFiltersButton), withSender: self)
         return button
     }()
     
@@ -114,6 +115,7 @@ final class TrackersViewController: UIViewController {
         setUI()
         setupObservers()
         configureDismissingKeyboard()
+        factory.getInitialData()
     }
     
     deinit {
@@ -234,6 +236,10 @@ final class TrackersViewController: UIViewController {
     }
     
     //MARK: - Actions
+    //отладочно: при нажатии на кнопку Фильтры
+    @objc private func didTapFiltersButton() {
+        factory.eraseAllDataFromBase()
+    }
     
     @objc private func datePickerValueDateChanged(_ sender: UIDatePicker) {
         DispatchQueue.main.async {

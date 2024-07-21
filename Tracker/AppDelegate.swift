@@ -31,12 +31,34 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         return persistentContainer.viewContext
     }
     
-     func saveContext() {
+    func saveContext(context: NSManagedObjectContext) {
             do {
                 try context.save()
             } catch {
                 print("Failed to save context: \(error)")
             }
         }
+    
+    func clearAllData(context: NSManagedObjectContext) {
+        let entityNames = persistentContainer.managedObjectModel.entities.map({ $0.name! })
+        
+        for entityName in entityNames {
+            let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: entityName)
+            let batchDeleteRequest = NSBatchDeleteRequest(fetchRequest: fetchRequest)
+            
+            do {
+                try context.execute(batchDeleteRequest)
+            } catch {
+                print("Failed to batch delete entity \(entityName): \(error)")
+            }
+        }
+        
+        do {
+            try context.save()
+        } catch {
+            print("Failed to save context: \(error)")
+        }
+    }
+    
 }
 

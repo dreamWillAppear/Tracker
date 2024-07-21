@@ -20,7 +20,7 @@ final class TrackerRecordStore {
         let record = TrackerRecordCoreData(context: context)
         record.trackerID = trackerID
         record.date = date
-        appDelegate.saveContext()
+        appDelegate.saveContext(context: context)
     }
     
 }

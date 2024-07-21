@@ -4,8 +4,12 @@ import CoreData
 final class TrackerCategoryStore {
     
     private let appDelegate = AppDelegate()
-    private lazy var context = appDelegate.context
     private let fetchRequest: NSFetchRequest<TrackerCategoryCoreData> = TrackerCategoryCoreData.fetchRequest()
+    private var context: NSManagedObjectContext
+    
+    init(context: NSManagedObjectContext) {
+        self.context = context
+    }
     
     func fetchAllRecords() -> [TrackerCategoryCoreData] {
         do {
@@ -27,27 +31,14 @@ final class TrackerCategoryStore {
             return []
         }
     }
-    
-    func deleteAllRecords() {
-        let fetchRequest: NSFetchRequest<NSFetchRequestResult> = NSFetchRequest(entityName: "TrackerCategoryCoreData")
-        let deleteRequest = NSBatchDeleteRequest(fetchRequest: fetchRequest)
-
-        do {
-            try context.execute(deleteRequest)
-            try context.save()
-            print("All records deleted successfully.")
-        } catch {
-            print("Error deleting records: \(error)")
-        }
-    }
-    
-    func fetchCategory(withTitle title: String) -> String? {
+        
+    func fetchCategory(withTitle title: String) -> TrackerCategoryCoreData? {
         let fetchRequest: NSFetchRequest<TrackerCategoryCoreData> = TrackerCategoryCoreData.fetchRequest()
             fetchRequest.predicate = NSPredicate(format: "title == %@", title)
             
             do {
                 let categories = try context.fetch(fetchRequest)
-                return categories.first?.title
+                return categories.first
             } catch {
                 print("Failed to fetch category: \(error)")
                 return nil
@@ -59,11 +50,9 @@ final class TrackerCategoryStore {
         if fetchCategory(withTitle: title) == nil {
             let newCategory = TrackerCategoryCoreData(context: context)
             newCategory.title = title
-            appDelegate.saveContext()
-            print(fetchAllCategories())
+            appDelegate.saveContext(context: context)
             return
         }
-        print(fetchAllCategories())
     }
     
 }

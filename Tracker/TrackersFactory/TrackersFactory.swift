@@ -29,35 +29,44 @@ final class TrackersFactory {
         didSet{
             //приводим к исходному schedule после добавления трекера в хранилище
             schedule = Array(repeating: false, count: WeekDay.allCases.count)
+            updateTrackersForShowing()
         }
     }
     
     var completedTrackers: [TrackerRecord] = []
     
-    private let categoryStore = TrackerCategoryStore()
+    private let appDelegate = AppDelegate()
+    private lazy var context = appDelegate.persistentContainer.viewContext
+    private lazy var categoryStore = TrackerCategoryStore(context: context)
+    private lazy var trackerStore = TrackerStore(context: context)
     
     // MARK: - Initializers
     
-    private  init() {}
+    private  init() {
+        getInitialData()
+    }
     
     // MARK: - Public Methods
     
-    func addToStorage(tracker: Tracker, for category: String) {
-        
-        categoryStore.addCategory(title: category)
-        
-        if let index = trackersStorage.enumerated().first(where: { $0.element.title == category })?.offset {
-            let updatedCategory = trackersStorage[index]
-            var updatedTrackers = updatedCategory.trackers
-            updatedTrackers.append(tracker)
-            let newCategory = TrackerCategory(title: category, trackers: updatedTrackers)
-            trackersStorage[index] = newCategory
-        } else {
-            let newCategory = TrackerCategory(title: category, trackers: [tracker])
-            trackersStorage.append(newCategory)
-        }
+    func eraseAllDataFromBase() {
+        appDelegate.clearAllData(context: context)
     }
     
+    func getInitialData() {
+        trackerStore.loadInitialData(factory: self)
+    }
+    
+    func addToStorage(tracker: Tracker, for category: String) {
+        
+        if let categoryEntity = trackerStore.fetchCategory(withTitle: category) {
+                   trackerStore.addTracker(tracker: tracker, to: categoryEntity)
+               } else {
+                   trackerStore.addCategory(title: category)
+                   guard let newCategory = trackerStore.fetchCategory(withTitle: category) else { return }
+                   trackerStore.addTracker(tracker: tracker, to: newCategory)
+               }
+    }
+        
     func filterTrackers(in categoriesArray: [TrackerCategory], forDayWithIndex weekdayIndex: Int) -> [TrackerCategory] {
         var categoriesForShowing: [TrackerCategory] = []
         for category in trackersStorage {
