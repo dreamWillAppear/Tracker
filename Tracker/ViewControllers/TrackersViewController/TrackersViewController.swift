@@ -102,7 +102,7 @@ final class TrackersViewController: UIViewController {
         button.tintColor = .trackerWhite
         button.layer.cornerRadius = 16
         button.isHidden = true
-        button.target(forAction: #selector (didTapFiltersButton), withSender: self)
+        button.addTarget(self, action: #selector(didTapFiltersButton), for: .touchUpInside)
         return button
     }()
     
@@ -236,9 +236,10 @@ final class TrackersViewController: UIViewController {
     }
     
     //MARK: - Actions
-    //отладочно: при нажатии на кнопку Фильтры
+    //отладочное: при нажатии на кнопку Фильтры
     @objc private func didTapFiltersButton() {
         factory.eraseAllDataFromBase()
+        updateCollectionViewPlaceholder(forSearch: false)
     }
     
     @objc private func datePickerValueDateChanged(_ sender: UIDatePicker) {
