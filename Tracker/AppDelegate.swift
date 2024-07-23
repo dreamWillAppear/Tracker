@@ -42,23 +42,30 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     func clearAllData(context: NSManagedObjectContext) {
         let trackersRequest: NSFetchRequest<NSFetchRequestResult> = TrackerCoreData.fetchRequest()
         let categoriesRequest: NSFetchRequest<NSFetchRequestResult> = TrackerCategoryCoreData.fetchRequest()
+        let trackerRecordRequest: NSFetchRequest<NSFetchRequestResult> = TrackerRecordCoreData.fetchRequest()
         
         do {
-            if let trackers = try context.fetch(trackersRequest) as? [TrackerCoreData] {
-                for tracker in trackers {
-                    context.delete(tracker)
-                }
+            guard let trackers = try context.fetch(trackersRequest) as? [TrackerCoreData],
+                  let categories = try context.fetch(categoriesRequest) as? [TrackerCategoryCoreData],
+                  let records = try context.fetch(trackerRecordRequest) as? [TrackerRecordCoreData] else {
+                return
             }
             
-            if let categories = try context.fetch(categoriesRequest) as? [TrackerCategoryCoreData] {
-                for category in categories {
-                    context.delete(category)
-                }
+            trackers.forEach { tracker in
+                context.delete(tracker)
             }
             
+            categories.forEach { category in
+                context.delete(category)
+            }
+            
+            records.forEach { record in
+                context.delete(record)
+            }
+        
             try context.save()
         } catch {
-            print("Failed to delete entities: \(error)")
+            print("Failed to clean entities: \(error)")
         }
     }
     

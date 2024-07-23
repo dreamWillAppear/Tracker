@@ -43,7 +43,6 @@ final class TrackerCategoryStore {
                 print("Failed to fetch category: \(error)")
                 return nil
             }
-    
         }
     
     func addCategory(title: String) {

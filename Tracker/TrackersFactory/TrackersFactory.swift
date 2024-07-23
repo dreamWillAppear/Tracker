@@ -32,13 +32,12 @@ final class TrackersFactory {
             updateTrackersForShowing()
         }
     }
-    
-    var completedTrackers: [TrackerRecord] = []
-    
+        
     private let appDelegate = AppDelegate()
     private lazy var context = appDelegate.persistentContainer.viewContext
     private lazy var categoryStore = TrackerCategoryStore(context: context)
     private lazy var trackerStore = TrackerStore(context: context)
+    private lazy var trackerRecordStore = TrackerRecordStore(context: context)
     
     // MARK: - Initializers
     
@@ -59,14 +58,14 @@ final class TrackersFactory {
     func addToStorage(tracker: Tracker, for category: String) {
         
         if let categoryEntity = trackerStore.fetchCategory(withTitle: category) {
-                   trackerStore.addTracker(tracker: tracker, to: categoryEntity)
-               } else {
-                   trackerStore.addCategory(title: category)
-                   guard let newCategory = trackerStore.fetchCategory(withTitle: category) else { return }
-                   trackerStore.addTracker(tracker: tracker, to: newCategory)
-               }
+            trackerStore.addTracker(tracker: tracker, to: categoryEntity)
+        } else {
+            trackerStore.addCategory(title: category)
+            guard let newCategory = trackerStore.fetchCategory(withTitle: category) else { return }
+            trackerStore.addTracker(tracker: tracker, to: newCategory)
+        }
     }
-        
+    
     func filterTrackers(in categoriesArray: [TrackerCategory], forDayWithIndex weekdayIndex: Int) -> [TrackerCategory] {
         var categoriesForShowing: [TrackerCategory] = []
         for category in trackersStorage {
@@ -114,32 +113,21 @@ final class TrackersFactory {
     }
     
     func markTrackerAsCompleted(trackerID: UUID, on date: Date) {
-        let record = TrackerRecord(trackerID: trackerID, date: date)
-        if !completedTrackers.contains(where: { $0.trackerID == trackerID && $0.date == date }) {
-            completedTrackers.append(record)
-        }
+        trackerRecordStore.markTrackerAsCompleted(trackerID: trackerID, on: date)
     }
     
     func unmarkTrackerAsCompleted(trackerID: UUID, on date: Date) {
-        if let index = completedTrackers.firstIndex(where: { $0.trackerID == trackerID && $0.date == date } ) {
-            completedTrackers.remove(at: index)
-        }
+        trackerRecordStore.unmarkTrackerAsCompleted(trackerID: trackerID, on: date)
     }
     
     func isTrackerCompleted(trackerID: UUID, on date: Date) -> Bool {
-        return completedTrackers.contains { $0.trackerID == trackerID && $0.date == date }
+        return trackerRecordStore.checkRecord(trackerID: trackerID, on: date)
     }
     
     func getRecordsCount(for tracker: Tracker) -> Int {
-        let trackerID = tracker.id
-        return completedTrackers.filter( {$0.trackerID == trackerID} ).count
+        trackerRecordStore.getRecordsCount(for: tracker.id)
     }
-    
-    func randomColor() -> UIColor {
-        UIColor(named: "Color selection \(String(Int.random(in: 1...18)))")!
-    }
-    
-    
+
     func generateCatName() -> String {
         ["Важное", "Домашний уют", "Cамочувствие", "Мелочи"].randomElement()!
     }
