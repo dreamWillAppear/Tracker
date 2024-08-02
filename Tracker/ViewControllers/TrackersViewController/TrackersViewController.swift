@@ -139,7 +139,7 @@ final class TrackersViewController: UIViewController {
             CategoryHeaderView.self,
             forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader,
             withReuseIdentifier: CategoryHeaderView.identifier)
-
+        
         collectionView.register(
             TrackerCell.self,
             forCellWithReuseIdentifier: TrackerCell.reuseIdentifier)
@@ -236,7 +236,7 @@ final class TrackersViewController: UIViewController {
     }
     
     //MARK: - Actions
-    //отладочное: при нажатии на кнопку Фильтры
+    //отладочное: при нажатии на кнопку Фильтры - БД очищается и экран обновляется
     @objc private func didTapFiltersButton() {
         factory.eraseAllDataFromBase()
         updateCollectionViewPlaceholder(forSearch: false)
@@ -279,15 +279,15 @@ extension TrackersViewController: UICollectionViewDataSource, UICollectionViewDe
     func collectionView(
         _ collectionView: UICollectionView,
         cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: TrackerCell.reuseIdentifier, for: indexPath) as? TrackerCell else {
-            return .init()
+            guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: TrackerCell.reuseIdentifier, for: indexPath) as? TrackerCell else {
+                return .init()
+            }
+            
+            let tracker = factory.trackersForShowing[indexPath.section].trackers[indexPath.item]
+            
+            cell.configureCell(for: tracker, date: currentDate)
+            return cell
         }
-        
-        let tracker = factory.trackersForShowing[indexPath.section].trackers[indexPath.item]
-        
-        cell.configureCell(for: tracker, date: currentDate)
-        return cell
-    }
     
     func collectionView(
         _ collectionView: UICollectionView,
@@ -355,5 +355,6 @@ extension TrackersViewController: UISearchBarDelegate {
         searchBar.setShowsCancelButton(true, animated: true)
         return true
     }
+    
 }
 

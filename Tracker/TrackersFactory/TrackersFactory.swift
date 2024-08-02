@@ -32,7 +32,7 @@ final class TrackersFactory {
             updateTrackersForShowing()
         }
     }
-        
+    
     private let appDelegate = AppDelegate()
     private lazy var context = appDelegate.persistentContainer.viewContext
     private lazy var categoryStore = TrackerCategoryStore(context: context)
@@ -127,9 +127,10 @@ final class TrackersFactory {
     func getRecordsCount(for tracker: Tracker) -> Int {
         trackerRecordStore.getRecordsCount(for: tracker.id)
     }
-
+    
     func generateCatName() -> String {
         ["Важное", "Домашний уют", "Cамочувствие", "Мелочи"].randomElement()!
     }
+    
 }
 

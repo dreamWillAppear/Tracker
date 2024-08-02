@@ -27,6 +27,6 @@ final class TabBarController: UITabBarController {
                 .withTintColor(.trackerGray, renderingMode: .alwaysOriginal),
             selectedImage: UIImage(systemName: "hare.fill")
         )
-        
     }
+    
 }

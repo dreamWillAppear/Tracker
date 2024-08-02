@@ -42,5 +42,6 @@ final class TrackerButton: UIButton {
         
         self.setTitle(nil, for: .normal)
     }
+    
 }
 

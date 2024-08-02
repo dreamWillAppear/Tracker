@@ -376,7 +376,7 @@ final class AddHabbitViewController: UIViewController, UITextFieldDelegate {
             .map { weekdays[$0.offset] }
         scheduleButton.addSupplementaryView(with: selectedDays.joined(separator: ", "))
     }
-private let appDelegate = AppDelegate()
+    private let appDelegate = AppDelegate()
     
     @objc private func didTapCancelButton() {
         self.dismiss(animated: true)
@@ -421,10 +421,10 @@ extension AddHabbitViewController: UICollectionViewDelegate, UICollectionViewDat
         numberOfItemsInSection section: Int) -> Int {
             
             switch collectionView {
-            case emojiCollectionView:
-                return EmojiCell.emojiArray.count
-            default:
-                return ColorSelectCell.colors.count
+                case emojiCollectionView:
+                    return EmojiCell.emojiArray.count
+                default:
+                    return ColorSelectCell.colors.count
             }
             
         }
@@ -434,23 +434,23 @@ extension AddHabbitViewController: UICollectionViewDelegate, UICollectionViewDat
         cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
             
             switch collectionView {
-                
-            case emojiCollectionView:
-                guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: EmojiCell.reuseIdentifier, for: indexPath) as? EmojiCell else {
-                    return .init()
-                }
-                let isSeclected = selectedEmojiCellIndexPath == indexPath
-                cell.configureCell(with: EmojiCell.emojiArray[indexPath.item], isSelected: isSeclected)
-                return cell
-                
-            default:
-                guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: ColorSelectCell.reuseIdentifier, for: indexPath) as? ColorSelectCell else {
-                    return .init()
-                }
-                let isSelected = selectedColorCellIndexPath == indexPath
-                
-                cell.configureCell(color: ColorSelectCell.colors[indexPath.item], isSelected: isSelected)
-                return cell
+                    
+                case emojiCollectionView:
+                    guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: EmojiCell.reuseIdentifier, for: indexPath) as? EmojiCell else {
+                        return .init()
+                    }
+                    let isSeclected = selectedEmojiCellIndexPath == indexPath
+                    cell.configureCell(with: EmojiCell.emojiArray[indexPath.item], isSelected: isSeclected)
+                    return cell
+                    
+                default:
+                    guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: ColorSelectCell.reuseIdentifier, for: indexPath) as? ColorSelectCell else {
+                        return .init()
+                    }
+                    let isSelected = selectedColorCellIndexPath == indexPath
+                    
+                    cell.configureCell(color: ColorSelectCell.colors[indexPath.item], isSelected: isSelected)
+                    return cell
             }
         }
     
@@ -459,17 +459,17 @@ extension AddHabbitViewController: UICollectionViewDelegate, UICollectionViewDat
         viewForSupplementaryElementOfKind kind: String,
         at indexPath: IndexPath) -> UICollectionReusableView {
             switch collectionView {
-            case emojiCollectionView:
-                guard let header = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: EmojiCollectionHeader.identifier, for: indexPath) as? EmojiCollectionHeader else {
-                    return .init()
-                }
-                return header
-                
-            default:
-                guard let header = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: ColorSelectCollectionHeader.identifier, for: indexPath) as? ColorSelectCollectionHeader else {
-                    return .init()
-                }
-                return header
+                case emojiCollectionView:
+                    guard let header = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: EmojiCollectionHeader.identifier, for: indexPath) as? EmojiCollectionHeader else {
+                        return .init()
+                    }
+                    return header
+                    
+                default:
+                    guard let header = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: ColorSelectCollectionHeader.identifier, for: indexPath) as? ColorSelectCollectionHeader else {
+                        return .init()
+                    }
+                    return header
             }
         }
     
@@ -483,16 +483,16 @@ extension AddHabbitViewController: UICollectionViewDelegate, UICollectionViewDat
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         
         switch collectionView {
-            
-        case emojiCollectionView:
-            factory.selectedEmoji = EmojiCell.emojiArray[indexPath.row]
-            selectedEmojiCellIndexPath = indexPath
-            emojiSelected = true
-            
-        default:
-            factory.selectedColor = ColorSelectCell.colors[indexPath.row]
-            selectedColorCellIndexPath = indexPath
-            colorSelected = true
+                
+            case emojiCollectionView:
+                factory.selectedEmoji = EmojiCell.emojiArray[indexPath.row]
+                selectedEmojiCellIndexPath = indexPath
+                emojiSelected = true
+                
+            default:
+                factory.selectedColor = ColorSelectCell.colors[indexPath.row]
+                selectedColorCellIndexPath = indexPath
+                colorSelected = true
         }
         
         collectionView.reloadData()

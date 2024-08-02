@@ -30,20 +30,20 @@ final class ColorSelectCell: UICollectionViewCell {
     }
     
     func configureCell(color: UIColor, isSelected: Bool) {
-        contentView.layer.cornerRadius = 8
+        contentView.layer.cornerRadius = colorView.layer.cornerRadius
         contentView.layer.borderColor = color.withAlphaComponent(0.3).cgColor
         contentView.layer.borderWidth = isSelected ? 3 : 0
         colorView.backgroundColor = color
     }
     
     private func configureConstraints(){
-           contentView.snp.makeConstraints { make in
-               make.edges.equalToSuperview()
-           }
-           
-           colorView.snp.makeConstraints { make in
-               make.edges.equalToSuperview().inset(6)
-           }
-       }
+        contentView.snp.makeConstraints { make in
+            make.edges.equalToSuperview()
+        }
+        
+        colorView.snp.makeConstraints { make in
+            make.edges.equalToSuperview().inset(6)
+        }
+    }
     
 }

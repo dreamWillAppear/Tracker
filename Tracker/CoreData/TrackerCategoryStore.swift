@@ -31,19 +31,19 @@ final class TrackerCategoryStore {
             return []
         }
     }
-        
+    
     func fetchCategory(withTitle title: String) -> TrackerCategoryCoreData? {
         let fetchRequest: NSFetchRequest<TrackerCategoryCoreData> = TrackerCategoryCoreData.fetchRequest()
-            fetchRequest.predicate = NSPredicate(format: "title == %@", title)
-            
-            do {
-                let categories = try context.fetch(fetchRequest)
-                return categories.first
-            } catch {
-                print("Failed to fetch category: \(error)")
-                return nil
-            }
+        fetchRequest.predicate = NSPredicate(format: "title == %@", title)
+        
+        do {
+            let categories = try context.fetch(fetchRequest)
+            return categories.first
+        } catch {
+            print("Failed to fetch category: \(error)")
+            return nil
         }
+    }
     
     func addCategory(title: String) {
         if fetchCategory(withTitle: title) == nil {

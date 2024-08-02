@@ -62,13 +62,12 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             records.forEach { record in
                 context.delete(record)
             }
-        
+            
             try context.save()
         } catch {
             print("Failed to clean entities: \(error)")
         }
     }
-    
     
 }
 
