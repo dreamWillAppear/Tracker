@@ -18,16 +18,6 @@ final class TrackerStore: NSObject, NSFetchedResultsControllerDelegate {
         updateTrackersStorage(factory: factory)
     }
     
-    func fetchAllTrackers() -> [TrackerCoreData] {
-        let fetchRequest: NSFetchRequest<TrackerCoreData> = TrackerCoreData.fetchRequest()
-        do {
-            return try context.fetch(fetchRequest)
-        } catch {
-            print("Failed to fetch trackers: \(error)")
-            return []
-        }
-    }
-    
     func controllerDidChangeContent(_ controller: NSFetchedResultsController<NSFetchRequestResult>) {
         updateTrackersStorage(factory: TrackersFactory.shared)
         NotificationCenter.default.post(name: TrackersFactory.trackersForShowingUpdatedNotification, object: nil)
@@ -60,12 +50,23 @@ final class TrackerStore: NSObject, NSFetchedResultsControllerDelegate {
         
         do {
             if let trackerCoreData = try context.fetch(fetchRequest).first {
+                guard let trackerID = trackerCoreData.id,
+                      let title = trackerCoreData.title,
+                      let colorData = trackerCoreData.color,
+                      let color = UIColor.color(withData: colorData),
+                      let emoji = trackerCoreData.emoji,
+                      let scheduleData = trackerCoreData.schedule,
+                      let schedule = try? NSKeyedUnarchiver.unarchivedObject(ofClass: NSArray.self, from: scheduleData) as? [Bool] else {
+                    print("Failed to unwrap TrackerCoreData properties")
+                    return nil
+                }
+                
                 return Tracker(
-                    id: trackerCoreData.id!,
-                    title: trackerCoreData.title!,
-                    color: UIColor.color(withData: trackerCoreData.color!)!,
-                    emoji: trackerCoreData.emoji!,
-                    schedule: try! NSKeyedUnarchiver.unarchivedObject(ofClass: NSArray.self, from: trackerCoreData.schedule!) as! [Bool]
+                    id: trackerID,
+                    title: title,
+                    color: color,
+                    emoji: emoji,
+                    schedule: schedule
                 )
             } else {
                 return nil
@@ -75,7 +76,7 @@ final class TrackerStore: NSObject, NSFetchedResultsControllerDelegate {
             return nil
         }
     }
-    
+
     private func fetchCategoryCoreData(withTitle title: String) -> TrackerCategoryCoreData? {
         let fetchRequest: NSFetchRequest<TrackerCategoryCoreData> = TrackerCategoryCoreData.fetchRequest()
         fetchRequest.predicate = NSPredicate(format: "title == %@", title)
@@ -87,7 +88,6 @@ final class TrackerStore: NSObject, NSFetchedResultsControllerDelegate {
             return nil
         }
     }
-    
     
     private func setupFetchedResultsControllers() {
         let categoryFetchRequest: NSFetchRequest<TrackerCategoryCoreData> = TrackerCategoryCoreData.fetchRequest()

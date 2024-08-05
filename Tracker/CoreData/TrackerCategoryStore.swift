@@ -17,36 +17,39 @@ final class TrackerCategoryStore {
         appDelegate.saveContext(context: context)
     }
     
-    func fetchCategory(withTitle title: String) -> TrackerCategoryCoreData? {
-        let fetchRequest: NSFetchRequest<TrackerCategoryCoreData> = TrackerCategoryCoreData.fetchRequest()
-        fetchRequest.predicate = NSPredicate(format: "title == %@", title)
-        
-        do {
-            let categories = try context.fetch(fetchRequest)
-            return categories.first
-        } catch {
-            print("Failed to fetch category: \(error)")
-            return nil
-        }
-    }
-    
     func fetchAllCategories() -> [TrackerCategory] {
         let fetchRequest: NSFetchRequest<TrackerCategoryCoreData> = TrackerCategoryCoreData.fetchRequest()
         
         do {
             let categoriesCoreData = try context.fetch(fetchRequest)
-            return categoriesCoreData.map { categoryCoreData in
-                let trackers = categoryCoreData.trackers?.allObjects as? [TrackerCoreData] ?? []
-                let trackerModels = trackers.map { trackerCoreData in
-                    Tracker(
-                        id: trackerCoreData.id!,
-                        title: trackerCoreData.title!,
-                        color: UIColor.color(withData: trackerCoreData.color!)!,
-                        emoji: trackerCoreData.emoji!,
-                        schedule: try! NSKeyedUnarchiver.unarchivedObject(ofClass: NSArray.self, from: trackerCoreData.schedule!) as! [Bool]
-                    )
+            return categoriesCoreData.compactMap { categoryCoreData in
+                guard let title = categoryCoreData.title else {
+                    print("Failed to unwrap category title")
+                    return nil
                 }
-                return TrackerCategory(title: categoryCoreData.title!, trackers: trackerModels)
+                
+                let trackers = (categoryCoreData.trackers?.allObjects as? [TrackerCoreData])?.compactMap { trackerCoreData -> Tracker? in
+                    guard let trackerID = trackerCoreData.id,
+                          let trackerTitle = trackerCoreData.title,
+                          let colorData = trackerCoreData.color,
+                          let color = UIColor.color(withData: colorData),
+                          let emoji = trackerCoreData.emoji,
+                          let scheduleData = trackerCoreData.schedule,
+                          let schedule = try? NSKeyedUnarchiver.unarchivedObject(ofClass: NSArray.self, from: scheduleData) as? [Bool] else {
+                        print("Failed to unwrap TrackerCoreData properties")
+                        return nil
+                    }
+                    
+                    return Tracker(
+                        id: trackerID,
+                        title: trackerTitle,
+                        color: color,
+                        emoji: emoji,
+                        schedule: schedule
+                    )
+                } ?? []
+                
+                return TrackerCategory(title: title, trackers: trackers)
             }
         } catch {
             print("Failed to fetch categories: \(error)")
