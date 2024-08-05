@@ -11,25 +11,10 @@ final class TrackerCategoryStore {
         self.context = context
     }
     
-    func fetchAllRecords() -> [TrackerCategoryCoreData] {
-        do {
-            return try context.fetch(fetchRequest)
-        } catch {
-            print("Failed to fetch records - \(error.localizedDescription)")
-            return []
-        }
-    }
-    
-    func fetchAllCategories() -> [String] {
-        let fetchRequest: NSFetchRequest<TrackerCategoryCoreData> = TrackerCategoryCoreData.fetchRequest()
-        
-        do {
-            let categories = try context.fetch(fetchRequest)
-            return categories.compactMap { $0.title }
-        } catch {
-            print("Failed to fetch categories: \(error)")
-            return []
-        }
+    func addCategory(_ category: TrackerCategory) {
+        let categoryCoreData = TrackerCategoryCoreData(context: context)
+        categoryCoreData.title = category.title
+        appDelegate.saveContext(context: context)
     }
     
     func fetchCategory(withTitle title: String) -> TrackerCategoryCoreData? {
@@ -45,12 +30,27 @@ final class TrackerCategoryStore {
         }
     }
     
-    func addCategory(title: String) {
-        if fetchCategory(withTitle: title) == nil {
-            let newCategory = TrackerCategoryCoreData(context: context)
-            newCategory.title = title
-            appDelegate.saveContext(context: context)
-            return
+    func fetchAllCategories() -> [TrackerCategory] {
+        let fetchRequest: NSFetchRequest<TrackerCategoryCoreData> = TrackerCategoryCoreData.fetchRequest()
+        
+        do {
+            let categoriesCoreData = try context.fetch(fetchRequest)
+            return categoriesCoreData.map { categoryCoreData in
+                let trackers = categoryCoreData.trackers?.allObjects as? [TrackerCoreData] ?? []
+                let trackerModels = trackers.map { trackerCoreData in
+                    Tracker(
+                        id: trackerCoreData.id!,
+                        title: trackerCoreData.title!,
+                        color: UIColor.color(withData: trackerCoreData.color!)!,
+                        emoji: trackerCoreData.emoji!,
+                        schedule: try! NSKeyedUnarchiver.unarchivedObject(ofClass: NSArray.self, from: trackerCoreData.schedule!) as! [Bool]
+                    )
+                }
+                return TrackerCategory(title: categoryCoreData.title!, trackers: trackerModels)
+            }
+        } catch {
+            print("Failed to fetch categories: \(error)")
+            return []
         }
     }
     

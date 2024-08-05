@@ -56,15 +56,15 @@ final class TrackersFactory {
     }
     
     func addToStorage(tracker: Tracker, for category: String) {
-        
-        if let categoryEntity = trackerStore.fetchCategory(withTitle: category) {
-            trackerStore.addTracker(tracker: tracker, to: categoryEntity)
+        if let existingCategory = categoryStore.fetchAllCategories().first(where: { $0.title == category }) {
+            trackerStore.addTracker(tracker, to: existingCategory)
         } else {
-            trackerStore.addCategory(title: category)
-            guard let newCategory = trackerStore.fetchCategory(withTitle: category) else { return }
-            trackerStore.addTracker(tracker: tracker, to: newCategory)
+            let newCategory = TrackerCategory(title: category, trackers: [])
+            categoryStore.addCategory(newCategory)
+            trackerStore.addTracker(tracker, to: newCategory)
         }
     }
+
     
     func filterTrackers(in categoriesArray: [TrackerCategory], forDayWithIndex weekdayIndex: Int) -> [TrackerCategory] {
         var categoriesForShowing: [TrackerCategory] = []
@@ -113,12 +113,19 @@ final class TrackersFactory {
     }
     
     func markTrackerAsCompleted(trackerID: UUID, on date: Date) {
-        trackerRecordStore.markTrackerAsCompleted(trackerID: trackerID, on: date)
+        let record = TrackerRecord(trackerID: trackerID, date: date)
+        trackerRecordStore.addRecord(record)
     }
     
     func unmarkTrackerAsCompleted(trackerID: UUID, on date: Date) {
-        trackerRecordStore.unmarkTrackerAsCompleted(trackerID: trackerID, on: date)
+        let record = TrackerRecord(trackerID: trackerID, date: date)
+        trackerRecordStore.removeRecord(record)
     }
+
+    func todayAlreadyRecorded(trackerID: UUID) -> Bool {
+            let today = Date()
+            return trackerRecordStore.checkRecord(trackerID: trackerID, on: today)
+        }
     
     func isTrackerCompleted(trackerID: UUID, on date: Date) -> Bool {
         return trackerRecordStore.checkRecord(trackerID: trackerID, on: date)

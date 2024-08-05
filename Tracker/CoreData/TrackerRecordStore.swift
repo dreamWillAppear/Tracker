@@ -10,13 +10,36 @@ final class TrackerRecordStore {
         self.context = context
     }
     
-    func fetchAllRecords() -> [TrackerRecordCoreData] {
+    func addRecord(_ record: TrackerRecord) {
+        let recordCoreData = TrackerRecordCoreData(context: context)
+        recordCoreData.trackerID = record.trackerID
+        recordCoreData.date = record.date
+        appDelegate.saveContext(context: context)
+    }
+    
+    func removeRecord(_ record: TrackerRecord) {
         let fetchRequest: NSFetchRequest<TrackerRecordCoreData> = TrackerRecordCoreData.fetchRequest()
+        fetchRequest.predicate = NSPredicate(format: "trackerID == %@ AND date == %@", record.trackerID as CVarArg, record.date as CVarArg)
+        
         do {
-            return try context.fetch(fetchRequest)
+            if let recordCoreData = try context.fetch(fetchRequest).first {
+                context.delete(recordCoreData)
+                appDelegate.saveContext(context: context)
+            }
         } catch {
-            print("Failed to fetch records - \(error.localizedDescription)")
-            return []
+            print("Failed to fetch or delete record: \(error)")
+        }
+    }
+    
+    func getRecordsCount(for trackerID: UUID) -> Int {
+        let request: NSFetchRequest<TrackerRecordCoreData> = TrackerRecordCoreData.fetchRequest()
+        request.predicate = NSPredicate(format: "trackerID == %@", trackerID as CVarArg)
+        
+        do {
+            return try context.fetch(request).count
+        } catch {
+            print("TrackerRecordStore - Failed to get Records count: \(error.localizedDescription)")
+            return 0
         }
     }
     
@@ -43,26 +66,15 @@ final class TrackerRecordStore {
     }
     
     func checkRecord(trackerID: UUID, on date: Date) -> Bool {
-        let request: NSFetchRequest<TrackerRecordCoreData> = TrackerRecordCoreData.fetchRequest()
-        request.predicate = NSPredicate(format: "trackerID == %@ AND date == %@", trackerID as CVarArg, date as CVarArg)
+        let fetchRequest: NSFetchRequest<TrackerRecordCoreData> = TrackerRecordCoreData.fetchRequest()
+        fetchRequest.predicate = NSPredicate(format: "trackerID == %@ AND date == %@", trackerID as CVarArg, date as CVarArg)
         
         do {
-            let records = try context.count(for: request)
-            return records > 0
+            let records = try context.fetch(fetchRequest)
+            return !records.isEmpty
         } catch {
+            print("Failed to fetch record: \(error)")
             return false
-        }
-    }
-    
-    func getRecordsCount(for trackerID: UUID) -> Int {
-        let request: NSFetchRequest<TrackerRecordCoreData> = TrackerRecordCoreData.fetchRequest()
-        request.predicate = NSPredicate(format: "trackerID == %@", trackerID as CVarArg)
-        
-        do {
-            return try context.fetch(request).count
-        } catch {
-            print("TrackerRecordStore - Failed to get Records count: \(error.localizedDescription)")
-            return 0
         }
     }
     

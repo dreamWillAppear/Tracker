@@ -14,6 +14,10 @@ final class TrackerStore: NSObject, NSFetchedResultsControllerDelegate {
         setupFetchedResultsControllers()
     }
     
+    func loadInitialData(factory: TrackersFactory) {
+        updateTrackersStorage(factory: factory)
+    }
+    
     func fetchAllTrackers() -> [TrackerCoreData] {
         let fetchRequest: NSFetchRequest<TrackerCoreData> = TrackerCoreData.fetchRequest()
         do {
@@ -24,26 +28,24 @@ final class TrackerStore: NSObject, NSFetchedResultsControllerDelegate {
         }
     }
     
-    func loadInitialData(factory: TrackersFactory) {
-        updateTrackersStorage(factory: factory)
-    }
-    
     func controllerDidChangeContent(_ controller: NSFetchedResultsController<NSFetchRequestResult>) {
         updateTrackersStorage(factory: TrackersFactory.shared)
         NotificationCenter.default.post(name: TrackersFactory.trackersForShowingUpdatedNotification, object: nil)
     }
     
-    func addTracker(tracker: Tracker, to category: TrackerCategoryCoreData){
+    func addTracker(_ tracker: Tracker, to category: TrackerCategory) {
+        let trackerCoreData = TrackerCoreData(context: context)
+        trackerCoreData.id = tracker.id
+        trackerCoreData.title = tracker.title
+        trackerCoreData.color = tracker.color.encodeColor()
+        trackerCoreData.emoji = tracker.emoji
+        trackerCoreData.schedule = tracker.schedule.encode()
         
-        let newTracker = TrackerCoreData(context: context)
-        newTracker.id = tracker.id
-        newTracker.title = tracker.title
-        newTracker.color = tracker.color.encodeColor()
-        newTracker.emoji = tracker.emoji
-        newTracker.schedule = tracker.schedule.encode()
-        newTracker.category = category
+        if let categoryCoreData = fetchCategoryCoreData(withTitle: category.title) {
+            trackerCoreData.category = categoryCoreData
+        }
+        
         appDelegate.saveContext(context: context)
-        
     }
     
     func addCategory(title: String) {
@@ -52,7 +54,29 @@ final class TrackerStore: NSObject, NSFetchedResultsControllerDelegate {
         appDelegate.saveContext(context: context)
     }
     
-    func fetchCategory(withTitle title: String) -> TrackerCategoryCoreData? {
+    func fetchTracker(by id: UUID) -> Tracker? {
+        let fetchRequest: NSFetchRequest<TrackerCoreData> = TrackerCoreData.fetchRequest()
+        fetchRequest.predicate = NSPredicate(format: "id == %@", id as CVarArg)
+        
+        do {
+            if let trackerCoreData = try context.fetch(fetchRequest).first {
+                return Tracker(
+                    id: trackerCoreData.id!,
+                    title: trackerCoreData.title!,
+                    color: UIColor.color(withData: trackerCoreData.color!)!,
+                    emoji: trackerCoreData.emoji!,
+                    schedule: try! NSKeyedUnarchiver.unarchivedObject(ofClass: NSArray.self, from: trackerCoreData.schedule!) as! [Bool]
+                )
+            } else {
+                return nil
+            }
+        } catch {
+            print("Failed to fetch tracker: \(error)")
+            return nil
+        }
+    }
+    
+    private func fetchCategoryCoreData(withTitle title: String) -> TrackerCategoryCoreData? {
         let fetchRequest: NSFetchRequest<TrackerCategoryCoreData> = TrackerCategoryCoreData.fetchRequest()
         fetchRequest.predicate = NSPredicate(format: "title == %@", title)
         
@@ -60,43 +84,6 @@ final class TrackerStore: NSObject, NSFetchedResultsControllerDelegate {
             return try context.fetch(fetchRequest).first
         } catch {
             print("Failed to fetch category: \(error)")
-            return nil
-        }
-    }
-    
-    func fetchTracker(id: UUID) -> Tracker? {
-        let fetchRequest: NSFetchRequest<TrackerCoreData> = TrackerCoreData.fetchRequest()
-        fetchRequest.predicate = NSPredicate(format: "id == %@", id as CVarArg)
-        
-        do {
-            if let trackerCoreData = try context.fetch(fetchRequest).first {
-                let id = trackerCoreData.id ?? UUID()
-                let title = trackerCoreData.title ?? ""
-                
-                var color = UIColor.clear
-                if let colorData = trackerCoreData.color {
-                    color = UIColor.color(withData: colorData) ?? .clear
-                }
-                
-                let emoji = trackerCoreData.emoji ?? ""
-                
-                var schedule: [Bool] = []
-                if let scheduleData = trackerCoreData.schedule {
-                    schedule = scheduleData.decodeSchedule() ?? []
-                }
-                
-                return Tracker(
-                    id: id,
-                    title: title,
-                    color: color,
-                    emoji: emoji,
-                    schedule: schedule
-                )
-            } else {
-                return nil
-            }
-        } catch {
-            print("Failed to fetch tracker: \(error)")
             return nil
         }
     }
@@ -199,7 +186,6 @@ extension Array where Element == Bool {
         }
     }
 }
-
 
 extension Data {
     func decodeSchedule() -> [Bool]? {
