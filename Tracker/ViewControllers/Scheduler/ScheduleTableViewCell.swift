@@ -62,4 +62,5 @@ final class ScheduleTableViewCell: UITableViewCell {
     @objc func switchValueChanded(_ sender: UISwitch) {
         delegate?.switchValueChanded(sender, cell: self)
     }
+    
 }

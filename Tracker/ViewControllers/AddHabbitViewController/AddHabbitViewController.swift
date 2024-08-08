@@ -4,15 +4,26 @@ import SnapKit
 
 final class AddHabbitViewController: UIViewController, UITextFieldDelegate {
     
+    //MARK: - Public Properties
+    
+    var isHabbit = false
+    
     // MARK: - Private Properties
     
     private var categoryName = ""
     private let factory = TrackersFactory.shared
     private var categorySelected = false
     private var trackerNameEntered = false
-    private var scheduleDidSet = true
-    
+    private var scheduleDidSet = false
+    private var emojiSelected = false
+    private var colorSelected = false
     private var scheduleUpdateNotification = TrackersFactory.scheduleUpdatedNotification
+    
+    private lazy var mainScrollView: UIScrollView = {
+        let scrollView = UIScrollView()
+        
+        return scrollView
+    }()
     
     private let warningLabel: UILabel = {
         let label = UILabel()
@@ -42,6 +53,7 @@ final class AddHabbitViewController: UIViewController, UITextFieldDelegate {
     }()
     
     private lazy var buttonsStackView: UIStackView = {
+        
         let image = UIImage(named: "Chevron")?
             .withRenderingMode(.alwaysOriginal)
             .withTintColor(.trackerGray)
@@ -49,6 +61,8 @@ final class AddHabbitViewController: UIViewController, UITextFieldDelegate {
         imageViewTop.image = image
         let imageViewBottom = UIImageView()
         imageViewBottom.image = image
+        imageViewBottom.isHidden = !isHabbit
+        
         
         let view = UIStackView()
         view.axis = .vertical
@@ -56,7 +70,7 @@ final class AddHabbitViewController: UIViewController, UITextFieldDelegate {
         view.backgroundColor = .trackerBackground
         view.layer.cornerRadius = 16
         view.addSubview(imageViewTop)
-        view.addSubview(imageViewBottom)
+        isHabbit ? view.addSubview(imageViewBottom) : ()
         
         imageViewTop.snp.makeConstraints { make in
             make.height.equalTo(12)
@@ -65,6 +79,10 @@ final class AddHabbitViewController: UIViewController, UITextFieldDelegate {
             make.top.equalToSuperview().inset(32)
         }
         
+        guard isHabbit else {
+            factory.schedule =  Array(repeating: true, count: WeekDay.allCases.count) //MOCK
+            return view
+        }
         imageViewBottom.snp.makeConstraints { make in
             make.height.equalTo(12)
             make.width.equalTo(7)
@@ -98,6 +116,7 @@ final class AddHabbitViewController: UIViewController, UITextFieldDelegate {
     
     private lazy var cancelAndCreateButtonsStackView: UIStackView = {
         let view = UIStackView()
+        view.backgroundColor = self.view.backgroundColor
         view.axis = .horizontal
         view.spacing = 8
         view.distribution = .fillEqually
@@ -128,14 +147,40 @@ final class AddHabbitViewController: UIViewController, UITextFieldDelegate {
         return button
     }()
     
+    private var selectedEmojiCellIndexPath: IndexPath?
+    
+    private lazy var  emojiCollectionView: UICollectionView = {
+        let layout = UICollectionViewFlowLayout()
+        layout.sectionInset = UIEdgeInsets(top: 24, left: 18, bottom: 24, right: 18)
+        layout.minimumLineSpacing = 0
+        layout.minimumInteritemSpacing = 5
+        let collectionView = UICollectionView(frame: .zero, collectionViewLayout: layout)
+        return collectionView
+    }()
+    
+    private var selectedColorCellIndexPath: IndexPath?
+    
+    private lazy var  colorSelectCollectionView: UICollectionView = {
+        let layout = UICollectionViewFlowLayout()
+        layout.sectionInset = UIEdgeInsets(top: 24, left: 18, bottom: 24, right: 18)
+        layout.minimumLineSpacing = 0
+        layout.minimumInteritemSpacing = 5
+        let collectionView = UICollectionView(frame: .zero, collectionViewLayout: layout)
+        return collectionView
+    }()
+    
     // MARK: - Public Methods
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        scheduleDidSet = !isHabbit
+        
         setUI()
         setConstraints()
         configureDismissingKeyboard()
+        configureEmojiCollectionView()
+        configureColorSelectCollectionView()
         setupObservers()
     }
     
@@ -145,41 +190,79 @@ final class AddHabbitViewController: UIViewController, UITextFieldDelegate {
     
     // MARK: - Private Methods
     
-    private func setupObservers() {
-        NotificationCenter.default.addObserver(self, selector: #selector(addScheduleButtonSupplementaryText), name: scheduleUpdateNotification, object: nil)
-    }
-    
     private func setUI() {
         view.backgroundColor = .trackerWhite
         self.navigationController?.navigationBar.titleTextAttributes = [NSAttributedString.Key.font: UIFont.systemFont(ofSize: 16, weight: .medium)]
-        title = "Новая привычка"
+        title = isHabbit ? "Новая привычка" : "Новое нерегулярное событие"
         
         configureButtonsStackViews()
         
         [addTrackerNameField,
          buttonsStackView,
-         cancelAndCreateButtonsStackView,
-         warningLabel].forEach {
-            view.addSubview($0)
+         warningLabel,
+         emojiCollectionView,
+         colorSelectCollectionView,
+         cancelAndCreateButtonsStackView].forEach {
+            mainScrollView.addSubview($0)
         }
+        
+        view.addSubview(mainScrollView)
+    }
+    
+    private func configureEmojiCollectionView() {
+        emojiCollectionView.delegate = self
+        emojiCollectionView.dataSource = self
+        
+        emojiCollectionView.register(
+            EmojiCell.self,
+            forCellWithReuseIdentifier: EmojiCell.reuseIdentifier)
+        
+        emojiCollectionView.register(
+            EmojiCollectionHeader.self,
+            forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader,
+            withReuseIdentifier: EmojiCollectionHeader.identifier)
+    }
+    
+    private func setupObservers() {
+        NotificationCenter.default.addObserver(self, selector: #selector(addScheduleButtonSupplementaryText), name: scheduleUpdateNotification, object: nil)
+    }
+    
+    private func configureColorSelectCollectionView() {
+        colorSelectCollectionView.delegate = self
+        colorSelectCollectionView.dataSource = self
+        
+        colorSelectCollectionView.register(
+            ColorSelectCell.self,
+            forCellWithReuseIdentifier:  ColorSelectCell.reuseIdentifier)
+        
+        colorSelectCollectionView.register(
+            ColorSelectCollectionHeader.self,
+            forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader,
+            withReuseIdentifier: ColorSelectCollectionHeader.identifier)
     }
     
     private func configureButtonsStackViews() {
         let separatorLine = UIView()
         separatorLine.backgroundColor = .trackerGray
         
-        [categoryButton,
-         separatorLine,
-         scheduleButton].forEach {
-            buttonsStackView.addArrangedSubview($0)
+        if isHabbit {
+            
+            [categoryButton,
+             separatorLine,
+             scheduleButton].forEach {
+                buttonsStackView.addArrangedSubview($0)
+            }
+            
+            separatorLine.snp.makeConstraints { make in
+                make.center.equalTo(buttonsStackView)
+                make.height.equalTo(1)
+                make.leading.equalTo(buttonsStackView).offset(16)
+                make.trailing.equalTo(buttonsStackView).offset(-16)
+            }
+        } else {
+            buttonsStackView.addArrangedSubview(categoryButton)
         }
         
-        separatorLine.snp.makeConstraints { make in
-            make.center.equalTo(buttonsStackView)
-            make.height.equalTo(1)
-            make.leading.equalTo(buttonsStackView).offset(16)
-            make.trailing.equalTo(buttonsStackView).offset(-16)
-        }
         
         [cancelButton,
          createButton].forEach {
@@ -196,7 +279,7 @@ final class AddHabbitViewController: UIViewController, UITextFieldDelegate {
     }
     
     private func tryEnableCreationButton() {
-        let isEnabled = categorySelected && trackerNameEntered && scheduleDidSet
+        let isEnabled = categorySelected && trackerNameEntered && scheduleDidSet && emojiSelected && colorSelected
         creationButton(mustBeEnabled: isEnabled)
     }
     
@@ -206,17 +289,29 @@ final class AddHabbitViewController: UIViewController, UITextFieldDelegate {
     }
     
     private func setConstraints() {
+        
+        mainScrollView.snp.makeConstraints { make in
+            make.edges.equalToSuperview()
+            make.width.equalToSuperview()
+        }
+        
         addTrackerNameField.snp.makeConstraints { make in
             make.width.equalToSuperview().inset(16)
             make.height.equalTo(75)
             make.centerX.equalToSuperview()
-            make.top.equalToSuperview().inset(81)
+            make.top.equalToSuperview().inset(24)
+        }
+        
+        warningLabel.snp.makeConstraints { make in
+            make.leading.equalTo(addTrackerNameField)
+            make.trailing.equalTo(addTrackerNameField)
+            make.top.equalTo(addTrackerNameField.snp.bottom).offset(6)
         }
         
         buttonsStackView.snp.makeConstraints { make in
+            make.top.equalTo(addTrackerNameField.snp.bottom).offset(24)
             make.width.equalToSuperview().inset(16)
-            make.height.equalTo(150)
-            make.top.equalTo(warningLabel.snp.bottom).offset(32)
+            make.height.equalTo(isHabbit ? 150 : 75)
             make.centerX.equalToSuperview()
         }
         
@@ -224,16 +319,24 @@ final class AddHabbitViewController: UIViewController, UITextFieldDelegate {
             make.width.equalToSuperview()
         }
         
-        cancelAndCreateButtonsStackView.snp.makeConstraints { make in
-            make.height.equalTo(60)
-            make.leading.trailing.equalToSuperview().inset(20)
-            make.bottom.equalToSuperview().inset(34)
+        emojiCollectionView.snp.makeConstraints { make in
+            make.top.equalTo(buttonsStackView.snp.bottom).offset(32)
+            make.height.equalTo(204 + 18)
+            make.width.equalToSuperview()
         }
         
-        warningLabel.snp.makeConstraints { make in
-            make.leading.equalTo(addTrackerNameField)
-            make.trailing.equalTo(addTrackerNameField)
-            make.top.equalTo(addTrackerNameField.snp.bottom).offset(8)
+        colorSelectCollectionView.snp.makeConstraints { make in
+            make.top.equalTo(emojiCollectionView.snp.bottom).offset(40 - 24)
+            make.height.equalTo(204 + 18)
+            make.width.equalToSuperview()
+        }
+        
+        cancelAndCreateButtonsStackView.snp.makeConstraints { make in
+            make.top.equalTo(colorSelectCollectionView.snp.bottom)
+            make.height.equalTo(60)
+            make.centerX.equalToSuperview()
+            make.width.equalToSuperview().inset(20)
+            make.bottom.equalToSuperview().inset(34)
         }
     }
     
@@ -255,22 +358,25 @@ final class AddHabbitViewController: UIViewController, UITextFieldDelegate {
         let tracker = Tracker(
             id: UUID(),
             title: addTrackerNameField.text ?? "",
-            color: factory.randomColor(),
-            emoji: factory.randomEmoji(),
-            schedule: factory.schedule
-        )
+            color: factory.selectedColor,
+            emoji: factory.selectedEmoji,
+            schedule: factory.schedule)
+        
         factory.addToStorage(tracker: tracker, for: categoryName)
         factory.updateTrackersForShowing()
         self.view.window?.rootViewController?.dismiss(animated: true, completion: nil)
     }
     
     @objc private func addScheduleButtonSupplementaryText() {
+        scheduleDidSet = factory.schedule.contains(true)
+        tryEnableCreationButton()
         let weekdays = ["Пн", "Вт", "Ср", "Чт", "Пт", "Сб", "Вс"]
         let selectedDays = factory.schedule.enumerated()
             .filter { $0.element }
             .map { weekdays[$0.offset] }
         scheduleButton.addSupplementaryView(with: selectedDays.joined(separator: ", "))
     }
+    private let appDelegate = AppDelegate()
     
     @objc private func didTapCancelButton() {
         self.dismiss(animated: true)
@@ -299,5 +405,102 @@ extension AddHabbitViewController {
         warningLabel.isHidden = !isBiggerThen
         return !isBiggerThen
     }
+    
 }
+
+//MARK: - UICollectionViewDataSource & UICollectionViewDelegate
+
+extension AddHabbitViewController: UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
+    
+    func numberOfSections(in collectionView: UICollectionView) -> Int {
+        1
+    }
+    
+    func collectionView(
+        _ collectionView: UICollectionView,
+        numberOfItemsInSection section: Int) -> Int {
+            
+            switch collectionView {
+                case emojiCollectionView:
+                    return EmojiCell.emojiArray.count
+                default:
+                    return ColorSelectCell.colors.count
+            }
+            
+        }
+    
+    func collectionView(
+        _ collectionView: UICollectionView,
+        cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+            
+            switch collectionView {
+                    
+                case emojiCollectionView:
+                    guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: EmojiCell.reuseIdentifier, for: indexPath) as? EmojiCell else {
+                        return .init()
+                    }
+                    let isSeclected = selectedEmojiCellIndexPath == indexPath
+                    cell.configureCell(with: EmojiCell.emojiArray[indexPath.item], isSelected: isSeclected)
+                    return cell
+                    
+                default:
+                    guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: ColorSelectCell.reuseIdentifier, for: indexPath) as? ColorSelectCell else {
+                        return .init()
+                    }
+                    let isSelected = selectedColorCellIndexPath == indexPath
+                    
+                    cell.configureCell(color: ColorSelectCell.colors[indexPath.item], isSelected: isSelected)
+                    return cell
+            }
+        }
+    
+    func collectionView(
+        _ collectionView: UICollectionView,
+        viewForSupplementaryElementOfKind kind: String,
+        at indexPath: IndexPath) -> UICollectionReusableView {
+            switch collectionView {
+                case emojiCollectionView:
+                    guard let header = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: EmojiCollectionHeader.identifier, for: indexPath) as? EmojiCollectionHeader else {
+                        return .init()
+                    }
+                    return header
+                    
+                default:
+                    guard let header = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: ColorSelectCollectionHeader.identifier, for: indexPath) as? ColorSelectCollectionHeader else {
+                        return .init()
+                    }
+                    return header
+            }
+        }
+    
+    func collectionView(
+        _ collectionView: UICollectionView,
+        layout collectionViewLayout: UICollectionViewLayout,
+        referenceSizeForHeaderInSection section: Int) -> CGSize {
+            .init(width: 52, height: 18)
+        }
+    
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        
+        switch collectionView {
+                
+            case emojiCollectionView:
+                factory.selectedEmoji = EmojiCell.emojiArray[indexPath.row]
+                selectedEmojiCellIndexPath = indexPath
+                emojiSelected = true
+                
+            default:
+                factory.selectedColor = ColorSelectCell.colors[indexPath.row]
+                selectedColorCellIndexPath = indexPath
+                colorSelected = true
+        }
+        
+        collectionView.reloadData()
+        tryEnableCreationButton()
+    }
+    
+}
+
+
+
 

@@ -77,4 +77,5 @@ final class StatisticsViewController: UIViewController {
             make.width.height.equalTo(80)
         }
     }
+    
 }

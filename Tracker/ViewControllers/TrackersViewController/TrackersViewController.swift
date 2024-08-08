@@ -7,7 +7,7 @@ final class TrackersViewController: UIViewController {
     
     private let dateFormatter = DateFormatter()
     private let currentCalendar = TrackerCalendar.currentCalendar
-    private var currentDate: Date = Date()
+    private lazy var currentDate: Date = TrackerCalendar.currentDate
     private let categoriesUpdatedNotification = TrackersFactory.trackersForShowingUpdatedNotification
     private let factory = TrackersFactory.shared
     private var completedTrackers: [TrackerRecord] = []
@@ -102,6 +102,7 @@ final class TrackersViewController: UIViewController {
         button.tintColor = .trackerWhite
         button.layer.cornerRadius = 16
         button.isHidden = true
+        button.addTarget(self, action: #selector(didTapFiltersButton), for: .touchUpInside)
         return button
     }()
     
@@ -109,11 +110,12 @@ final class TrackersViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
+        currentDate = datePicker.date
         configureCollectionView()
         setUI()
         setupObservers()
         configureDismissingKeyboard()
+        factory.getInitialData()
     }
     
     deinit {
@@ -234,6 +236,11 @@ final class TrackersViewController: UIViewController {
     }
     
     //MARK: - Actions
+    //отладочное: при нажатии на кнопку Фильтры - БД очищается и экран обновляется
+    @objc private func didTapFiltersButton() {
+        factory.eraseAllDataFromBase()
+        updateCollectionViewPlaceholder(forSearch: false)
+    }
     
     @objc private func datePickerValueDateChanged(_ sender: UIDatePicker) {
         DispatchQueue.main.async {
@@ -269,16 +276,18 @@ extension TrackersViewController: UICollectionViewDataSource, UICollectionViewDe
     }
     
     //MARK: - ConfigureCell
-    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: TrackerCell.reuseIdentifier, for: indexPath) as? TrackerCell else {
-            return .init()
+    func collectionView(
+        _ collectionView: UICollectionView,
+        cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+            guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: TrackerCell.reuseIdentifier, for: indexPath) as? TrackerCell else {
+                return .init()
+            }
+            
+            let tracker = factory.trackersForShowing[indexPath.section].trackers[indexPath.item]
+            
+            cell.configureCell(for: tracker, date: currentDate)
+            return cell
         }
-        
-        let tracker = factory.trackersForShowing[indexPath.section].trackers[indexPath.item]
-        
-        cell.configureCell(for: tracker, date: currentDate)
-        return cell
-    }
     
     func collectionView(
         _ collectionView: UICollectionView,
@@ -346,5 +355,6 @@ extension TrackersViewController: UISearchBarDelegate {
         searchBar.setShowsCancelButton(true, animated: true)
         return true
     }
+    
 }
 

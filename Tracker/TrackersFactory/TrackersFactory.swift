@@ -8,6 +8,9 @@ final class TrackersFactory {
     static let trackersForShowingUpdatedNotification = Notification.Name("trackersForShowingUpdatedNotification")
     static let scheduleUpdatedNotification = Notification.Name("scheduleUpdatedNotification")
     
+    var selectedEmoji = ""
+    var selectedColor = UIColor()
+    
     var weekdayIndex = TrackerCalendar.currentDayWeekIndex
     
     var schedule = Array(repeating: false, count: WeekDay.allCases.count) {
@@ -26,29 +29,42 @@ final class TrackersFactory {
         didSet{
             //приводим к исходному schedule после добавления трекера в хранилище
             schedule = Array(repeating: false, count: WeekDay.allCases.count)
+            updateTrackersForShowing()
         }
     }
     
-    var completedTrackers: [TrackerRecord] = []
+    private let appDelegate = AppDelegate()
+    private lazy var context = appDelegate.persistentContainer.viewContext
+    private lazy var categoryStore = TrackerCategoryStore(context: context)
+    private lazy var trackerStore = TrackerStore(context: context)
+    private lazy var trackerRecordStore = TrackerRecordStore(context: context)
     
     // MARK: - Initializers
     
-    private  init() {}
+    private  init() {
+        getInitialData()
+    }
     
     // MARK: - Public Methods
     
+    func eraseAllDataFromBase() {
+        appDelegate.clearAllData(context: context)
+    }
+    
+    func getInitialData() {
+        trackerStore.loadInitialData(factory: self)
+    }
+    
     func addToStorage(tracker: Tracker, for category: String) {
-        if let index = trackersStorage.enumerated().first(where: { $0.element.title == category })?.offset {
-            let updatedCategory = trackersStorage[index]
-            var updatedTrackers = updatedCategory.trackers
-            updatedTrackers.append(tracker)
-            let newCategory = TrackerCategory(title: category, trackers: updatedTrackers)
-            trackersStorage[index] = newCategory
+        if let existingCategory = categoryStore.fetchAllCategories().first(where: { $0.title == category }) {
+            trackerStore.addTracker(tracker, to: existingCategory)
         } else {
-            let newCategory = TrackerCategory(title: category, trackers: [tracker])
-            trackersStorage.append(newCategory)
+            let newCategory = TrackerCategory(title: category, trackers: [])
+            categoryStore.addCategory(newCategory)
+            trackerStore.addTracker(tracker, to: newCategory)
         }
     }
+    
     
     func filterTrackers(in categoriesArray: [TrackerCategory], forDayWithIndex weekdayIndex: Int) -> [TrackerCategory] {
         var categoriesForShowing: [TrackerCategory] = []
@@ -98,37 +114,30 @@ final class TrackersFactory {
     
     func markTrackerAsCompleted(trackerID: UUID, on date: Date) {
         let record = TrackerRecord(trackerID: trackerID, date: date)
-        if !completedTrackers.contains(where: { $0.trackerID == trackerID && $0.date == date }) {
-            completedTrackers.append(record)
-        }
+        trackerRecordStore.addRecord(record)
     }
     
     func unmarkTrackerAsCompleted(trackerID: UUID, on date: Date) {
-        if let index = completedTrackers.firstIndex(where: { $0.trackerID == trackerID && $0.date == date } ) {
-            completedTrackers.remove(at: index)
-        }
+        let record = TrackerRecord(trackerID: trackerID, date: date)
+        trackerRecordStore.removeRecord(record)
+    }
+    
+    func todayAlreadyRecorded(trackerID: UUID) -> Bool {
+        let today = Date()
+        return trackerRecordStore.checkRecord(trackerID: trackerID, on: today)
     }
     
     func isTrackerCompleted(trackerID: UUID, on date: Date) -> Bool {
-        return completedTrackers.contains { $0.trackerID == trackerID && $0.date == date }
+        return trackerRecordStore.checkRecord(trackerID: trackerID, on: date)
     }
     
     func getRecordsCount(for tracker: Tracker) -> Int {
-        let trackerID = tracker.id
-        return completedTrackers.filter( {$0.trackerID == trackerID} ).count
-    }
-    
-    func randomColor() -> UIColor {
-        UIColor(named: "Color selection \(String(Int.random(in: 1...18)))")!
-    }
-    
-    func randomEmoji() -> String {
-        ["💎","🚀","🌙","🎁","⛄","🌊","⛵","🏀","🎱","💰","👄","🚲","🍉","💛","💚"].randomElement()!
-        
+        trackerRecordStore.getRecordsCount(for: tracker.id)
     }
     
     func generateCatName() -> String {
         ["Важное", "Домашний уют", "Cамочувствие", "Мелочи"].randomElement()!
     }
+    
 }
 
