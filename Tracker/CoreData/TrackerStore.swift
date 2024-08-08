@@ -76,7 +76,7 @@ final class TrackerStore: NSObject, NSFetchedResultsControllerDelegate {
             return nil
         }
     }
-
+    
     private func fetchCategoryCoreData(withTitle title: String) -> TrackerCategoryCoreData? {
         let fetchRequest: NSFetchRequest<TrackerCategoryCoreData> = TrackerCategoryCoreData.fetchRequest()
         fetchRequest.predicate = NSPredicate(format: "title == %@", title)

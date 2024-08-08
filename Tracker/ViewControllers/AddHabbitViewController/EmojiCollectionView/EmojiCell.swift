@@ -33,7 +33,7 @@ final class EmojiCell: UICollectionViewCell {
         label.text = emoji
         label.backgroundColor = isSelected ? .trackerLightGray : .clear
     }
-
+    
     private func configureConstraints(){
         
         contentView.snp.makeConstraints { make in

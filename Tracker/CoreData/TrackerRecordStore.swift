@@ -11,15 +11,21 @@ final class TrackerRecordStore {
     }
     
     func addRecord(_ record: TrackerRecord) {
+        let calendar = TrackerCalendar.currentCalendar
+        let startOfDay = calendar.startOfDay(for: record.date)
         let recordCoreData = TrackerRecordCoreData(context: context)
         recordCoreData.trackerID = record.trackerID
-        recordCoreData.date = record.date
+        recordCoreData.date = startOfDay
         appDelegate.saveContext(context: context)
     }
     
     func removeRecord(_ record: TrackerRecord) {
+        let calendar = TrackerCalendar.currentCalendar
+        let startOfDay = calendar.startOfDay(for: record.date)
+        let endOfDay = calendar.date(byAdding: .day, value: 1, to: startOfDay)!.addingTimeInterval(-1)
+        
         let fetchRequest: NSFetchRequest<TrackerRecordCoreData> = TrackerRecordCoreData.fetchRequest()
-        fetchRequest.predicate = NSPredicate(format: "trackerID == %@ AND date == %@", record.trackerID as CVarArg, record.date as CVarArg)
+        fetchRequest.predicate = NSPredicate(format: "trackerID == %@ AND date >= %@ AND date <= %@", record.trackerID as CVarArg, startOfDay as CVarArg, endOfDay as CVarArg)
         
         do {
             if let recordCoreData = try context.fetch(fetchRequest).first {
@@ -43,31 +49,13 @@ final class TrackerRecordStore {
         }
     }
     
-    func markTrackerAsCompleted(trackerID: UUID, on date: Date) {
-        let record = TrackerRecordCoreData(context: context)
-        record.trackerID = trackerID
-        record.date = date
-        appDelegate.saveContext(context: context)
-    }
-    
-    func unmarkTrackerAsCompleted(trackerID: UUID, on date: Date) {
-        let request: NSFetchRequest<TrackerRecordCoreData> = TrackerRecordCoreData.fetchRequest()
-        request.predicate = NSPredicate(format: "trackerID == %@ AND date == %@", trackerID as CVarArg, date as CVarArg)
-        
-        do {
-            let records = try context.fetch(request)
-            records.forEach { record in
-                context.delete(record)
-            }
-            appDelegate.saveContext(context: context)
-        } catch {
-            print("TrackerRecordStore - Failed to fetch record \(error.localizedDescription)")
-        }
-    }
-    
     func checkRecord(trackerID: UUID, on date: Date) -> Bool {
+        let calendar = Calendar.current
+        let startOfDay = calendar.startOfDay(for: date)
+        let endOfDay = calendar.date(byAdding: .day, value: 1, to: startOfDay)!.addingTimeInterval(-1)
+        
         let fetchRequest: NSFetchRequest<TrackerRecordCoreData> = TrackerRecordCoreData.fetchRequest()
-        fetchRequest.predicate = NSPredicate(format: "trackerID == %@ AND date == %@", trackerID as CVarArg, date as CVarArg)
+        fetchRequest.predicate = NSPredicate(format: "trackerID == %@ AND date >= %@ AND date <= %@", trackerID as CVarArg, startOfDay as CVarArg, endOfDay as CVarArg)
         
         do {
             let records = try context.fetch(fetchRequest)

@@ -498,6 +498,7 @@ extension AddHabbitViewController: UICollectionViewDelegate, UICollectionViewDat
         collectionView.reloadData()
         tryEnableCreationButton()
     }
+    
 }
 
 

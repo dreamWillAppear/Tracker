@@ -64,7 +64,7 @@ final class TrackersFactory {
             trackerStore.addTracker(tracker, to: newCategory)
         }
     }
-
+    
     
     func filterTrackers(in categoriesArray: [TrackerCategory], forDayWithIndex weekdayIndex: Int) -> [TrackerCategory] {
         var categoriesForShowing: [TrackerCategory] = []
@@ -121,11 +121,11 @@ final class TrackersFactory {
         let record = TrackerRecord(trackerID: trackerID, date: date)
         trackerRecordStore.removeRecord(record)
     }
-
+    
     func todayAlreadyRecorded(trackerID: UUID) -> Bool {
-            let today = Date()
-            return trackerRecordStore.checkRecord(trackerID: trackerID, on: today)
-        }
+        let today = Date()
+        return trackerRecordStore.checkRecord(trackerID: trackerID, on: today)
+    }
     
     func isTrackerCompleted(trackerID: UUID, on date: Date) -> Bool {
         return trackerRecordStore.checkRecord(trackerID: trackerID, on: date)

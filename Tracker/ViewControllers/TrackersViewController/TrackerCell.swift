@@ -112,7 +112,6 @@ final class TrackerCell: UICollectionViewCell {
     }
     
     private func configureIncreaseButton(tracker: Tracker, date: Date) {
-        
         guard !selectedDateIsFuture() else {
             increaseButton.isEnabled = false
             increaseButton.backgroundColor = trackerColor?.withAlphaComponent(0.2)
@@ -121,7 +120,6 @@ final class TrackerCell: UICollectionViewCell {
             return
         }
         
-        //почему-то если явно не включить, то кнопка и не включится, если хотя бы раз была выключена в guard
         increaseButton.isEnabled = true
         let isCompleted = factory.isTrackerCompleted(trackerID: tracker.id, on: date)
         let image = isCompleted ? UIImage(named: "Cell Button Done") : UIImage(systemName: "plus")

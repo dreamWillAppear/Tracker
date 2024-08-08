@@ -7,7 +7,7 @@ final class TrackersViewController: UIViewController {
     
     private let dateFormatter = DateFormatter()
     private let currentCalendar = TrackerCalendar.currentCalendar
-    private var currentDate: Date = Date()
+    private lazy var currentDate: Date = TrackerCalendar.currentDate
     private let categoriesUpdatedNotification = TrackersFactory.trackersForShowingUpdatedNotification
     private let factory = TrackersFactory.shared
     private var completedTrackers: [TrackerRecord] = []
@@ -110,7 +110,7 @@ final class TrackersViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
+        currentDate = datePicker.date
         configureCollectionView()
         setUI()
         setupObservers()
