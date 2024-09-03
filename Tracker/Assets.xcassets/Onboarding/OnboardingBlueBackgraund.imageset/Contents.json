@@ -1,0 +1,12 @@
+{
+  "images" : [
+    {
+      "filename" : "OnboardingBlueBackgraund.svg",
+      "idiom" : "universal"
+    }
+  ],
+  "info" : {
+    "author" : "xcode",
+    "version" : 1
+  }
+}

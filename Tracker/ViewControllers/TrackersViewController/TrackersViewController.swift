@@ -111,6 +111,7 @@ final class TrackersViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         currentDate = datePicker.date
+        checkOnboarding()
         configureCollectionView()
         setUI()
         setupObservers()
@@ -126,10 +127,6 @@ final class TrackersViewController: UIViewController {
     
     private func setupObservers() {
         NotificationCenter.default.addObserver(self, selector: #selector(categoriesUpdated), name: categoriesUpdatedNotification, object: nil)
-    }
-    
-    @objc private func categoriesUpdated() {
-        collectionView.reloadData()
     }
     
     private func configureCollectionView() {
@@ -150,6 +147,16 @@ final class TrackersViewController: UIViewController {
         tapAssideKeyboard.cancelsTouchesInView = false
         view.addGestureRecognizer(tapAssideKeyboard)
         searchField.delegate = self
+    }
+    
+    private func checkOnboarding() {
+        if !UserDefaults.standard.bool(forKey: "hasShownOnboarding") {
+            let onboardingVC = OnboardingViewController(transitionStyle: .scroll, navigationOrientation: .horizontal)
+            onboardingVC.modalPresentationStyle = .fullScreen
+            present(onboardingVC, animated: true) {
+                UserDefaults.standard.set(true, forKey: "hasShownOnboarding")
+            }
+        }
     }
     
     private func setUI() {
@@ -236,6 +243,10 @@ final class TrackersViewController: UIViewController {
     }
     
     //MARK: - Actions
+    @objc private func categoriesUpdated() {
+        collectionView.reloadData()
+    }
+    
     //отладочное: при нажатии на кнопку Фильтры - БД очищается и экран обновляется
     @objc private func didTapFiltersButton() {
         factory.eraseAllDataFromBase()
@@ -328,18 +339,18 @@ extension TrackersViewController: UISearchBarDelegate {
     
     func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
         switch searchText{
-                
-            case "":
-                updateCollectionViewPlaceholder(forSearch: false)
-                searchBar.setShowsCancelButton(false, animated: true)
-                factory.trackersForShowing = factory.filterTrackers(in: factory.trackersStorage, forDayWithIndex: factory.weekdayIndex)
-            default:
-                //без асинхронного вызова заглушка появляется только после ввода второго символа. Видимо потому что trackersForShowing: [TrackerCategory] уже пуст, но UI еще обновился?
-                DispatchQueue.main.async {
-                    self.updateCollectionViewPlaceholder(forSearch: true)
-                }
-                searchBar.setShowsCancelButton(true, animated: true)
-                factory.trackersForShowing = factory.filterTrackers(in: factory.trackersStorage, by: searchText)
+            
+        case "":
+            updateCollectionViewPlaceholder(forSearch: false)
+            searchBar.setShowsCancelButton(false, animated: true)
+            factory.trackersForShowing = factory.filterTrackers(in: factory.trackersStorage, forDayWithIndex: factory.weekdayIndex)
+        default:
+            //без асинхронного вызова заглушка появляется только после ввода второго символа. Видимо потому что trackersForShowing: [TrackerCategory] уже пуст, но UI еще обновился?
+            DispatchQueue.main.async {
+                self.updateCollectionViewPlaceholder(forSearch: true)
+            }
+            searchBar.setShowsCancelButton(true, animated: true)
+            factory.trackersForShowing = factory.filterTrackers(in: factory.trackersStorage, by: searchText)
         }
     }
     
