@@ -8,6 +8,8 @@ final class TrackersFactory {
     static let trackersForShowingUpdatedNotification = Notification.Name("trackersForShowingUpdatedNotification")
     static let scheduleUpdatedNotification = Notification.Name("scheduleUpdatedNotification")
     
+    lazy var context = appDelegate.persistentContainer.viewContext
+    
     var selectedEmoji = ""
     var selectedColor = UIColor()
     
@@ -34,7 +36,6 @@ final class TrackersFactory {
     }
     
     private let appDelegate = AppDelegate()
-    private lazy var context = appDelegate.persistentContainer.viewContext
     private lazy var categoryStore = TrackerCategoryStore(context: context)
     private lazy var trackerStore = TrackerStore(context: context)
     private lazy var trackerRecordStore = TrackerRecordStore(context: context)

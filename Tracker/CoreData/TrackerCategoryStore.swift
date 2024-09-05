@@ -11,6 +11,13 @@ final class TrackerCategoryStore {
         self.context = context
     }
     
+    func addCategory(name: String) {
+        let category = TrackerCategory(title: name, trackers: [])
+        let categoryCoreData = TrackerCategoryCoreData(context: context)
+        categoryCoreData.title = category.title
+        appDelegate.saveContext(context: context)
+    }
+    
     func addCategory(_ category: TrackerCategory) {
         let categoryCoreData = TrackerCategoryCoreData(context: context)
         categoryCoreData.title = category.title
