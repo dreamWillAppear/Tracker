@@ -162,5 +162,4 @@ extension OnboardingViewController: UIPageViewControllerDataSource, UIPageViewCo
             pageControl.currentPage = currentIndex
         }
     }
-    
 }

@@ -10,6 +10,18 @@ final class CategorySelectViewController: UIViewController, UITableViewDelegate,
     private let categoryCell = CategoryCell()
     private var selectedCategoryName = ""
     
+    private lazy var currentTableHeight: CGFloat = {
+        var height = CGFloat(75 * viewModel.categories.count)
+        
+        if height < 600 {
+            height = CGFloat(75 * viewModel.categories.count)
+        } else {
+            height = 600
+        }
+        
+        return height
+    }()
+    
     private lazy var tableView: UITableView = {
         let table = UITableView()
         table.backgroundColor = .trackerBackground
@@ -41,9 +53,15 @@ final class CategorySelectViewController: UIViewController, UITableViewDelegate,
         setUI()
     }
     
+    override func viewDidLayoutSubviews() {
+        super.viewDidLayoutSubviews()
+        currentTableHeight = tableView.frame.size.height
+    }
+    
     private func bindViewModel() {
         viewModel.categoriesUpdated = { [weak self] in
             self?.tableView.reloadData()
+            self?.updateTableViewHeight()
         }
         
         viewModel.fetchCategories()
@@ -63,6 +81,7 @@ final class CategorySelectViewController: UIViewController, UITableViewDelegate,
         tableView.separatorInset = UIEdgeInsets(top: 0, left: 16, bottom: 0, right: 16)
         
         setConstraints()
+        updateTableViewHeight()
     }
     
     private func setConstraints() {
@@ -70,7 +89,7 @@ final class CategorySelectViewController: UIViewController, UITableViewDelegate,
             make.top.equalToSuperview().inset(81)
             make.leading.equalToSuperview().inset(16)
             make.trailing.equalToSuperview().inset(16)
-            make.bottom.equalTo(addCategoryButton.snp.top).offset(-47)
+            make.height.equalTo(currentTableHeight)
         }
         
         addCategoryButton.snp.makeConstraints { make in
@@ -81,6 +100,23 @@ final class CategorySelectViewController: UIViewController, UITableViewDelegate,
         }
     }
         
+    private func updateTableViewHeight() {
+        
+        var tableViewHeight: CGFloat = CGFloat(75 * viewModel.categories.count)
+        
+        guard tableViewHeight < 600 else {
+            tableViewHeight = 600
+            return
+        }
+        
+        tableView.snp.updateConstraints { make in
+            make.top.equalToSuperview().inset(81)
+            make.leading.equalToSuperview().inset(16)
+            make.trailing.equalToSuperview().inset(16)
+            make.height.equalTo(tableViewHeight)
+        }
+    }
+    
     //MARK: - Actions
     
     @objc func didTapAddTrackerButton() {
@@ -88,6 +124,7 @@ final class CategorySelectViewController: UIViewController, UITableViewDelegate,
         viewController.newCategoryAdded = { [weak self] in
             self?.viewModel.fetchCategories()
             self?.tableView.reloadData()
+            self?.updateTableViewHeight()
         }
         present(UINavigationController(rootViewController: viewController), animated: true)
     }
@@ -102,7 +139,7 @@ extension CategorySelectViewController {
        guard  let cell = tableView.dequeueReusableCell(withIdentifier: CategoryCell.reuseIdentifier, for: indexPath) as? CategoryCell else {
             return UITableViewCell()
         }
-        let category = viewModel.categories[indexPath.row]
+        let category = viewModel.categories.reversed()[indexPath.row]
         cell.configureCell(categoryName: category.title)
         return cell
     }
