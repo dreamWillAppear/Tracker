@@ -1,6 +1,6 @@
 import UIKit
 
-final class AddCategoryViewController: UIViewController {
+final class AddCategoryViewController: UIViewController, UITextFieldDelegate {
     
     var newCategoryAdded: (() -> Void)?
     
@@ -24,10 +24,11 @@ final class AddCategoryViewController: UIViewController {
     
     private lazy var doneButton: UIButton = {
         let button = UIButton(type: .system)
+        button.isEnabled = false
         button.setTitle("Готово", for: .normal)
+        button.setTitleColor(.trackerWhite, for: .normal)
         button.titleLabel?.font = .systemFont(ofSize: 16)
-        button.tintColor = .trackerGray
-        button.backgroundColor = .trackerBlack
+        button.backgroundColor = .trackerGray
         button.layer.cornerRadius = 16
         button.addTarget(self, action: #selector(didTapDoneButton), for: .touchUpInside)
         return button
@@ -35,8 +36,13 @@ final class AddCategoryViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-      
+        categoryNameTextField.delegate = self
         setUI()
+    }
+    
+    func textFieldDidChangeSelection(_ textField: UITextField) {
+        guard  let text = textField.text else { return }
+        setDoneButtonState(isEnabled: !text.isEmpty)
     }
     
     private func setUI() {
@@ -50,7 +56,7 @@ final class AddCategoryViewController: UIViewController {
         
         setConstraints()
     }
-
+    
     private func setConstraints() {
         categoryNameTextField.snp.makeConstraints { make in
             make.centerX.equalToSuperview()
@@ -67,13 +73,17 @@ final class AddCategoryViewController: UIViewController {
         }
     }
     
-    //MARK: - Actions
-
-   @objc private func didTapDoneButton() {
-       guard let name = categoryNameTextField.text, !name.isEmpty else { return }
-       viewModel.addCategory(name: name)
-       newCategoryAdded?()
-       self.dismiss(animated: true)
+    private func setDoneButtonState(isEnabled: Bool) {
+        doneButton.isEnabled = isEnabled
+        doneButton.backgroundColor = isEnabled ? .trackerBlack : .trackerGray
     }
     
+    //MARK: - Actions
+    
+    @objc private func didTapDoneButton() {
+        guard let name = categoryNameTextField.text, !name.isEmpty else { return }
+        viewModel.addCategory(name: name)
+        newCategoryAdded?()
+        self.dismiss(animated: true)
+    }
 }

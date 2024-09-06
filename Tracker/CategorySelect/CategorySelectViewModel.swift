@@ -1,8 +1,6 @@
-import Combine
-
 final class CategorySelectViewModel {
     
-    @Published var categories: [TrackerCategory] = []
+    var categories: [TrackerCategory] = []
     
     private let trackerCategoryStore = TrackerCategoryStore(context: TrackersFactory.shared.context)
     
@@ -16,7 +14,7 @@ final class CategorySelectViewModel {
         trackerCategoryStore.addCategory(name: name)
     }
     
-     func fetchCategories() {
+    func fetchCategories() {
         categories = trackerCategoryStore.fetchAllCategories()
         categoriesUpdated?()
     }

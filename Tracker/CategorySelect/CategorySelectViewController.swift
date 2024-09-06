@@ -1,5 +1,4 @@
 import UIKit
-import Combine
 
 final class CategorySelectViewController: UIViewController, UITableViewDelegate, UITableViewDataSource {
     
@@ -28,7 +27,7 @@ final class CategorySelectViewController: UIViewController, UITableViewDelegate,
         table.layer.cornerRadius = 16
         table.register(
             CategoryCell.self,
-           forCellReuseIdentifier: CategoryCell.reuseIdentifier)
+            forCellReuseIdentifier: CategoryCell.reuseIdentifier)
         return table
     }()
     
@@ -44,9 +43,32 @@ final class CategorySelectViewController: UIViewController, UITableViewDelegate,
         
     }()
     
+    private lazy var noCategoriesPlaceholder: UIStackView = {
+        let view = UIStackView()
+        view.axis = .vertical
+        view.alignment = .center
+        view.spacing = 8
+        return view
+    }()
+    
+    private var noCategoriesImageView: UIImageView = {
+        let imageView = UIImageView()
+        imageView.image = .noTrackers
+        return imageView
+    }()
+    
+    private var noCategoriesLabel: UILabel = {
+        let label = UILabel()
+        label.text = "Привычки и события можно\n объединить по смыслу"
+        label.numberOfLines = 2
+        label.font = .systemFont(ofSize: 12)
+        label.textAlignment = .center
+        return label
+    }()
+    
     override func viewDidLoad() {
         super.viewDidLoad()
- 
+        
         tableView.dataSource = self
         tableView.delegate = self
         
@@ -62,6 +84,7 @@ final class CategorySelectViewController: UIViewController, UITableViewDelegate,
         viewModel.categoriesUpdated = { [weak self] in
             self?.tableView.reloadData()
             self?.updateTableViewHeight()
+            self?.updateNoCategoriesPlaceholderVisibility()
         }
         
         viewModel.fetchCategories()
@@ -72,13 +95,19 @@ final class CategorySelectViewController: UIViewController, UITableViewDelegate,
         title = "Категория"
         view.backgroundColor = .trackerWhite
         
-        [tableView, addCategoryButton].forEach {
+        updateNoCategoriesPlaceholderVisibility()
+        
+        [tableView, addCategoryButton, noCategoriesPlaceholder].forEach {
             view.addSubview($0)
         }
         
         
         tableView.separatorStyle = .singleLine
         tableView.separatorInset = UIEdgeInsets(top: 0, left: 16, bottom: 0, right: 16)
+        
+        [noCategoriesImageView, noCategoriesLabel].forEach {
+            noCategoriesPlaceholder.addArrangedSubview($0)
+        }
         
         setConstraints()
         updateTableViewHeight()
@@ -98,13 +127,17 @@ final class CategorySelectViewController: UIViewController, UITableViewDelegate,
             make.trailing.equalToSuperview().inset(16)
             make.bottom.equalToSuperview().inset(50)
         }
-    }
         
+        noCategoriesPlaceholder.snp.makeConstraints { make in
+            make.centerX.centerY.equalToSuperview()
+        }
+    }
+    
     private func updateTableViewHeight() {
         
         var tableViewHeight: CGFloat = CGFloat(75 * viewModel.categories.count)
         
-        guard tableViewHeight < 600 else {
+        guard tableViewHeight <= 600 else {
             tableViewHeight = 600
             return
         }
@@ -117,6 +150,10 @@ final class CategorySelectViewController: UIViewController, UITableViewDelegate,
         }
     }
     
+    private func updateNoCategoriesPlaceholderVisibility() {
+        noCategoriesPlaceholder.isHidden = !viewModel.categories.isEmpty
+    }
+    
     //MARK: - Actions
     
     @objc func didTapAddTrackerButton() {
@@ -125,6 +162,7 @@ final class CategorySelectViewController: UIViewController, UITableViewDelegate,
             self?.viewModel.fetchCategories()
             self?.tableView.reloadData()
             self?.updateTableViewHeight()
+            self?.updateNoCategoriesPlaceholderVisibility()
         }
         present(UINavigationController(rootViewController: viewController), animated: true)
     }
@@ -136,23 +174,23 @@ extension CategorySelectViewController {
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-       guard  let cell = tableView.dequeueReusableCell(withIdentifier: CategoryCell.reuseIdentifier, for: indexPath) as? CategoryCell else {
+        guard  let cell = tableView.dequeueReusableCell(withIdentifier: CategoryCell.reuseIdentifier, for: indexPath) as? CategoryCell else {
             return UITableViewCell()
         }
         let category = viewModel.categories.reversed()[indexPath.row]
         cell.configureCell(categoryName: category.title)
         return cell
     }
-
+    
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         return 75
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        let selectedCategory = viewModel.categories[indexPath.row]
+        let selectedCategory = viewModel.categories.reversed()[indexPath.row]
         categoryNameSelected?(selectedCategory.title)
         self.dismiss(animated: true)
     }
-
+    
 }
 

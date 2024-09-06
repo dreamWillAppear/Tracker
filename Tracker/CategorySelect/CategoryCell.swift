@@ -1,11 +1,11 @@
 import UIKit
 import SnapKit
 
- class CategoryCell: UITableViewCell {
+class CategoryCell: UITableViewCell {
     
     static let reuseIdentifier = "CategoryCell"
     
-     lazy var categoryLabel: UILabel = {
+    lazy var categoryLabel: UILabel = {
         let label = UILabel()
         label.font = .systemFont(ofSize: 17, weight: .regular)
         label.textColor = .trackerBlack
@@ -21,7 +21,7 @@ import SnapKit
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-        
+    
     private func setUI() {
         backgroundColor  = .trackerBackground
         contentView.addSubview(categoryLabel)
