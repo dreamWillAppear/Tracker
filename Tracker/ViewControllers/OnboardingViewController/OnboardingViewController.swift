@@ -3,32 +3,18 @@ import SnapKit
 
 final class OnboardingViewController: UIPageViewController {
     
-    private lazy var pages = [UIViewController]()
-    
-    private lazy var  bluePage: UIViewController = {
-        let vc = UIViewController()
-        
-        let imageView = UIImageView(image: UIImage(resource: .onboardingBlueBackgraund))
-        imageView.contentMode = .scaleAspectFill
-        vc.view.addSubview(imageView)
-        imageView.snp.makeConstraints { make in
-            make.leading.trailing.top.bottom.equalToSuperview()
-        }
-        
-        let label = UILabel()
-        label.text = "Отслеживайте только то, что хотите"
-        label.textAlignment = .center
-        label.numberOfLines = 0
-        label.font = UIFont.systemFont(ofSize: 32, weight: .bold)
-        label.textColor = .trackerBlack
-        vc.view.addSubview(label)
-        label.snp.makeConstraints { make in
-            make.bottom.equalToSuperview().inset(340)
-            make.leading.trailing.equalToSuperview().inset(16)
-        }
-        
-        return vc
+    private lazy var bluePageText: String = {
+        "Отслеживайте только то, что хотите"
     }()
+    
+    private lazy var redPageText: String = {
+        "Даже если это не литры воды и йога"
+    }()
+    
+    private lazy var pages = [
+        OnboardingPagesViewController(backgroundImage: .onboardingBlueBackground, labelText: bluePageText),
+        OnboardingPagesViewController(backgroundImage: .onboardingRedBackground, labelText: redPageText)
+    ]
     
     lazy var pageControl: UIPageControl = {
         let pageControl = UIPageControl()
@@ -37,46 +23,6 @@ final class OnboardingViewController: UIPageViewController {
         pageControl.currentPageIndicatorTintColor = .trackerBlack
         pageControl.pageIndicatorTintColor = .trackerGray
         return pageControl
-    }()
-    
-    private lazy var redPage: UIViewController = {
-        let vc = UIViewController()
-        
-        let imageView = UIImageView(image: UIImage(resource: .onboardingRedBackground))
-        imageView.contentMode = .scaleAspectFill
-        vc.view.addSubview(imageView)
-        imageView.snp.makeConstraints { make in
-            make.leading.trailing.top.bottom.equalToSuperview()
-        }
-        
-        let label = UILabel()
-        label.text = "Даже если это не литры воды и йога"
-        label.textAlignment = .center
-        label.numberOfLines = 0
-        label.font = UIFont.systemFont(ofSize: 32, weight: .bold)
-        label.textColor = .trackerBlack
-        vc.view.addSubview(label)
-        label.snp.makeConstraints { make in
-            make.bottom.equalToSuperview().inset(340)
-            make.leading.trailing.equalToSuperview().inset(16)
-        }
-        
-        return vc
-    }()
-    
-    private lazy var amazingButton: UIButton = {
-        let button = UIButton(type: .system)
-        button.backgroundColor = .trackerBlack
-        button.titleLabel?.font = UIFont.systemFont(ofSize: 16, weight: .medium)
-        button.titleLabel?.tintColor = .trackerWhite
-        button.setTitle("Вот это технологии!", for: .normal)
-        button.layer.cornerRadius = 16
-        button.addTarget(
-            self,
-            action: #selector(didTapThatAmazingButton),
-            for: .touchUpInside
-        )
-        return button
     }()
     
     override func viewDidLoad() {
@@ -92,15 +38,13 @@ final class OnboardingViewController: UIPageViewController {
     }
     
     private func setUI() {
-        [bluePage, redPage].forEach {
-            pages.append($0)
-        }
+        
         
         if pages.first != nil {
-            setViewControllers([bluePage], direction: .forward, animated: true, completion: nil)
+            setViewControllers([pages[0]], direction: .forward, animated: true, completion: nil)
         }
         
-        [pageControl, amazingButton].forEach {
+        [pageControl].forEach {
             view.addSubview($0)
         }
         
@@ -108,32 +52,22 @@ final class OnboardingViewController: UIPageViewController {
     }
     
     private func setConstraints() {
-        
-        amazingButton.snp.makeConstraints { make in
-            make.height.equalTo(60)
-            make.leading.equalToSuperview().inset(20)
-            make.trailing.equalToSuperview().inset(20)
-            make.bottom.equalToSuperview().inset(84)
-        }
-        
         pageControl.snp.makeConstraints { make in
             make.centerX.equalToSuperview()
             make.height.equalTo(6)
-            make.bottom.equalTo(amazingButton.snp.top).inset(-24)
+            make.bottom.equalToSuperview().inset(168)
         }
         
     }
-    
-    @objc private func didTapThatAmazingButton() {
-        self.dismiss(animated: true)
-    }
-    
 }
 
 extension OnboardingViewController: UIPageViewControllerDataSource, UIPageViewControllerDelegate {
     
     func pageViewController(_ pageViewController: UIPageViewController, viewControllerBefore viewController: UIViewController) -> UIViewController? {
-        guard let viewControllerIndex = pages.firstIndex(of: viewController) else { return nil }
+        guard let onboardingViewController = viewController as? OnboardingPagesViewController,
+              let viewControllerIndex = pages.firstIndex(of: onboardingViewController) else {
+            return nil
+        }
         
         let previousIndex = viewControllerIndex - 1
         
@@ -145,7 +79,10 @@ extension OnboardingViewController: UIPageViewControllerDataSource, UIPageViewCo
     }
     
     func pageViewController(_ pageViewController: UIPageViewController, viewControllerAfter viewController: UIViewController) -> UIViewController? {
-        guard let viewControllerIndex = pages.firstIndex(of: viewController) else { return nil }
+        guard let onboardingViewController = viewController as? OnboardingPagesViewController,
+              let viewControllerIndex = pages.firstIndex(of: onboardingViewController) else {
+            return nil
+        }
         
         let nextIndex = viewControllerIndex + 1
         
@@ -157,7 +94,7 @@ extension OnboardingViewController: UIPageViewControllerDataSource, UIPageViewCo
     }
     
     func pageViewController(_ pageViewController: UIPageViewController, didFinishAnimating finished: Bool, previousViewControllers: [UIViewController], transitionCompleted completed: Bool) {
-        if let currentViewController = pageViewController.viewControllers?.first,
+        if completed, let currentViewController = pageViewController.viewControllers?.first as? OnboardingPagesViewController,
            let currentIndex = pages.firstIndex(of: currentViewController) {
             pageControl.currentPage = currentIndex
         }
