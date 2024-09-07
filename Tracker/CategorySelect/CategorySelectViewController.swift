@@ -7,18 +7,10 @@ final class CategorySelectViewController: UIViewController, UITableViewDelegate,
     private let addHabbitViewController = AddHabbitViewController()
     private let viewModel = CategorySelectViewModel()
     private let categoryCell = CategoryCell()
-    private var selectedCategoryName = ""
+    private let rowHeight: CGFloat = 75
     
     private lazy var currentTableHeight: CGFloat = {
-        var height = CGFloat(75 * viewModel.categories.count)
-        
-        if height < 600 {
-            height = CGFloat(75 * viewModel.categories.count)
-        } else {
-            height = 600
-        }
-        
-        return height
+        calculateTableViewHeight()
     }()
     
     private lazy var tableView: UITableView = {
@@ -80,6 +72,29 @@ final class CategorySelectViewController: UIViewController, UITableViewDelegate,
         currentTableHeight = tableView.frame.size.height
     }
     
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        viewModel.categories.count
+    }
+    
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        guard  let cell = tableView.dequeueReusableCell(withIdentifier: CategoryCell.reuseIdentifier, for: indexPath) as? CategoryCell else {
+            return UITableViewCell()
+        }
+        let category = viewModel.categories.reversed()[indexPath.row]
+        cell.configureCell(categoryName: category.title)
+        return cell
+    }
+    
+    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+        rowHeight
+    }
+    
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        let selectedCategory = viewModel.categories.reversed()[indexPath.row]
+        categoryNameSelected?(selectedCategory.title)
+        self.dismiss(animated: true)
+    }
+    
     private func bindViewModel() {
         viewModel.categoriesUpdated = { [weak self] in
             self?.tableView.reloadData()
@@ -133,19 +148,34 @@ final class CategorySelectViewController: UIViewController, UITableViewDelegate,
         }
     }
     
+    private func calculateTableViewHeight() -> CGFloat {
+        let screenHeight = UIScreen.main.bounds.height
+        let referenceScreenHeight: Double = 896 // высота экрана iPhone 11
+        let referenceMaxTableHeight: Double = 600 // максимальная высота таблицы для iPhone 11
+        
+        let proportion = screenHeight / referenceScreenHeight - 0.08
+        
+        // Вычисляем высоту таблицы на основе пропорции
+        let maxTableHeight = referenceMaxTableHeight * proportion
+        
+        // Вычисляем высоту таблицы на основе количества строк
+        let rowHeight: CGFloat = 75 // высота одной строки
+        let tableHeight: CGFloat = rowHeight * CGFloat(viewModel.categories.count)
+        
+        // Округляем tableHeight до ближайшего кратного высоте ячейки
+        let roundedTableHeight = (tableHeight / rowHeight).rounded() * rowHeight
+        
+        // Ограничиваем высоту таблицы максимальным значением
+        guard roundedTableHeight < maxTableHeight else { return maxTableHeight }
+        
+        return roundedTableHeight
+    }
+    
     private func updateTableViewHeight() {
         
-        var tableViewHeight: CGFloat = CGFloat(75 * viewModel.categories.count)
-        
-        guard tableViewHeight <= 600 else {
-            tableViewHeight = 600
-            return
-        }
+        let tableViewHeight: CGFloat = calculateTableViewHeight()
         
         tableView.snp.updateConstraints { make in
-            make.top.equalToSuperview().inset(81)
-            make.leading.equalToSuperview().inset(16)
-            make.trailing.equalToSuperview().inset(16)
             make.height.equalTo(tableViewHeight)
         }
     }
@@ -166,31 +196,5 @@ final class CategorySelectViewController: UIViewController, UITableViewDelegate,
         }
         present(UINavigationController(rootViewController: viewController), animated: true)
     }
-}
-
-extension CategorySelectViewController {
-    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        viewModel.categories.count
-    }
-    
-    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        guard  let cell = tableView.dequeueReusableCell(withIdentifier: CategoryCell.reuseIdentifier, for: indexPath) as? CategoryCell else {
-            return UITableViewCell()
-        }
-        let category = viewModel.categories.reversed()[indexPath.row]
-        cell.configureCell(categoryName: category.title)
-        return cell
-    }
-    
-    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        return 75
-    }
-    
-    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        let selectedCategory = viewModel.categories.reversed()[indexPath.row]
-        categoryNameSelected?(selectedCategory.title)
-        self.dismiss(animated: true)
-    }
-    
 }
 

@@ -30,7 +30,6 @@
 		FD42042B2BF17E7E0007A254 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = FD42042A2BF17E7E0007A254 /* Assets.xcassets */; };
 		FD42042E2BF17E7E0007A254 /* Base in Resources */ = {isa = PBXBuildFile; fileRef = FD42042D2BF17E7E0007A254 /* Base */; };
 		FD53E1962BF53F580073B644 /* SnapKit in Frameworks */ = {isa = PBXBuildFile; productRef = FD53E1952BF53F580073B644 /* SnapKit */; };
-		FD53E1982BF53F580073B644 /* SnapKit-Dynamic in Frameworks */ = {isa = PBXBuildFile; productRef = FD53E1972BF53F580073B644 /* SnapKit-Dynamic */; };
 		FD53E19A2BF562890073B644 /* StatisticsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = FD53E1992BF562890073B644 /* StatisticsViewController.swift */; };
 		FD80C2862C3ECAA000885B41 /* TrackerStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = FD80C2852C3ECAA000885B41 /* TrackerStore.swift */; };
 		FD80C2892C3F38BB00885B41 /* TrackerCategoryStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = FD80C2882C3F38BB00885B41 /* TrackerCategoryStore.swift */; };
@@ -86,7 +85,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				FD53E1962BF53F580073B644 /* SnapKit in Frameworks */,
-				FD53E1982BF53F580073B644 /* SnapKit-Dynamic in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -263,7 +261,6 @@
 			name = Tracker;
 			packageProductDependencies = (
 				FD53E1952BF53F580073B644 /* SnapKit */,
-				FD53E1972BF53F580073B644 /* SnapKit-Dynamic */,
 			);
 			productName = Tracker;
 			productReference = FD42041E2BF17E7C0007A254 /* Tracker.app */;
@@ -591,11 +588,6 @@
 			isa = XCSwiftPackageProductDependency;
 			package = FD53E1942BF53F580073B644 /* XCRemoteSwiftPackageReference "SnapKit" */;
 			productName = SnapKit;
-		};
-		FD53E1972BF53F580073B644 /* SnapKit-Dynamic */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = FD53E1942BF53F580073B644 /* XCRemoteSwiftPackageReference "SnapKit" */;
-			productName = "SnapKit-Dynamic";
 		};
 /* End XCSwiftPackageProductDependency section */
 
