@@ -4,7 +4,7 @@ final class CategorySelectViewController: UIViewController, UITableViewDelegate,
     
     var categoryNameSelected: ((String) -> Void)?
     
-    private let addHabbitViewController = AddHabbitViewController()
+    private var selectedCategoryName: String
     private let viewModel = CategorySelectViewModel()
     private let categoryCell = CategoryCell()
     private let rowHeight: CGFloat = 75
@@ -58,6 +58,15 @@ final class CategorySelectViewController: UIViewController, UITableViewDelegate,
         return label
     }()
     
+    init(selectedCategoryName: String) {
+        self.selectedCategoryName = selectedCategoryName
+        super.init(nibName: nil, bundle: nil)
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -80,8 +89,12 @@ final class CategorySelectViewController: UIViewController, UITableViewDelegate,
         guard  let cell = tableView.dequeueReusableCell(withIdentifier: CategoryCell.reuseIdentifier, for: indexPath) as? CategoryCell else {
             return UITableViewCell()
         }
+        
         let category = viewModel.categories.reversed()[indexPath.row]
-        cell.configureCell(categoryName: category.title)
+        let isSelected = selectedCategoryName == category.title
+        
+        cell.checkmarkImageView.isHidden = false
+        cell.configureCell(categoryName: category.title, isSelected: isSelected)
         return cell
     }
     
@@ -91,6 +104,8 @@ final class CategorySelectViewController: UIViewController, UITableViewDelegate,
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         let selectedCategory = viewModel.categories.reversed()[indexPath.row]
+        let cell = tableView.cellForRow(at: indexPath) as? CategoryCell
+        cell?.checkmarkImageView.isHidden = false
         categoryNameSelected?(selectedCategory.title)
         self.dismiss(animated: true)
     }

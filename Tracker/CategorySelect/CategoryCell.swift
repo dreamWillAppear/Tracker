@@ -13,6 +13,14 @@ class CategoryCell: UITableViewCell {
         return label
     }()
     
+    lazy var checkmarkImageView: UIImageView = {
+        let imageView = UIImageView()
+        imageView.image = UIImage(systemName: "checkmark")
+        imageView.contentMode = .center
+        imageView.isHidden = true
+        return imageView
+    }()
+    
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         setUI()
@@ -22,19 +30,32 @@ class CategoryCell: UITableViewCell {
         fatalError("init(coder:) has not been implemented")
     }
     
+    func configureCell(categoryName: String, isSelected: Bool) {
+        categoryLabel.text = categoryName
+        checkmarkImageView.isHidden = !isSelected
+    }
+    
     private func setUI() {
         backgroundColor  = .trackerBackground
-        contentView.addSubview(categoryLabel)
         contentView.layer.cornerRadius = 16
         
+        [categoryLabel, checkmarkImageView].forEach() {
+            contentView.addSubview($0)
+        }
+        
+        setConstraints()
+    }
+    
+    private func setConstraints() {
         categoryLabel.snp.makeConstraints { make in
             make.leading.equalToSuperview().inset(16)
             make.centerY.equalToSuperview()
         }
+        
+        checkmarkImageView.snp.makeConstraints { make in
+            make.width.height.equalTo(24)
+            make.trailing.equalToSuperview().inset(16)
+            make.centerY.equalToSuperview()
+        }
     }
-    
-    func configureCell(categoryName: String) {
-        categoryLabel.text = categoryName
-    }
-    
 }

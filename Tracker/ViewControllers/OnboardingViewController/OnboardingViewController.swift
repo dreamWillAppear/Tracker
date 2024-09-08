@@ -40,8 +40,8 @@ final class OnboardingViewController: UIPageViewController {
     private func setUI() {
         
         
-        if pages.first != nil {
-            setViewControllers([pages[0]], direction: .forward, animated: true, completion: nil)
+        if let firstPage = pages.first {
+            setViewControllers([firstPage], direction: .forward, animated: true, completion: nil)
         }
         
         [pageControl].forEach {
@@ -57,7 +57,6 @@ final class OnboardingViewController: UIPageViewController {
             make.height.equalTo(6)
             make.bottom.equalToSuperview().inset(168)
         }
-        
     }
 }
 

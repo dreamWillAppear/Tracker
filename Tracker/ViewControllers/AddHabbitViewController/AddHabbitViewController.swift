@@ -7,10 +7,10 @@ final class AddHabbitViewController: UIViewController, UITextFieldDelegate {
     //MARK: - Public Properties
     
     var isHabbit = false
-    
+    var categoryName = ""
+    var selectedCategory: (() -> String)?
     // MARK: - Private Properties
-    
-     var categoryName = ""
+
     private let factory = TrackersFactory.shared
     private var categorySelected = false
     private var trackerNameEntered = false
@@ -347,7 +347,7 @@ final class AddHabbitViewController: UIViewController, UITextFieldDelegate {
     //MARK: - ACTIONS
     
     @objc private func didTapCategoryButton() {
-        let viewController = CategorySelectViewController()
+        let viewController = CategorySelectViewController(selectedCategoryName: categoryName)
         viewController.categoryNameSelected = { [weak self] category in
             self?.categorySelected = true
             self?.categoryName = category
@@ -434,7 +434,6 @@ extension AddHabbitViewController: UICollectionViewDelegate, UICollectionViewDat
                 default:
                     return ColorSelectCell.colors.count
             }
-            
         }
     
     func collectionView(

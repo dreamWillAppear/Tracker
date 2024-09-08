@@ -196,10 +196,10 @@
 		FD4204202BF17E7C0007A254 /* Tracker */ = {
 			isa = PBXGroup;
 			children = (
-				FD9EEB0D2C89068C0004E154 /* CategorySelect */,
 				FD4204212BF17E7C0007A254 /* AppDelegate.swift */,
 				1631E0992BF40A85003986AE /* TabBarController.swift */,
 				FD8A207A2C111B8D0056A256 /* TrackerCalendar.swift */,
+				FD9EEB0D2C89068C0004E154 /* CategorySelect */,
 				1645C9B12BF8A5A600CC7B90 /* Models */,
 				FD53E19B2BF5657C0073B644 /* ViewControllers */,
 				16947A4D2C033C8300426968 /* TrackersFactory */,
