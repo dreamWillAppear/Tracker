@@ -151,7 +151,7 @@ final class TrackersViewController: UIViewController {
     
     private func checkOnboarding() {
         if !UserDefaults.standard.bool(forKey: "hasShownOnboarding") {
-            let onboardingVC = OnboardingViewController(transitionStyle: .scroll, navigationOrientation: .horizontal)
+            let onboardingVC = OnboardingViewController(transitionStyle: .pageCurl, navigationOrientation: .horizontal)
             onboardingVC.modalPresentationStyle = .fullScreen
             present(onboardingVC, animated: true) {
                 UserDefaults.standard.set(true, forKey: "hasShownOnboarding")

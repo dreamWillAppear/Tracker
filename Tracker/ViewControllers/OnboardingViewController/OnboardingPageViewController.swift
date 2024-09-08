@@ -1,7 +1,7 @@
 import UIKit
 import SnapKit
 
-final class OnboardingPagesViewController: UIViewController {
+final class OnboardingPageViewController: UIViewController {
     
     private var backgroundImage: UIImage
     private var labelText: String

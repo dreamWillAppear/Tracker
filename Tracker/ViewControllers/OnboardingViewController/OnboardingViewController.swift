@@ -12,8 +12,8 @@ final class OnboardingViewController: UIPageViewController {
     }()
     
     private lazy var pages = [
-        OnboardingPagesViewController(backgroundImage: .onboardingBlueBackground, labelText: bluePageText),
-        OnboardingPagesViewController(backgroundImage: .onboardingRedBackground, labelText: redPageText)
+        OnboardingPageViewController(backgroundImage: .onboardingBlueBackground, labelText: bluePageText),
+        OnboardingPageViewController(backgroundImage: .onboardingRedBackground, labelText: redPageText)
     ]
     
     lazy var pageControl: UIPageControl = {
@@ -64,7 +64,7 @@ final class OnboardingViewController: UIPageViewController {
 extension OnboardingViewController: UIPageViewControllerDataSource, UIPageViewControllerDelegate {
     
     func pageViewController(_ pageViewController: UIPageViewController, viewControllerBefore viewController: UIViewController) -> UIViewController? {
-        guard let onboardingViewController = viewController as? OnboardingPagesViewController,
+        guard let onboardingViewController = viewController as? OnboardingPageViewController,
               let viewControllerIndex = pages.firstIndex(of: onboardingViewController) else {
             return nil
         }
@@ -79,7 +79,7 @@ extension OnboardingViewController: UIPageViewControllerDataSource, UIPageViewCo
     }
     
     func pageViewController(_ pageViewController: UIPageViewController, viewControllerAfter viewController: UIViewController) -> UIViewController? {
-        guard let onboardingViewController = viewController as? OnboardingPagesViewController,
+        guard let onboardingViewController = viewController as? OnboardingPageViewController,
               let viewControllerIndex = pages.firstIndex(of: onboardingViewController) else {
             return nil
         }
@@ -94,7 +94,7 @@ extension OnboardingViewController: UIPageViewControllerDataSource, UIPageViewCo
     }
     
     func pageViewController(_ pageViewController: UIPageViewController, didFinishAnimating finished: Bool, previousViewControllers: [UIViewController], transitionCompleted completed: Bool) {
-        if completed, let currentViewController = pageViewController.viewControllers?.first as? OnboardingPagesViewController,
+        if completed, let currentViewController = pageViewController.viewControllers?.first as? OnboardingPageViewController,
            let currentIndex = pages.firstIndex(of: currentViewController) {
             pageControl.currentPage = currentIndex
         }
