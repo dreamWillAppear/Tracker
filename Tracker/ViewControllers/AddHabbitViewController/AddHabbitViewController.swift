@@ -7,10 +7,10 @@ final class AddHabbitViewController: UIViewController, UITextFieldDelegate {
     //MARK: - Public Properties
     
     var isHabbit = false
-    
+    var categoryName = ""
+    var selectedCategory: (() -> String)?
     // MARK: - Private Properties
-    
-    private var categoryName = ""
+
     private let factory = TrackersFactory.shared
     private var categorySelected = false
     private var trackerNameEntered = false
@@ -188,6 +188,10 @@ final class AddHabbitViewController: UIViewController, UITextFieldDelegate {
         NotificationCenter.default.removeObserver(self, name: scheduleUpdateNotification, object: nil)
     }
     
+    func selectCategory(withName: String) {
+        categoryName = "NE DEFOLT!"
+    }
+    
     // MARK: - Private Methods
     
     private func setUI() {
@@ -343,15 +347,19 @@ final class AddHabbitViewController: UIViewController, UITextFieldDelegate {
     //MARK: - ACTIONS
     
     @objc private func didTapCategoryButton() {
-        categorySelected = true
+        let viewController = CategorySelectViewController(selectedCategoryName: categoryName)
+        viewController.categoryNameSelected = { [weak self] category in
+            self?.categorySelected = true
+            self?.categoryName = category
+            self?.categoryButton.addSupplementaryView(with: category)
+        }
+        present(UINavigationController(rootViewController: viewController), animated: true)
         tryEnableCreationButton()
-        categoryName = factory.generateCatName()
-        categoryButton.addSupplementaryView(with: categoryName)
     }
     
     @objc private func didTapScheduleButton() {
         let viewController = ScheduleViewController()
-        present(viewController, animated: true)
+        present(UINavigationController(rootViewController: viewController), animated: true)
     }
     
     @objc private func didTapCreateButton() {
@@ -426,7 +434,6 @@ extension AddHabbitViewController: UICollectionViewDelegate, UICollectionViewDat
                 default:
                     return ColorSelectCell.colors.count
             }
-            
         }
     
     func collectionView(
@@ -500,7 +507,3 @@ extension AddHabbitViewController: UICollectionViewDelegate, UICollectionViewDat
     }
     
 }
-
-
-
-
