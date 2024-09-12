@@ -2,7 +2,7 @@ import UIKit
 import SnapKit
 
 final class TrackerCell: UICollectionViewCell {
-    
+   
     static let reuseIdentifier = "trackerCell"
     
     private let factory = TrackersFactory.shared
@@ -52,6 +52,8 @@ final class TrackerCell: UICollectionViewCell {
     override init(frame: CGRect) {
         super.init(frame: frame)
         
+        contentView.layer.cornerRadius = colorFilledView.layer.cornerRadius
+        
         [colorFilledView,
          trackerTitle,
          emojiView,
@@ -60,6 +62,7 @@ final class TrackerCell: UICollectionViewCell {
             contentView.addSubview($0)
         }
         setConstraints()
+        setContextMenu()
     }
     
     required init?(coder: NSCoder) {
@@ -168,7 +171,10 @@ final class TrackerCell: UICollectionViewCell {
         }
     }
     
-    //MARK: - ACTIONS
+    private func setContextMenu() {
+        let interaction = UIContextMenuInteraction(delegate: self)
+        contentView.addInteraction(interaction)
+    }
     
     private func mark(tracker: Tracker, onDate: Date) {
         if factory.isTrackerCompleted(trackerID: tracker.id, on: onDate) {
@@ -177,6 +183,8 @@ final class TrackerCell: UICollectionViewCell {
             factory.markTrackerAsCompleted(trackerID: tracker.id, on: onDate)
         }
     }
+    
+    //MARK: - ACTIONS
     
     @objc private func didTapIncreaseButton() {
         guard
@@ -187,5 +195,28 @@ final class TrackerCell: UICollectionViewCell {
         mark(tracker: tracker, onDate: date)
         configureIncreaseButton(tracker: tracker, date: date)
         configureCounterLabel()
+    }
+}
+
+extension TrackerCell: UIContextMenuInteractionDelegate {
+    func contextMenuInteraction(_ interaction: UIContextMenuInteraction, configurationForMenuAtLocation location: CGPoint) -> UIContextMenuConfiguration? {
+        
+        let pinAction = UIAction(title: "Закрепить", image: nil) { _ in
+            print("Закрепить")
+        }
+        
+        let editAction = UIAction(title: "Редактировать", image: nil) { _ in
+            print("Редактировать")
+        }
+        
+        let deleteAction = UIAction(title: "Удалить", image: nil, attributes: .destructive) { _ in
+            print("Удалить")
+        }
+        
+        let menu = UIMenu(title: "", children: [pinAction, editAction, deleteAction])
+        
+        return UIContextMenuConfiguration(identifier: nil, previewProvider: nil) {_ in
+            return menu
+        }
     }
 }
