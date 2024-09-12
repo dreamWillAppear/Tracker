@@ -38,6 +38,24 @@ final class TrackerStore: NSObject, NSFetchedResultsControllerDelegate {
         appDelegate.saveContext(context: context)
     }
     
+    func deleteTracker(id: UUID) {
+        let fetchRequest: NSFetchRequest<TrackerCoreData> = TrackerCoreData.fetchRequest()
+        fetchRequest.predicate = NSPredicate(format: "id == %@", id as CVarArg)
+
+        do {
+            let results = try context.fetch(fetchRequest)
+            
+            for tracker in results {
+                context.delete(tracker)
+            }
+            
+            appDelegate.saveContext(context: context)
+            
+        } catch {
+            print("Error deleting tracker: \(error.localizedDescription)")
+        }
+    }
+    
     func addCategory(title: String) {
         let newCategory = TrackerCategoryCoreData(context: context)
         newCategory.title = title

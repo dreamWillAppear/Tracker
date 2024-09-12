@@ -66,6 +66,11 @@ final class TrackersFactory {
         }
     }
     
+    func deleteTrackerFromStorage(UUID: UUID) {
+        trackerStore.deleteTracker(id: UUID)
+        
+        
+    }
     
     func filterTrackers(in categoriesArray: [TrackerCategory], forDayWithIndex weekdayIndex: Int) -> [TrackerCategory] {
         var categoriesForShowing: [TrackerCategory] = []

@@ -185,7 +185,7 @@ final class TrackersViewController: UIViewController {
         navigationItem.rightBarButtonItem = UIBarButtonItem(customView: datePicker)
     }
     
-    private func updateCollectionViewPlaceholder(forSearch: Bool) {
+    func updateCollectionViewPlaceholder(forSearch: Bool) {
         collectionViewPlaceholderStackView.isHidden = !factory.trackersForShowing.isEmpty
         filtersButton.isHidden = factory.trackersForShowing.isEmpty
         

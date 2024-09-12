@@ -210,7 +210,7 @@ extension TrackerCell: UIContextMenuInteractionDelegate {
         }
         
         let deleteAction = UIAction(title: "Удалить", image: nil, attributes: .destructive) { _ in
-            print("Удалить")
+            self.factory.deleteTrackerFromStorage(UUID: self.tracker?.id ?? UUID())
         }
         
         let menu = UIMenu(title: "", children: [pinAction, editAction, deleteAction])
