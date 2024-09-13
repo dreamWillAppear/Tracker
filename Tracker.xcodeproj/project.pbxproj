@@ -10,7 +10,7 @@
 		16279ECF2C3854E800722E41 /* Storage.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 16279ECD2C3854E800722E41 /* Storage.xcdatamodeld */; };
 		1629E74A2BFB331E00A50F54 /* AddTrackerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1629E7492BFB331E00A50F54 /* AddTrackerViewController.swift */; };
 		1631E09A2BF40A85003986AE /* TabBarController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1631E0992BF40A85003986AE /* TabBarController.swift */; };
-		16343C402BFE603E00838829 /* AddHabbitViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16343C3F2BFE603E00838829 /* AddHabbitViewController.swift */; };
+		16343C402BFE603E00838829 /* EditTrackerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16343C3F2BFE603E00838829 /* EditTrackerViewController.swift */; };
 		1645C9B32BF8A5ED00CC7B90 /* Tracker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1645C9B22BF8A5ED00CC7B90 /* Tracker.swift */; };
 		167A2E7A2C0B4A5F00437041 /* ScheduleViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 167A2E792C0B4A5F00437041 /* ScheduleViewController.swift */; };
 		167A2E7D2C0B4AB000437041 /* WeekdayEnum.swift in Sources */ = {isa = PBXBuildFile; fileRef = 167A2E7C2C0B4AB000437041 /* WeekdayEnum.swift */; };
@@ -47,7 +47,7 @@
 		16279ECE2C3854E800722E41 /* Storage.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = Storage.xcdatamodel; sourceTree = "<group>"; };
 		1629E7492BFB331E00A50F54 /* AddTrackerViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddTrackerViewController.swift; sourceTree = "<group>"; };
 		1631E0992BF40A85003986AE /* TabBarController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TabBarController.swift; sourceTree = "<group>"; };
-		16343C3F2BFE603E00838829 /* AddHabbitViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddHabbitViewController.swift; sourceTree = "<group>"; };
+		16343C3F2BFE603E00838829 /* EditTrackerViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditTrackerViewController.swift; sourceTree = "<group>"; };
 		1645C9B22BF8A5ED00CC7B90 /* Tracker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Tracker.swift; sourceTree = "<group>"; };
 		167A2E792C0B4A5F00437041 /* ScheduleViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScheduleViewController.swift; sourceTree = "<group>"; };
 		167A2E7C2C0B4AB000437041 /* WeekdayEnum.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeekdayEnum.swift; sourceTree = "<group>"; };
@@ -159,7 +159,7 @@
 		16D1F78E2C1F9F03007601DE /* AddHabbitViewController */ = {
 			isa = PBXGroup;
 			children = (
-				16343C3F2BFE603E00838829 /* AddHabbitViewController.swift */,
+				16343C3F2BFE603E00838829 /* EditTrackerViewController.swift */,
 				16D1F78C2C1F9ECE007601DE /* TrackerButton.swift */,
 				169602D32C2CB36F003DB1BC /* EmojiCollectionView */,
 				169602D42C2CB382003DB1BC /* ColorSelectCollectionView */,
@@ -331,7 +331,7 @@
 				16F0FD132C1DF01A004C854A /* TrackerRecord.swift in Sources */,
 				16947A512C036E0800426968 /* CategoryHaderView.swift in Sources */,
 				169602D72C2CB3BC003DB1BC /* ColorSelectCollectionHeader.swift in Sources */,
-				16343C402BFE603E00838829 /* AddHabbitViewController.swift in Sources */,
+				16343C402BFE603E00838829 /* EditTrackerViewController.swift in Sources */,
 				167A2E7F2C0B4BE700437041 /* ScheduleTableViewCell.swift in Sources */,
 				16279ECF2C3854E800722E41 /* Storage.xcdatamodeld in Sources */,
 				167A2E7D2C0B4AB000437041 /* WeekdayEnum.swift in Sources */,

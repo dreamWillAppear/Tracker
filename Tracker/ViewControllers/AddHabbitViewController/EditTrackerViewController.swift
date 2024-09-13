@@ -2,14 +2,17 @@ import UIKit
 import SnapKit
 
 
-final class AddHabbitViewController: UIViewController, UITextFieldDelegate {
+final class EditTrackerViewController: UIViewController, UITextFieldDelegate {
     
     //MARK: - Public Properties
     
     var isHabbit = false
     var categoryName = ""
     var selectedCategory: (() -> String)?
+    
     // MARK: - Private Properties
+    
+    private let dayCounter: Int?
 
     private let factory = TrackersFactory.shared
     private var categorySelected = false
@@ -23,6 +26,15 @@ final class AddHabbitViewController: UIViewController, UITextFieldDelegate {
         let scrollView = UIScrollView()
         
         return scrollView
+    }()
+    
+    private lazy var dayCounterLabel: UILabel = {
+        let label = UILabel()
+        label.text = "\(dayCounter ?? 0) дней"
+        label.textColor = .trackerBlack
+        label.font = .systemFont(ofSize: 32, weight: .bold)
+        label.textAlignment = .center
+        return label
     }()
     
     private let warningLabel: UILabel = {
@@ -62,7 +74,6 @@ final class AddHabbitViewController: UIViewController, UITextFieldDelegate {
         let imageViewBottom = UIImageView()
         imageViewBottom.image = image
         imageViewBottom.isHidden = !isHabbit
-        
         
         let view = UIStackView()
         view.axis = .vertical
@@ -171,6 +182,15 @@ final class AddHabbitViewController: UIViewController, UITextFieldDelegate {
     
     // MARK: - Public Methods
     
+    init(dayCounter: Int?) {
+        self.dayCounter = dayCounter
+        super.init(nibName: nil, bundle: nil)
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -188,16 +208,19 @@ final class AddHabbitViewController: UIViewController, UITextFieldDelegate {
         NotificationCenter.default.removeObserver(self, name: scheduleUpdateNotification, object: nil)
     }
     
-    func selectCategory(withName: String) {
-        categoryName = "NE DEFOLT!"
-    }
-    
     // MARK: - Private Methods
     
     private func setUI() {
         view.backgroundColor = .trackerWhite
+        
         self.navigationController?.navigationBar.titleTextAttributes = [NSAttributedString.Key.font: UIFont.systemFont(ofSize: 16, weight: .medium)]
-        title = isHabbit ? "Новая привычка" : "Новое нерегулярное событие"
+        
+        if dayCounter != nil {
+            title = "Редактирование привычки"
+            mainScrollView.addSubview(dayCounterLabel)
+        } else {
+            title = isHabbit ? "Новая привычка" : "Новое нерегулярное событие"
+        }
         
         configureButtonsStackViews()
         
@@ -299,11 +322,29 @@ final class AddHabbitViewController: UIViewController, UITextFieldDelegate {
             make.width.equalToSuperview()
         }
         
-        addTrackerNameField.snp.makeConstraints { make in
-            make.width.equalToSuperview().inset(16)
-            make.height.equalTo(75)
-            make.centerX.equalToSuperview()
-            make.top.equalToSuperview().inset(24)
+        if dayCounter != nil {
+            
+            dayCounterLabel.snp.makeConstraints { make in
+                make.width.equalToSuperview().inset(16)
+                make.height.equalTo(38)
+                make.centerX.equalToSuperview()
+                make.top.equalToSuperview().inset(24)
+            }
+            
+            addTrackerNameField.snp.makeConstraints { make in
+                make.width.equalToSuperview().inset(16)
+                make.height.equalTo(75)
+                make.centerX.equalToSuperview()
+                make.top.equalTo(dayCounterLabel.snp.bottom).inset(-40)
+            }
+            
+        } else {
+            addTrackerNameField.snp.makeConstraints { make in
+                make.width.equalToSuperview().inset(16)
+                make.height.equalTo(75)
+                make.centerX.equalToSuperview()
+                make.top.equalToSuperview().inset(24)
+            }
         }
         
         warningLabel.snp.makeConstraints { make in
@@ -397,7 +438,7 @@ final class AddHabbitViewController: UIViewController, UITextFieldDelegate {
 
 //MARK: - textField Delegate
 
-extension AddHabbitViewController {
+extension EditTrackerViewController {
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
         textField.resignFirstResponder()
         return true
@@ -418,7 +459,7 @@ extension AddHabbitViewController {
 
 //MARK: - UICollectionViewDataSource & UICollectionViewDelegate
 
-extension AddHabbitViewController: UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
+extension EditTrackerViewController: UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
     
     func numberOfSections(in collectionView: UICollectionView) -> Int {
         1

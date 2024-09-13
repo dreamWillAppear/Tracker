@@ -5,6 +5,8 @@ final class TrackerCell: UICollectionViewCell {
    
     static let reuseIdentifier = "trackerCell"
     
+    var onEdit: ((Tracker) -> Void)?
+    
     private let factory = TrackersFactory.shared
     private var tracker: Tracker?
     private var selectedDate: Date?
@@ -205,12 +207,15 @@ extension TrackerCell: UIContextMenuInteractionDelegate {
             print("Закрепить")
         }
         
-        let editAction = UIAction(title: "Редактировать", image: nil) { _ in
-            print("Редактировать")
+        let editAction = UIAction(title: "Редактировать", image: nil) { [weak self] _ in
+            guard let tracker = self?.tracker else { return }
+            let recordCount = self?.factory.getRecordsCount(for: tracker)
+            let vc = EditTrackerViewController(dayCounter: recordCount)
+            present(UINavigationController(rootViewController: vc), animated: true)
         }
         
-        let deleteAction = UIAction(title: "Удалить", image: nil, attributes: .destructive) { _ in
-            self.factory.deleteTrackerFromStorage(UUID: self.tracker?.id ?? UUID())
+        let deleteAction = UIAction(title: "Удалить", image: nil, attributes: .destructive) { [weak self] _ in
+            self?.factory.deleteTrackerFromStorage(UUID: self?.tracker?.id ?? UUID())
         }
         
         let menu = UIMenu(title: "", children: [pinAction, editAction, deleteAction])

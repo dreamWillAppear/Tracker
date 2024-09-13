@@ -90,13 +90,13 @@ final class AddTrackerViewController: UIViewController {
     //MARK: - Actions
     
     @objc private func didTapAddHabbitButton(){
-        let viewController = AddHabbitViewController()
+        let viewController = EditTrackerViewController(dayCounter: 10)
         viewController.isHabbit = true
         present(UINavigationController(rootViewController: viewController), animated: true)
     }
     
     @objc private func didTapAddEventButton(){
-        let viewController = AddHabbitViewController()
+        let viewController = EditTrackerViewController(dayCounter: nil)
         viewController.isHabbit = false
         present(UINavigationController(rootViewController: viewController), animated: true)
     }
