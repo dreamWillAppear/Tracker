@@ -244,19 +244,16 @@ final class TrackersViewController: UIViewController {
     
     //MARK: - Actions
     @objc private func categoriesUpdated() {
+        updateCollectionViewPlaceholder(forSearch: false)
         collectionView.reloadData()
     }
     
     //отладочное: при нажатии на кнопку Фильтры - БД очищается и экран обновляется
     @objc private func didTapFiltersButton() {
         factory.eraseAllDataFromBase()
-        updateCollectionViewPlaceholder(forSearch: false)
     }
     
     @objc private func datePickerValueDateChanged(_ sender: UIDatePicker) {
-        DispatchQueue.main.async {
-            self.updateCollectionViewPlaceholder(forSearch: false)
-        }
         dateFormatter.dateFormat = "yyyy-MM-dd"
         currentDate = sender.date
         let weekday = currentCalendar.component(.weekday, from: currentDate)
@@ -282,7 +279,6 @@ extension TrackersViewController: UICollectionViewDataSource, UICollectionViewDe
     }
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        updateCollectionViewPlaceholder(forSearch: false)
         return factory.trackersForShowing[section].trackers.count
     }
     
@@ -341,7 +337,6 @@ extension TrackersViewController: UISearchBarDelegate {
         switch searchText{
             
         case "":
-            updateCollectionViewPlaceholder(forSearch: false)
             searchBar.setShowsCancelButton(false, animated: true)
             factory.trackersForShowing = factory.filterTrackers(in: factory.trackersStorage, forDayWithIndex: factory.weekdayIndex)
         default:
@@ -355,7 +350,6 @@ extension TrackersViewController: UISearchBarDelegate {
     }
     
     func searchBarCancelButtonClicked(_ searchBar: UISearchBar) {
-        updateCollectionViewPlaceholder(forSearch: false)
         searchBar.text = ""
         searchBar.setShowsCancelButton(false, animated: true)
         searchBar.endEditing(true)
