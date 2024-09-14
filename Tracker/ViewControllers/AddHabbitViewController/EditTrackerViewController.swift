@@ -12,7 +12,7 @@ final class EditTrackerViewController: UIViewController, UITextFieldDelegate {
     
     // MARK: - Private Properties
     
-    private let tracker: Tracker?
+    private let editableTracker: Tracker?
     
     private let factory = TrackersFactory.shared
     private var categorySelected = false
@@ -28,7 +28,7 @@ final class EditTrackerViewController: UIViewController, UITextFieldDelegate {
     }()
     
     private lazy var dayCounterLabel: UILabel = {
-        guard let tracker = tracker else { return UILabel() }
+        guard let tracker = editableTracker else { return UILabel() }
         let label = UILabel()
         label.text = factory.getDayCounterLabel(for: tracker)
         label.textColor = .trackerBlack
@@ -184,7 +184,7 @@ final class EditTrackerViewController: UIViewController, UITextFieldDelegate {
     
     init(isHabbit: Bool, tracker: Tracker?) {
         self.isHabbit = isHabbit
-        self.tracker = tracker
+        self.editableTracker = tracker
         super.init(nibName: nil, bundle: nil)
     }
     
@@ -215,7 +215,7 @@ final class EditTrackerViewController: UIViewController, UITextFieldDelegate {
         view.backgroundColor = .trackerWhite
         self.navigationController?.navigationBar.titleTextAttributes = [NSAttributedString.Key.font: UIFont.systemFont(ofSize: 16, weight: .medium)]
         
-        if tracker != nil {
+        if editableTracker != nil {
             title = "Редактирование привычки"
             congigureForEdit()
             mainScrollView.addSubview(dayCounterLabel)
@@ -238,7 +238,7 @@ final class EditTrackerViewController: UIViewController, UITextFieldDelegate {
     }
     
     private func congigureForEdit() {
-        guard let tracker = tracker else { return }
+        guard let tracker = editableTracker else { return }
         
         //настройка отображения выбранного лейбла, расписания, категории редактируемого трекера
         let selectedCategory = factory.getCategory(forTracker: tracker.id)
@@ -341,7 +341,7 @@ final class EditTrackerViewController: UIViewController, UITextFieldDelegate {
     }
     
     private func creationButton(mustBeEnabled: Bool) {
-        guard tracker == nil else {
+        guard editableTracker == nil else {
             self.createButton.isEnabled = !categoryName.isEmpty
             return
         }
@@ -356,7 +356,7 @@ final class EditTrackerViewController: UIViewController, UITextFieldDelegate {
             make.width.equalToSuperview()
         }
         
-        if tracker != nil {
+        if editableTracker != nil {
             
             dayCounterLabel.snp.makeConstraints { make in
                 make.width.equalToSuperview().inset(16)
@@ -419,6 +419,11 @@ final class EditTrackerViewController: UIViewController, UITextFieldDelegate {
         }
     }
     
+    private func updateTracker() {
+        guard let editableTracker = editableTracker else { return }
+        factory.editTracker(id: editableTracker.id, newTitle: addTrackerNameField.text ?? "", newColor: factory.selectedColor, newEmoji: factory.selectedEmoji, newSchedule: factory.schedule)
+    }
+    
     //MARK: - ACTIONS
     
     @objc private func didTapCategoryButton() {
@@ -438,14 +443,18 @@ final class EditTrackerViewController: UIViewController, UITextFieldDelegate {
     }
     
     @objc private func didTapCreateButton() {
-        let tracker = Tracker(
-            id: UUID(),
-            title: addTrackerNameField.text ?? "",
-            color: factory.selectedColor,
-            emoji: factory.selectedEmoji,
-            schedule: factory.schedule)
-        
+        if editableTracker != nil {
+            updateTracker()
+        } else {
+            let tracker = Tracker(
+                id: UUID(),
+                title: addTrackerNameField.text ?? "",
+                color: factory.selectedColor,
+                emoji: factory.selectedEmoji,
+                schedule: factory.schedule)
+            
             factory.addToStorage(tracker: tracker, for: categoryName)
+        }
         
         factory.updateTrackersForShowing()
         self.view.window?.rootViewController?.dismiss(animated: true, completion: nil)
