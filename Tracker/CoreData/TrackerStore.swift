@@ -38,6 +38,24 @@ final class TrackerStore: NSObject, NSFetchedResultsControllerDelegate {
         appDelegate.saveContext(context: context)
     }
     
+    func updateTracker(id: UUID, newTitle: String, newColor: UIColor, newEmoji: String, newSchedule: [Bool]) {
+        let fetchRequest: NSFetchRequest<TrackerCoreData> = TrackerCoreData.fetchRequest()
+        fetchRequest.predicate = NSPredicate(format: "id == %@", id as CVarArg)
+        
+        do {
+            if let trackerToUpdate = try context.fetch(fetchRequest).first {
+                    trackerToUpdate.title = newTitle
+                    trackerToUpdate.color = newColor.encodeColor()
+                    trackerToUpdate.emoji = newEmoji
+                    trackerToUpdate.schedule = newSchedule.encode()
+                
+                appDelegate.saveContext(context: context)
+            }
+        } catch {
+            print("Failed to update tracker: \(error.localizedDescription)")
+        }
+    }
+    
     func deleteTracker(id: UUID) {
         let fetchRequest: NSFetchRequest<TrackerCoreData> = TrackerCoreData.fetchRequest()
         fetchRequest.predicate = NSPredicate(format: "id == %@", id as CVarArg)

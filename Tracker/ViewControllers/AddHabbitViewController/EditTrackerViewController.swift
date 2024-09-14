@@ -6,14 +6,14 @@ final class EditTrackerViewController: UIViewController, UITextFieldDelegate {
     
     //MARK: - Public Properties
     
-    var isHabbit = false
+    var isHabbit: Bool
     var categoryName = ""
     var selectedCategory: (() -> String)?
     
     // MARK: - Private Properties
     
-    private let dayCounter: Int?
-
+    private let tracker: Tracker?
+    
     private let factory = TrackersFactory.shared
     private var categorySelected = false
     private var trackerNameEntered = false
@@ -24,13 +24,13 @@ final class EditTrackerViewController: UIViewController, UITextFieldDelegate {
     
     private lazy var mainScrollView: UIScrollView = {
         let scrollView = UIScrollView()
-        
         return scrollView
     }()
     
     private lazy var dayCounterLabel: UILabel = {
+        guard let tracker = tracker else { return UILabel() }
         let label = UILabel()
-        label.text = "\(dayCounter ?? 0) дней"
+        label.text = factory.getDayCounterLabel(for: tracker)
         label.textColor = .trackerBlack
         label.font = .systemFont(ofSize: 32, weight: .bold)
         label.textAlignment = .center
@@ -182,8 +182,9 @@ final class EditTrackerViewController: UIViewController, UITextFieldDelegate {
     
     // MARK: - Public Methods
     
-    init(dayCounter: Int?) {
-        self.dayCounter = dayCounter
+    init(isHabbit: Bool, tracker: Tracker?) {
+        self.isHabbit = isHabbit
+        self.tracker = tracker
         super.init(nibName: nil, bundle: nil)
     }
     
@@ -212,11 +213,11 @@ final class EditTrackerViewController: UIViewController, UITextFieldDelegate {
     
     private func setUI() {
         view.backgroundColor = .trackerWhite
-        
         self.navigationController?.navigationBar.titleTextAttributes = [NSAttributedString.Key.font: UIFont.systemFont(ofSize: 16, weight: .medium)]
         
-        if dayCounter != nil {
+        if tracker != nil {
             title = "Редактирование привычки"
+            congigureForEdit()
             mainScrollView.addSubview(dayCounterLabel)
         } else {
             title = isHabbit ? "Новая привычка" : "Новое нерегулярное событие"
@@ -234,6 +235,35 @@ final class EditTrackerViewController: UIViewController, UITextFieldDelegate {
         }
         
         view.addSubview(mainScrollView)
+    }
+    
+    private func congigureForEdit() {
+        guard let tracker = tracker else { return }
+        
+        //настройка отображения выбранного лейбла, расписания, категории редактируемого трекера
+        let selectedCategory = factory.getCategory(forTracker: tracker.id)
+        factory.schedule = tracker.schedule
+        scheduleButton.addSupplementaryView(with: configureScheduleButtonSupplementaryText(for: factory.schedule))
+        categoryButton.addSupplementaryView(with: selectedCategory?.title ?? "")
+        addTrackerNameField.text = tracker.title
+        
+        //настройка выбранного эмодзи и цвета редактируемого трекера
+        if let index =  EmojiCell.emojiArray.firstIndex(where: { $0 == tracker.emoji }) {
+            selectedEmojiCellIndexPath = IndexPath(item: index, section: 0)
+        }
+        
+        if let index =  ColorSelectCell.colors.firstIndex(where: { $0 == tracker.color }) {
+            selectedColorCellIndexPath = IndexPath(item: index, section: 0)
+        }
+        
+        //настройка уже выбранной категории, эмодзи и цвета редактируемого трекера
+        categoryName = selectedCategory?.title ?? ""
+        factory.selectedEmoji = tracker.emoji
+        factory.selectedColor = tracker.color
+    
+        createButton.isEnabled = true
+        createButton.backgroundColor = .trackerBlack
+        createButton.setTitle("Сохранить", for: .normal)
     }
     
     private func configureEmojiCollectionView() {
@@ -311,6 +341,10 @@ final class EditTrackerViewController: UIViewController, UITextFieldDelegate {
     }
     
     private func creationButton(mustBeEnabled: Bool) {
+        guard tracker == nil else {
+            self.createButton.isEnabled = !categoryName.isEmpty
+            return
+        }
         self.createButton.isEnabled = mustBeEnabled
         self.createButton.backgroundColor = mustBeEnabled ? .trackerBlack : .trackerGray
     }
@@ -322,7 +356,7 @@ final class EditTrackerViewController: UIViewController, UITextFieldDelegate {
             make.width.equalToSuperview()
         }
         
-        if dayCounter != nil {
+        if tracker != nil {
             
             dayCounterLabel.snp.makeConstraints { make in
                 make.width.equalToSuperview().inset(16)
@@ -390,8 +424,8 @@ final class EditTrackerViewController: UIViewController, UITextFieldDelegate {
     @objc private func didTapCategoryButton() {
         let viewController = CategorySelectViewController(selectedCategoryName: categoryName)
         viewController.categoryNameSelected = { [weak self] category in
-            self?.categorySelected = true
             self?.categoryName = category
+            self?.categorySelected = !category.isEmpty
             self?.categoryButton.addSupplementaryView(with: category)
         }
         present(UINavigationController(rootViewController: viewController), animated: true)
@@ -411,19 +445,28 @@ final class EditTrackerViewController: UIViewController, UITextFieldDelegate {
             emoji: factory.selectedEmoji,
             schedule: factory.schedule)
         
-        factory.addToStorage(tracker: tracker, for: categoryName)
+            factory.addToStorage(tracker: tracker, for: categoryName)
+        
         factory.updateTrackersForShowing()
         self.view.window?.rootViewController?.dismiss(animated: true, completion: nil)
+    }
+    
+    
+    private func configureScheduleButtonSupplementaryText(for schedule: [Bool]) -> String {
+        var suoplementaryText: String = ""
+        let weekdays = ["Пн", "Вт", "Ср", "Чт", "Пт", "Сб", "Вс"]
+        let selectedDays = schedule.enumerated()
+            .filter { $0.element }
+            .map { weekdays[$0.offset] }
+        scheduleButton.addSupplementaryView(with: selectedDays.joined(separator: ", "))
+        suoplementaryText = selectedDays.joined(separator: ", ")
+        return suoplementaryText
     }
     
     @objc private func addScheduleButtonSupplementaryText() {
         scheduleDidSet = factory.schedule.contains(true)
         tryEnableCreationButton()
-        let weekdays = ["Пн", "Вт", "Ср", "Чт", "Пт", "Сб", "Вс"]
-        let selectedDays = factory.schedule.enumerated()
-            .filter { $0.element }
-            .map { weekdays[$0.offset] }
-        scheduleButton.addSupplementaryView(with: selectedDays.joined(separator: ", "))
+        scheduleButton.addSupplementaryView(with: configureScheduleButtonSupplementaryText(for: factory.schedule))
     }
     private let appDelegate = AppDelegate()
     
@@ -470,10 +513,10 @@ extension EditTrackerViewController: UICollectionViewDelegate, UICollectionViewD
         numberOfItemsInSection section: Int) -> Int {
             
             switch collectionView {
-                case emojiCollectionView:
-                    return EmojiCell.emojiArray.count
-                default:
-                    return ColorSelectCell.colors.count
+            case emojiCollectionView:
+                return EmojiCell.emojiArray.count
+            default:
+                return ColorSelectCell.colors.count
             }
         }
     
@@ -482,23 +525,22 @@ extension EditTrackerViewController: UICollectionViewDelegate, UICollectionViewD
         cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
             
             switch collectionView {
-                    
-                case emojiCollectionView:
-                    guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: EmojiCell.reuseIdentifier, for: indexPath) as? EmojiCell else {
-                        return .init()
-                    }
-                    let isSeclected = selectedEmojiCellIndexPath == indexPath
-                    cell.configureCell(with: EmojiCell.emojiArray[indexPath.item], isSelected: isSeclected)
-                    return cell
-                    
-                default:
-                    guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: ColorSelectCell.reuseIdentifier, for: indexPath) as? ColorSelectCell else {
-                        return .init()
-                    }
-                    let isSelected = selectedColorCellIndexPath == indexPath
-                    
-                    cell.configureCell(color: ColorSelectCell.colors[indexPath.item], isSelected: isSelected)
-                    return cell
+            case emojiCollectionView:
+                guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: EmojiCell.reuseIdentifier, for: indexPath) as? EmojiCell else {
+                    return .init()
+                }
+                let isSeclected = selectedEmojiCellIndexPath == indexPath
+                cell.configureCell(with: EmojiCell.emojiArray[indexPath.item], isSelected: isSeclected)
+                return cell
+                
+            default:
+                guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: ColorSelectCell.reuseIdentifier, for: indexPath) as? ColorSelectCell else {
+                    return .init()
+                }
+                let isSelected = selectedColorCellIndexPath == indexPath
+                
+                cell.configureCell(color: ColorSelectCell.colors[indexPath.item], isSelected: isSelected)
+                return cell
             }
         }
     
@@ -507,17 +549,17 @@ extension EditTrackerViewController: UICollectionViewDelegate, UICollectionViewD
         viewForSupplementaryElementOfKind kind: String,
         at indexPath: IndexPath) -> UICollectionReusableView {
             switch collectionView {
-                case emojiCollectionView:
-                    guard let header = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: EmojiCollectionHeader.identifier, for: indexPath) as? EmojiCollectionHeader else {
-                        return .init()
-                    }
-                    return header
-                    
-                default:
-                    guard let header = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: ColorSelectCollectionHeader.identifier, for: indexPath) as? ColorSelectCollectionHeader else {
-                        return .init()
-                    }
-                    return header
+            case emojiCollectionView:
+                guard let header = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: EmojiCollectionHeader.identifier, for: indexPath) as? EmojiCollectionHeader else {
+                    return .init()
+                }
+                return header
+                
+            default:
+                guard let header = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: ColorSelectCollectionHeader.identifier, for: indexPath) as? ColorSelectCollectionHeader else {
+                    return .init()
+                }
+                return header
             }
         }
     
@@ -531,16 +573,16 @@ extension EditTrackerViewController: UICollectionViewDelegate, UICollectionViewD
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         
         switch collectionView {
-                
-            case emojiCollectionView:
-                factory.selectedEmoji = EmojiCell.emojiArray[indexPath.row]
-                selectedEmojiCellIndexPath = indexPath
-                emojiSelected = true
-                
-            default:
-                factory.selectedColor = ColorSelectCell.colors[indexPath.row]
-                selectedColorCellIndexPath = indexPath
-                colorSelected = true
+            
+        case emojiCollectionView:
+            factory.selectedEmoji = EmojiCell.emojiArray[indexPath.row]
+            selectedEmojiCellIndexPath = indexPath
+            emojiSelected = true
+            
+        default:
+            factory.selectedColor = ColorSelectCell.colors[indexPath.row]
+            selectedColorCellIndexPath = indexPath
+            colorSelected = true
         }
         
         collectionView.reloadData()

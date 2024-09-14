@@ -291,8 +291,14 @@ extension TrackersViewController: UICollectionViewDataSource, UICollectionViewDe
             }
             
             let tracker = factory.trackersForShowing[indexPath.section].trackers[indexPath.item]
-            
+    
             cell.configureCell(for: tracker, date: currentDate)
+            
+            cell.didTapEditTracker = { [weak self] in
+                let vc = EditTrackerViewController(isHabbit: true, tracker: tracker)
+                self?.present(vc, animated: true)
+            }
+            
             return cell
         }
     

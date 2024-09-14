@@ -68,8 +68,6 @@ final class TrackersFactory {
     
     func deleteTrackerFromStorage(UUID: UUID) {
         trackerStore.deleteTracker(id: UUID)
-        
-        
     }
     
     func filterTrackers(in categoriesArray: [TrackerCategory], forDayWithIndex weekdayIndex: Int) -> [TrackerCategory] {
@@ -114,6 +112,38 @@ final class TrackersFactory {
         return categoriesForShowing
     }
     
+    func getDayCounterLabel(for tracker: Tracker) -> String {
+        let daysCount = getRecordsCount(for: tracker)
+        var counterLabel = ""
+        
+        let lastTwoDigits = daysCount % 100
+        let lastDigit = daysCount % 10
+        
+        if (11...14).contains(lastTwoDigits) {
+            counterLabel = "\(daysCount) дней"
+        } else {
+            switch lastDigit {
+            case 1:
+                counterLabel = "\(daysCount) день"
+            case 2, 3, 4:
+                counterLabel = "\(daysCount) дня"
+            default:
+                counterLabel = "\(daysCount) дней"
+            }
+        }
+        return counterLabel
+    }
+    
+    func editTracker(id: UUID, newTitle: String, newColor: UIColor, newEmoji: String, newSchedule: [Bool]) {
+        trackerStore.updateTracker(
+            id: id,
+            newTitle: newTitle,
+            newColor: newColor,
+            newEmoji: newEmoji,
+            newSchedule: newSchedule
+        )
+    }
+    
     func updateTrackersForShowing() {
         trackersForShowing = filterTrackers(in: trackersStorage, forDayWithIndex: weekdayIndex)
     }
@@ -141,9 +171,9 @@ final class TrackersFactory {
         trackerRecordStore.getRecordsCount(for: tracker.id)
     }
     
-    func generateCatName() -> String {
-        ["Важное", "Домашний уют", "Cамочувствие", "Мелочи"].randomElement()!
+    func getCategory(forTracker id: UUID) -> TrackerCategory? {
+        categoryStore.fetchCategory(forTracker: id)
     }
-    
 }
+
 

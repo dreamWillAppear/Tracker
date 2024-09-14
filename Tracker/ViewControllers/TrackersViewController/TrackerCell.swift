@@ -5,7 +5,7 @@ final class TrackerCell: UICollectionViewCell {
    
     static let reuseIdentifier = "trackerCell"
     
-    var onEdit: ((Tracker) -> Void)?
+    var didTapEditTracker: (() -> Void)?
     
     private let factory = TrackersFactory.shared
     private var tracker: Tracker?
@@ -86,27 +86,7 @@ final class TrackerCell: UICollectionViewCell {
     
     private func configureCounterLabel() {
         guard let tracker = tracker else { return }
-        
-        let daysCount = factory.getRecordsCount(for: tracker)
-        var counterLabel = ""
-        
-        let lastTwoDigits = daysCount % 100
-        let lastDigit = daysCount % 10
-        
-        if (11...14).contains(lastTwoDigits) {
-            counterLabel = "\(daysCount) дней"
-        } else {
-            switch lastDigit {
-                case 1:
-                    counterLabel = "\(daysCount) день"
-                case 2, 3, 4:
-                    counterLabel = "\(daysCount) дня"
-                default:
-                    counterLabel = "\(daysCount) дней"
-            }
-        }
-        
-        dayCounter.text = counterLabel
+        dayCounter.text = factory.getDayCounterLabel(for: tracker)
     }
     
     private func selectedDateIsFuture() -> Bool {
@@ -208,10 +188,7 @@ extension TrackerCell: UIContextMenuInteractionDelegate {
         }
         
         let editAction = UIAction(title: "Редактировать", image: nil) { [weak self] _ in
-            guard let tracker = self?.tracker else { return }
-            let recordCount = self?.factory.getRecordsCount(for: tracker)
-            let vc = EditTrackerViewController(dayCounter: recordCount)
-            present(UINavigationController(rootViewController: vc), animated: true)
+            self?.didTapEditTracker?()
         }
         
         let deleteAction = UIAction(title: "Удалить", image: nil, attributes: .destructive) { [weak self] _ in

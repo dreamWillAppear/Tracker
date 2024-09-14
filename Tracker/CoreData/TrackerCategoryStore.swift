@@ -24,6 +24,40 @@ final class TrackerCategoryStore {
         appDelegate.saveContext(context: context)
     }
     
+    func fetchCategory(forTracker id: UUID) -> TrackerCategory? {
+        let fetchRequest: NSFetchRequest<TrackerCategoryCoreData> = TrackerCategoryCoreData.fetchRequest()
+        
+        do {
+            let categoriesCoreData = try context.fetch(fetchRequest)
+            
+            for categoryCoreData in categoriesCoreData {
+                if let trackers = categoryCoreData.trackers?.allObjects as? [TrackerCoreData],
+                   trackers.contains(where: { $0.id == id }) {
+                    let trackers = trackers.compactMap { trackerCoreData -> Tracker? in
+                        guard let trackerID = trackerCoreData.id,
+                              let trackerTitle = trackerCoreData.title,
+                              let colorData = trackerCoreData.color,
+                              let color = UIColor.color(withData: colorData),
+                              let emoji = trackerCoreData.emoji,
+                              let scheduleData = trackerCoreData.schedule,
+                              let schedule = try? NSKeyedUnarchiver.unarchivedObject(ofClass: NSArray.self, from: scheduleData) as? [Bool] else {
+                            return nil
+                        }
+                        return Tracker(id: trackerID, title: trackerTitle, color: color, emoji: emoji, schedule: schedule)
+                    }
+                    
+                    guard let title = categoryCoreData.title else { return nil }
+                    
+                    return TrackerCategory(title: title, trackers: trackers)
+                }
+            }
+        } catch {
+            print("Failed to fetch category for tracker: \(error)")
+            return nil
+        }
+        return nil
+    }
+
     func fetchAllCategories() -> [TrackerCategory] {
         let fetchRequest: NSFetchRequest<TrackerCategoryCoreData> = TrackerCategoryCoreData.fetchRequest()
         
