@@ -39,11 +39,19 @@ final class TrackerCategoryStore {
                               let colorData = trackerCoreData.color,
                               let color = UIColor.color(withData: colorData),
                               let emoji = trackerCoreData.emoji,
+                              let isPinned = trackerCoreData.isPinned,
                               let scheduleData = trackerCoreData.schedule,
                               let schedule = try? NSKeyedUnarchiver.unarchivedObject(ofClass: NSArray.self, from: scheduleData) as? [Bool] else {
                             return nil
                         }
-                        return Tracker(id: trackerID, title: trackerTitle, color: color, emoji: emoji, schedule: schedule)
+                        return Tracker(
+                            id: trackerID,
+                            title: trackerTitle,
+                            color: color,
+                            emoji: emoji,
+                            isPinned: isPinned.boolValue,
+                            schedule: schedule
+                        )
                     }
                     
                     guard let title = categoryCoreData.title else { return nil }
@@ -75,6 +83,7 @@ final class TrackerCategoryStore {
                           let colorData = trackerCoreData.color,
                           let color = UIColor.color(withData: colorData),
                           let emoji = trackerCoreData.emoji,
+                          let isPinned = trackerCoreData.isPinned,
                           let scheduleData = trackerCoreData.schedule,
                           let schedule = try? NSKeyedUnarchiver.unarchivedObject(ofClass: NSArray.self, from: scheduleData) as? [Bool] else {
                         print("Failed to unwrap TrackerCoreData properties")
@@ -86,6 +95,7 @@ final class TrackerCategoryStore {
                         title: trackerTitle,
                         color: color,
                         emoji: emoji,
+                        isPinned: isPinned.boolValue,
                         schedule: schedule
                     )
                 } ?? []

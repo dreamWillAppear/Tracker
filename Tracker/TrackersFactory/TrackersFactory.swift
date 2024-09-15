@@ -12,7 +12,7 @@ final class TrackersFactory {
     
     var selectedEmoji = ""
     var selectedColor = UIColor()
-    
+    var isPinned = false
     var weekdayIndex = TrackerCalendar.currentDayWeekIndex
     
     var schedule = Array(repeating: false, count: WeekDay.allCases.count) {
@@ -70,6 +70,14 @@ final class TrackersFactory {
         trackerStore.deleteTracker(id: UUID)
     }
     
+    func getPinnedAndUnpinnedTrackers(forDayWithIndex index: Int) -> ([Tracker], [Tracker]) {
+        let trackers = filterTrackers(in: trackersStorage, forDayWithIndex: index)
+            .flatMap { $0.trackers }
+        let pinned = trackers.filter { $0.isPinned }
+        let unpinned = trackers.filter { !$0.isPinned }
+        return (pinned, unpinned)
+    }
+
     func filterTrackers(in categoriesArray: [TrackerCategory], forDayWithIndex weekdayIndex: Int) -> [TrackerCategory] {
         var categoriesForShowing: [TrackerCategory] = []
         for category in trackersStorage {
@@ -134,13 +142,14 @@ final class TrackersFactory {
         return counterLabel
     }
     
-    func editTracker(id: UUID, newTitle: String, newColor: UIColor, newEmoji: String, newSchedule: [Bool]) {
+    func editTracker(id: UUID, newTitle: String, newColor: UIColor, newEmoji: String, isPinned: Bool, newSchedule: [Bool]) {
         trackerStore.updateTracker(
             id: id,
             newTitle: newTitle,
             newColor: newColor,
             newEmoji: newEmoji,
-            newSchedule: newSchedule
+            newSchedule: newSchedule, 
+            isPinned: isPinned
         )
     }
     

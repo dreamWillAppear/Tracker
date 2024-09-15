@@ -421,7 +421,14 @@ final class EditTrackerViewController: UIViewController, UITextFieldDelegate {
     
     private func updateTracker() {
         guard let editableTracker = editableTracker else { return }
-        factory.editTracker(id: editableTracker.id, newTitle: addTrackerNameField.text ?? "", newColor: factory.selectedColor, newEmoji: factory.selectedEmoji, newSchedule: factory.schedule)
+        factory.editTracker(
+            id: editableTracker.id,
+            newTitle: addTrackerNameField.text ?? "",
+            newColor: factory.selectedColor,
+            newEmoji: factory.selectedEmoji, 
+            isPinned: factory.isPinned,
+            newSchedule: factory.schedule
+        )
     }
     
     //MARK: - ACTIONS
@@ -451,6 +458,7 @@ final class EditTrackerViewController: UIViewController, UITextFieldDelegate {
                 title: addTrackerNameField.text ?? "",
                 color: factory.selectedColor,
                 emoji: factory.selectedEmoji,
+                isPinned: factory.isPinned,
                 schedule: factory.schedule)
             
             factory.addToStorage(tracker: tracker, for: categoryName)
