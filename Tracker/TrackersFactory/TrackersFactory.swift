@@ -142,7 +142,7 @@ final class TrackersFactory {
         return counterLabel
     }
     
-    func editTracker(id: UUID, newTitle: String, newColor: UIColor, newEmoji: String, isPinned: Bool, newSchedule: [Bool]) {
+    func editTracker(id: UUID, newTitle: String, newColor: UIColor, newEmoji: String, isPinned: Bool, newSchedule: [Bool], oldCategoryName: String, newCategoryName: String) {
         trackerStore.updateTracker(
             id: id,
             newTitle: newTitle,
@@ -151,6 +151,8 @@ final class TrackersFactory {
             newSchedule: newSchedule, 
             isPinned: isPinned
         )
+        
+        categoryStore.changeCategoryForTracker(trackerID: id, from: oldCategoryName, to: newCategoryName)
     }
     
     func updateTrackersForShowing() {

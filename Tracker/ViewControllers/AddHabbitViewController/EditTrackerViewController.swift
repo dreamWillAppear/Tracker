@@ -7,6 +7,7 @@ final class EditTrackerViewController: UIViewController, UITextFieldDelegate {
     //MARK: - Public Properties
     
     var isHabbit: Bool
+    var newCategoryName = ""
     var categoryName = ""
     var selectedCategory: (() -> String)?
     
@@ -427,7 +428,9 @@ final class EditTrackerViewController: UIViewController, UITextFieldDelegate {
             newColor: factory.selectedColor,
             newEmoji: factory.selectedEmoji, 
             isPinned: factory.isPinned,
-            newSchedule: factory.schedule
+            newSchedule: factory.schedule,
+            oldCategoryName: categoryName,
+            newCategoryName: newCategoryName
         )
     }
     
@@ -436,7 +439,7 @@ final class EditTrackerViewController: UIViewController, UITextFieldDelegate {
     @objc private func didTapCategoryButton() {
         let viewController = CategorySelectViewController(selectedCategoryName: categoryName)
         viewController.categoryNameSelected = { [weak self] category in
-            self?.categoryName = category
+            self?.newCategoryName = category
             self?.categorySelected = !category.isEmpty
             self?.categoryButton.addSupplementaryView(with: category)
         }
