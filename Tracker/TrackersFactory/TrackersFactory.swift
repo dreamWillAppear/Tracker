@@ -15,6 +15,8 @@ final class TrackersFactory {
     var isPinned = false
     var weekdayIndex = TrackerCalendar.currentDayWeekIndex
     
+    var pinnedTrackers: [Tracker] = []
+    
     var schedule = Array(repeating: false, count: WeekDay.allCases.count) {
         didSet {
             NotificationCenter.default.post(name: TrackersFactory.scheduleUpdatedNotification, object: nil)
@@ -152,13 +154,15 @@ final class TrackersFactory {
             isPinned: isPinned
         )
         
-        categoryStore.changeCategoryForTracker(trackerID: id, from: oldCategoryName, to: newCategoryName)
+        categoryStore.changeCategoryForTracker(trackerID: id, to: newCategoryName)
     }
     
     func updateTrackersForShowing() {
+        let (pinned, unpinned) = getPinnedAndUnpinnedTrackers(forDayWithIndex: weekdayIndex)
+        pinnedTrackers = pinned
         trackersForShowing = filterTrackers(in: trackersStorage, forDayWithIndex: weekdayIndex)
     }
-    
+
     func markTrackerAsCompleted(trackerID: UUID, on date: Date) {
         let record = TrackerRecord(trackerID: trackerID, date: date)
         trackerRecordStore.addRecord(record)

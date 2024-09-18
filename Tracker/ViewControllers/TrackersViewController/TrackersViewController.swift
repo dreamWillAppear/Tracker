@@ -275,32 +275,42 @@ final class TrackersViewController: UIViewController {
 extension TrackersViewController: UICollectionViewDataSource, UICollectionViewDelegate, UICollectionViewDelegateFlowLayout {
     
     func numberOfSections(in collectionView: UICollectionView) -> Int {
-        factory.trackersForShowing.count
+        return factory.trackersForShowing.count + (factory.pinnedTrackers.isEmpty ? 0 : 1)
     }
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return factory.trackersForShowing[section].trackers.count
+        if section == 0 && !factory.pinnedTrackers.isEmpty {
+            return factory.pinnedTrackers.count  // Количество закрепленных трекеров
+        } else {
+            let adjustedSection = factory.pinnedTrackers.isEmpty ? section : section - 1
+            return factory.trackersForShowing[adjustedSection].trackers.count
+        }
     }
     
     //MARK: - ConfigureCell
-    func collectionView(
-        _ collectionView: UICollectionView,
-        cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-            guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: TrackerCell.reuseIdentifier, for: indexPath) as? TrackerCell else {
-                return .init()
-            }
-            
-            let tracker = factory.trackersForShowing[indexPath.section].trackers[indexPath.item]
-    
-            cell.configureCell(for: tracker, date: currentDate)
-            
-            cell.didTapEditTracker = { [weak self] in
-                let vc = EditTrackerViewController(isHabbit: true, tracker: tracker)
-                self?.present(vc, animated: true)
-            }
-            
-            return cell
+    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+        guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: TrackerCell.reuseIdentifier, for: indexPath) as? TrackerCell else {
+            return .init()
         }
+        
+        let tracker: Tracker
+        
+        if indexPath.section == 0 && !factory.pinnedTrackers.isEmpty {
+            tracker = factory.pinnedTrackers[indexPath.item]  // Закрепленные трекеры
+        } else {
+            let adjustedSection = factory.pinnedTrackers.isEmpty ? indexPath.section : indexPath.section - 1
+            tracker = factory.trackersForShowing[adjustedSection].trackers[indexPath.item]
+        }
+        
+        cell.configureCell(for: tracker, date: currentDate)
+        
+        cell.didTapEditTracker = { [weak self] in
+                        let vc = EditTrackerViewController(isHabbit: true, tracker: tracker)
+                        self?.present(vc, animated: true)
+                    }
+        
+        return cell
+    }
     
     func collectionView(
         _ collectionView: UICollectionView,
@@ -313,29 +323,31 @@ extension TrackersViewController: UICollectionViewDataSource, UICollectionViewDe
         return .init(width: availableWidth / 2, height: 148)
     }
     
-    func collectionView(
-        _ collectionView: UICollectionView,
-        viewForSupplementaryElementOfKind kind: String,
-        at indexPath: IndexPath
-    ) -> UICollectionReusableView {
+    func collectionView(_ collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, at indexPath: IndexPath) -> UICollectionReusableView {
         guard let header = collectionView.dequeueReusableSupplementaryView(
             ofKind: kind,
             withReuseIdentifier: CategoryHeaderView.identifier,
             for: indexPath
         ) as? CategoryHeaderView else { return .init() }
         
-        header.categoryTitle.text = factory.trackersForShowing[indexPath.section].title
+        if indexPath.section == 0 && !factory.pinnedTrackers.isEmpty {
+            header.categoryTitle.text = "Закрепленные"
+        } else {
+            let adjustedSection = factory.pinnedTrackers.isEmpty ? indexPath.section : indexPath.section - 1
+            header.categoryTitle.text = factory.trackersForShowing[adjustedSection].title
+        }
+        
         return header
     }
     
     func collectionView(
-        _ collectionView: UICollectionView,
-        layout collectionViewLayout: UICollectionViewLayout,
-        referenceSizeForHeaderInSection section: Int
-    ) -> CGSize {
-        .init(width: 149, height: 18)
-    }
-}
+           _ collectionView: UICollectionView,
+           layout collectionViewLayout: UICollectionViewLayout,
+           referenceSizeForHeaderInSection section: Int
+       ) -> CGSize {
+           .init(width: 149, height: 18)
+       }
+   }
 
 extension TrackersViewController: UISearchBarDelegate {
     
@@ -366,6 +378,5 @@ extension TrackersViewController: UISearchBarDelegate {
         searchBar.setShowsCancelButton(true, animated: true)
         return true
     }
-    
 }
 
