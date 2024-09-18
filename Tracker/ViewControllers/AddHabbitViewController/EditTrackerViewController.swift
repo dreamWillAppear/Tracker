@@ -95,6 +95,7 @@ final class EditTrackerViewController: UIViewController, UITextFieldDelegate {
             factory.schedule =  Array(repeating: true, count: WeekDay.allCases.count) //MOCK
             return view
         }
+        
         imageViewBottom.snp.makeConstraints { make in
             make.height.equalTo(12)
             make.width.equalTo(7)
@@ -442,7 +443,11 @@ final class EditTrackerViewController: UIViewController, UITextFieldDelegate {
             self?.newCategoryName = category
             self?.categorySelected = !category.isEmpty
             self?.categoryButton.addSupplementaryView(with: category)
+            
+            guard let editableTracker = self?.editableTracker else { return } //если при редактировании привычки создать новую категрию, а потом вернуться на экран редактирования трекера - расписание сбрасывается - пока не понял почему так, ведь все остальное остается на месте. Однако "все остальное" не храниться в factory - возможно дело в этом.
+            self?.factory.schedule = editableTracker.schedule
         }
+        
         present(UINavigationController(rootViewController: viewController), animated: true)
         tryEnableCreationButton()
     }
@@ -464,7 +469,7 @@ final class EditTrackerViewController: UIViewController, UITextFieldDelegate {
                 isPinned: factory.isPinned,
                 schedule: factory.schedule)
             
-            factory.addToStorage(tracker: tracker, for: categoryName)
+            factory.addToStorage(tracker: tracker, for: newCategoryName)
         }
         
         factory.updateTrackersForShowing()

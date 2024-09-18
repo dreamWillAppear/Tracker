@@ -24,38 +24,45 @@ final class TrackerCategoryStore {
         appDelegate.saveContext(context: context)
     }
     
-    func changeCategoryForTracker(trackerID: UUID, from oldCategoryName: String, to newCategoryName: String) {
+    func changeCategoryForTracker(trackerID: UUID, to newCategoryName: String) {
         
-        let fetchOldCategoryRequest: NSFetchRequest<TrackerCategoryCoreData> = TrackerCategoryCoreData.fetchRequest()
-        fetchOldCategoryRequest.predicate = NSPredicate(format: "title == %@", oldCategoryName)
+        let fetchTrackerRequest: NSFetchRequest<TrackerCoreData> = TrackerCoreData.fetchRequest()
+        fetchTrackerRequest.predicate = NSPredicate(format: "id == %@", trackerID as CVarArg)
         
         let fetchNewCategoryRequest: NSFetchRequest<TrackerCategoryCoreData> = TrackerCategoryCoreData.fetchRequest()
         fetchNewCategoryRequest.predicate = NSPredicate(format: "title == %@", newCategoryName)
         
+        let fetchAllCategoriesRequest: NSFetchRequest<TrackerCategoryCoreData> = TrackerCategoryCoreData.fetchRequest()
+        
         do {
-    
-            if let oldCategory = try context.fetch(fetchOldCategoryRequest).first,
-               let trackers = oldCategory.trackers?.allObjects as? [TrackerCoreData],
-               let trackerToMove = trackers.first(where: { $0.id == trackerID }) {
-                
-                oldCategory.removeFromTrackers(trackerToMove)
+            
+            if let trackerToMove = try context.fetch(fetchTrackerRequest).first {
+
+                let allCategories = try context.fetch(fetchAllCategoriesRequest)
+                for category in allCategories {
+                    if let trackers = category.trackers?.allObjects as? [TrackerCoreData],
+                       trackers.contains(trackerToMove) {
+                        category.removeFromTrackers(trackerToMove)
+                    }
+                }
                 
                 if let newCategory = try context.fetch(fetchNewCategoryRequest).first {
                     
                     newCategory.addToTrackers(trackerToMove)
+                    
+                    appDelegate.saveContext(context: context)
                 } else {
                     print("New category not found, please create it first.")
                 }
-
-                appDelegate.saveContext(context: context)
             } else {
-                print("Old category or tracker not found.")
+                print("Tracker not found.")
             }
             
         } catch {
             print("Failed to change category for tracker: \(error.localizedDescription)")
         }
     }
+
     
     func fetchCategory(forTracker id: UUID) -> TrackerCategory? {
         let fetchRequest: NSFetchRequest<TrackerCategoryCoreData> = TrackerCategoryCoreData.fetchRequest()
