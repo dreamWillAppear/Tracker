@@ -6,6 +6,8 @@ final class TrackerCell: UICollectionViewCell {
     static let reuseIdentifier = "trackerCell"
     
     var didTapEditTracker: (() -> Void)?
+    var didTapDeleteTracker: (() -> Void)?
+    var didTapIncrease: (() -> Void)?
     
     private let factory = TrackersFactory.shared
     private var tracker: Tracker?
@@ -173,18 +175,22 @@ final class TrackerCell: UICollectionViewCell {
             let tracker = tracker,
             let date = selectedDate
         else { return }
-        
+    
         mark(tracker: tracker, onDate: date)
         configureIncreaseButton(tracker: tracker, date: date)
         configureCounterLabel()
+        didTapIncrease?()
     }
 }
 
 extension TrackerCell: UIContextMenuInteractionDelegate {
     func contextMenuInteraction(_ interaction: UIContextMenuInteraction, configurationForMenuAtLocation location: CGPoint) -> UIContextMenuConfiguration? {
+        guard let tracker = tracker else  { return .init() }
+        let trackerPinned = factory.isPinned(trackerId: tracker.id)
+        let pinActionTitle = trackerPinned ? "Открепить" : "Закрепить"
         
-        let pinAction = UIAction(title: "Закрепить", image: nil) { _ in
-            print("Закрепить")
+        let pinAction = UIAction(title: pinActionTitle, image: nil) { [weak self]  _ in
+            self?.factory.pinTracker(id: tracker.id, needPin: !trackerPinned)
         }
         
         let editAction = UIAction(title: "Редактировать", image: nil) { [weak self] _ in
@@ -192,7 +198,7 @@ extension TrackerCell: UIContextMenuInteractionDelegate {
         }
         
         let deleteAction = UIAction(title: "Удалить", image: nil, attributes: .destructive) { [weak self] _ in
-            self?.factory.deleteTrackerFromStorage(UUID: self?.tracker?.id ?? UUID())
+            self?.didTapDeleteTracker?()
         }
         
         let menu = UIMenu(title: "", children: [pinAction, editAction, deleteAction])

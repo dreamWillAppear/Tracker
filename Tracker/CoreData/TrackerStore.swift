@@ -60,6 +60,37 @@ final class TrackerStore: NSObject, NSFetchedResultsControllerDelegate {
         }
     }
     
+    func pinTracker(id: UUID, needPin: Bool) {
+        let fetchRequest: NSFetchRequest<TrackerCoreData> = TrackerCoreData.fetchRequest()
+        fetchRequest.predicate = NSPredicate(format: "id == %@", id as CVarArg)
+        
+        do {
+            if let tracker = try context.fetch(fetchRequest).first {
+                tracker.isPinned = NSNumber(value: needPin)
+                appDelegate.saveContext(context: context)
+            }
+        } catch {
+            print("Failed to pin tracker: \(error.localizedDescription)")
+        }
+    }
+    
+    func isPinned(trackerId: UUID) -> Bool {
+        var isPinned = false
+        let fetchRequest: NSFetchRequest<TrackerCoreData> = TrackerCoreData.fetchRequest()
+        fetchRequest.predicate = NSPredicate(format: "id == %@", trackerId as CVarArg)
+        
+        do {
+            if let tracker = try context.fetch(fetchRequest).first {
+                isPinned = tracker.isPinned?.boolValue ?? false
+                appDelegate.saveContext(context: context)
+            }
+        } catch {
+            print("Failed to check pin tracker: \(error.localizedDescription)")
+        }
+        
+        return isPinned
+    }
+        
     func deleteTracker(id: UUID) {
         let fetchRequest: NSFetchRequest<TrackerCoreData> = TrackerCoreData.fetchRequest()
         fetchRequest.predicate = NSPredicate(format: "id == %@", id as CVarArg)

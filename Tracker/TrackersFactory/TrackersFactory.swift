@@ -162,6 +162,14 @@ final class TrackersFactory {
         pinnedTrackers = pinned
         trackersForShowing = filterTrackers(in: trackersStorage, forDayWithIndex: weekdayIndex)
     }
+    
+    func pinTracker(id: UUID, needPin: Bool) {
+        trackerStore.pinTracker(id: id, needPin: needPin)
+    }
+    
+    func isPinned(trackerId: UUID) -> Bool {
+        trackerStore.isPinned(trackerId: trackerId)
+        }
 
     func markTrackerAsCompleted(trackerID: UUID, on date: Date) {
         let record = TrackerRecord(trackerID: trackerID, date: date)

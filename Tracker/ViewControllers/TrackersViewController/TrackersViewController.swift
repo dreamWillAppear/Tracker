@@ -185,7 +185,7 @@ final class TrackersViewController: UIViewController {
         navigationItem.rightBarButtonItem = UIBarButtonItem(customView: datePicker)
     }
     
-    func updateCollectionViewPlaceholder(forSearch: Bool) {
+   private func updateCollectionViewPlaceholder(forSearch: Bool) {
         collectionViewPlaceholderStackView.isHidden = !factory.trackersForShowing.isEmpty
         filtersButton.isHidden = factory.trackersForShowing.isEmpty
         
@@ -196,6 +196,26 @@ final class TrackersViewController: UIViewController {
             noTrackersImageView.image = .noTrackers
             noTrackersLabel.text = "Что будем отслеживать?"
         }
+    }
+    
+    private func showDeleteConfirmationAlert(trackerID: UUID) {
+        let alert = UIAlertController(
+            title: "Уверены, что хотите удалить трекер?",
+            message: nil,
+            preferredStyle: .actionSheet
+        )
+        
+        let action = UIAlertAction(title: "Удалить", style: .destructive) { [weak self] _ in
+            self?.factory.deleteTrackerFromStorage(UUID: trackerID)
+        }
+        
+        let cancelAction = UIAlertAction(title: "Отмена", style: .cancel)
+        
+        [action, cancelAction].forEach {
+            alert.addAction($0)
+        }
+        
+        present(alert, animated: true)
     }
     
     private func setConstraints() {
@@ -308,6 +328,15 @@ extension TrackersViewController: UICollectionViewDataSource, UICollectionViewDe
                         let vc = EditTrackerViewController(isHabbit: true, tracker: tracker)
                         self?.present(vc, animated: true)
                     }
+        
+        cell.didTapDeleteTracker = { [weak self] in
+            print("DID TAP DELETE TRACKER")
+            self?.showDeleteConfirmationAlert(trackerID: tracker.id)
+        }
+        
+        cell.didTapIncrease = { [weak self] in
+            self?.collectionView.reloadData()
+        }
         
         return cell
     }
