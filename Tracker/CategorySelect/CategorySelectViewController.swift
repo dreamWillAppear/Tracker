@@ -4,8 +4,8 @@ final class CategorySelectViewController: UIViewController, UITableViewDelegate,
     
     var categoryNameSelected: ((String) -> Void)?
     
-    private var selectedCategoryName: String
     private let viewModel = CategorySelectViewModel()
+    private var selectedCategoryName: String
     private let categoryCell = CategoryCell()
     private let rowHeight: CGFloat = 75
     

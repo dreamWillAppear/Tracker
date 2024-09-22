@@ -140,6 +140,9 @@ final class TrackersViewController: UIViewController {
         collectionView.register(
             TrackerCell.self,
             forCellWithReuseIdentifier: TrackerCell.reuseIdentifier)
+        
+        //оверскролл, что бы filtersButton не мешала взаимодействовать с трекерами
+        collectionView.contentInset = UIEdgeInsets(top: 0, left: 0, bottom: 75, right: 0)
     }
     
     private func configureDismissingKeyboard() {
@@ -268,9 +271,12 @@ final class TrackersViewController: UIViewController {
         collectionView.reloadData()
     }
     
-    //отладочное: при нажатии на кнопку Фильтры - БД очищается и экран обновляется
+    
     @objc private func didTapFiltersButton() {
-        factory.eraseAllDataFromBase()
+        let viewController = FiltersViewController()
+        present(UINavigationController(rootViewController: viewController), animated: true)
+        //отладочное: при нажатии на кнопку Фильтры - БД очищается и экран обновляется
+        //factory.eraseAllDataFromBase()
     }
     
     @objc private func datePickerValueDateChanged(_ sender: UIDatePicker) {
