@@ -219,7 +219,7 @@ final class EditTrackerViewController: UIViewController, UITextFieldDelegate {
         
         if editableTracker != nil {
             title = "Редактирование привычки"
-            congigureForEdit()
+            configureForEdit()
             mainScrollView.addSubview(dayCounterLabel)
         } else {
             title = isHabbit ? "Новая привычка" : "Новое нерегулярное событие"
@@ -239,12 +239,14 @@ final class EditTrackerViewController: UIViewController, UITextFieldDelegate {
         view.addSubview(mainScrollView)
     }
     
-    private func congigureForEdit() {
+    //MARK: - Configure For Edit Tracker
+    
+    private func configureForEdit() {
         guard let tracker = editableTracker else { return }
-        
         //настройка отображения выбранного лейбла, расписания, категории редактируемого трекера
         let selectedCategory = factory.getCategory(forTracker: tracker.id)
         factory.schedule = tracker.schedule
+        factory.isPinned = tracker.isPinned
         scheduleButton.addSupplementaryView(with: configureScheduleButtonSupplementaryText(for: factory.schedule))
         categoryButton.addSupplementaryView(with: selectedCategory?.title ?? "")
         addTrackerNameField.text = tracker.title
@@ -260,6 +262,8 @@ final class EditTrackerViewController: UIViewController, UITextFieldDelegate {
         
         //настройка уже выбранной категории, эмодзи и цвета редактируемого трекера
         categoryName = selectedCategory?.title ?? ""
+        newCategoryName = categoryName
+        print("configure for edit - newCategoryName is \(newCategoryName)")
         factory.selectedEmoji = tracker.emoji
         factory.selectedColor = tracker.color
     
@@ -422,6 +426,8 @@ final class EditTrackerViewController: UIViewController, UITextFieldDelegate {
     }
     
     private func updateTracker() {
+        print("new category is \(newCategoryName)")
+        print("old catgory is \(categoryName)")
         guard let editableTracker = editableTracker else { return }
         factory.editTracker(
             id: editableTracker.id,
