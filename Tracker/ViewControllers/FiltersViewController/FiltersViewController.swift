@@ -3,8 +3,12 @@ import SnapKit
 
 final class FiltersViewController: UIViewController, UITableViewDelegate, UITableViewDataSource {
     
+    var filterSelected: ((String) -> Void)?
+    
     private let viewModel = FilterViewModel()
-
+    
+    private let factory = TrackersFactory.shared
+    
     private lazy var tableView = {
         let tableView = UITableView()
         tableView.backgroundColor = .trackerBackground
@@ -14,7 +18,7 @@ final class FiltersViewController: UIViewController, UITableViewDelegate, UITabl
             FiltersCell.self,
             forCellReuseIdentifier: FiltersCell.reuseIdentifier
         )
-
+        
         return tableView
     }()
     
@@ -27,7 +31,7 @@ final class FiltersViewController: UIViewController, UITableViewDelegate, UITabl
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        viewModel.filtersName.count
+        viewModel.filtersNames.count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
@@ -35,15 +39,21 @@ final class FiltersViewController: UIViewController, UITableViewDelegate, UITabl
             return UITableViewCell()
         }
         
-        let filterName = viewModel.filtersName[indexPath.row]
-        
-        cell.configureCell(filterName: filterName, isSelected: true)
-        
+        let filterName = viewModel.filtersNames[indexPath.row]
+        let isSelected = factory.currentFilterName == filterName
+        cell.configureCell(filterName: filterName, isSelected: isSelected)
         return cell
     }
     
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         75
+    }
+    
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        let cell =  tableView.cellForRow(at: indexPath) as? FiltersCell
+        cell?.checkmarkImageView.isHidden = false
+        filterSelected?(cell?.filterLabel.text ?? "")
+        self.dismiss(animated: true)
     }
     
     private func setUI() {
@@ -61,7 +71,7 @@ final class FiltersViewController: UIViewController, UITableViewDelegate, UITabl
             make.top.equalToSuperview().inset(81)
             make.leading.equalToSuperview().inset(16)
             make.trailing.equalToSuperview().inset(16)
-            make.height.equalTo(75 * viewModel.filtersName.count)
+            make.height.equalTo(75 * viewModel.filtersNames.count)
         }
     }
     

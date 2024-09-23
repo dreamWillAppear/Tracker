@@ -2,7 +2,7 @@ import UIKit
 import SnapKit
 
 final class TrackerCell: UICollectionViewCell {
-   
+    
     static let reuseIdentifier = "trackerCell"
     
     var didTapEditTracker: (() -> Void)?
@@ -18,6 +18,13 @@ final class TrackerCell: UICollectionViewCell {
         let view = UIView()
         view.layer.cornerRadius = 16
         return view
+    }()
+    
+    private lazy var pinIcon: UIImageView = {
+        let imageView = UIImageView()
+        imageView.image = UIImage(named: "Pin Icon")?.withTintColor(.trackerWhite, renderingMode: .alwaysOriginal)
+        imageView.isHidden = true
+        return imageView
     }()
     
     private lazy var trackerTitle: UILabel = {
@@ -59,6 +66,7 @@ final class TrackerCell: UICollectionViewCell {
         contentView.layer.cornerRadius = colorFilledView.layer.cornerRadius
         
         [colorFilledView,
+         pinIcon,
          trackerTitle,
          emojiView,
          dayCounter,
@@ -77,7 +85,7 @@ final class TrackerCell: UICollectionViewCell {
         self.tracker = tracker
         self.selectedDate = date
         trackerColor = tracker.color
-        
+        pinIcon.isHidden = !tracker.isPinned
         colorFilledView.backgroundColor = tracker.color
         trackerTitle.text = tracker.title
         emojiView.text = tracker.emoji
@@ -130,6 +138,11 @@ final class TrackerCell: UICollectionViewCell {
             make.trailing.equalToSuperview()
         }
         
+        pinIcon.snp.makeConstraints { make in
+            make.top.equalToSuperview().inset(18)
+            make.trailing.equalToSuperview().inset(12)
+        }
+        
         trackerTitle.snp.makeConstraints { make in
             make.width.equalTo(143)
             make.height.equalTo(34)
@@ -175,7 +188,7 @@ final class TrackerCell: UICollectionViewCell {
             let tracker = tracker,
             let date = selectedDate
         else { return }
-    
+        
         mark(tracker: tracker, onDate: date)
         configureIncreaseButton(tracker: tracker, date: date)
         configureCounterLabel()

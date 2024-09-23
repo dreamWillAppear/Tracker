@@ -188,7 +188,7 @@ final class TrackersViewController: UIViewController {
         navigationItem.rightBarButtonItem = UIBarButtonItem(customView: datePicker)
     }
     
-   private func updateCollectionViewPlaceholder(forSearch: Bool) {
+    private func updateCollectionViewPlaceholder(forSearch: Bool) {
         collectionViewPlaceholderStackView.isHidden = !factory.trackersForShowing.isEmpty
         filtersButton.isHidden = factory.trackersForShowing.isEmpty
         
@@ -220,6 +220,8 @@ final class TrackersViewController: UIViewController {
         
         present(alert, animated: true)
     }
+    
+    
     
     private func setConstraints() {
         mainLabel.snp.makeConstraints { make in
@@ -265,6 +267,8 @@ final class TrackersViewController: UIViewController {
         
     }
     
+    
+    
     //MARK: - Actions
     @objc private func categoriesUpdated() {
         updateCollectionViewPlaceholder(forSearch: false)
@@ -275,14 +279,32 @@ final class TrackersViewController: UIViewController {
     @objc private func didTapFiltersButton() {
         let viewController = FiltersViewController()
         present(UINavigationController(rootViewController: viewController), animated: true)
+        
+        viewController.filterSelected = { [weak self] filterName in
+            self?.factory.currentFilterName = filterName
+            
+            guard filterName != FiltersNames.todayTrackers.rawValue else {
+                self?.datePicker.date = TrackerCalendar.currentDate
+                self?.factory.updateTrackersForShowing()
+                return
+            }
+            
+            self?.factory.updateTrackersForShowing()
+        }
         //отладочное: при нажатии на кнопку Фильтры - БД очищается и экран обновляется
         //factory.eraseAllDataFromBase()
     }
     
     @objc private func datePickerValueDateChanged(_ sender: UIDatePicker) {
+        if factory.currentFilterName == FiltersNames.todayTrackers.rawValue {
+            factory.currentFilterName = FiltersNames.allTrackers.rawValue
+        }
+        
+        
         dateFormatter.dateFormat = "yyyy-MM-dd"
         currentDate = sender.date
         let weekday = currentCalendar.component(.weekday, from: currentDate)
+        factory.selectedDate = currentDate
         factory.weekdayIndex = ((weekday + 5) % 7)
         factory.updateTrackersForShowing()
     }
@@ -331,12 +353,11 @@ extension TrackersViewController: UICollectionViewDataSource, UICollectionViewDe
         cell.configureCell(for: tracker, date: currentDate)
         
         cell.didTapEditTracker = { [weak self] in
-                        let vc = EditTrackerViewController(isHabbit: true, tracker: tracker)
-                        self?.present(vc, animated: true)
-                    }
+            let vc = EditTrackerViewController(isHabbit: true, tracker: tracker)
+            self?.present(UINavigationController(rootViewController: vc), animated: true)
+        }
         
         cell.didTapDeleteTracker = { [weak self] in
-            print("DID TAP DELETE TRACKER")
             self?.showDeleteConfirmationAlert(trackerID: tracker.id)
         }
         
@@ -376,29 +397,29 @@ extension TrackersViewController: UICollectionViewDataSource, UICollectionViewDe
     }
     
     func collectionView(
-           _ collectionView: UICollectionView,
-           layout collectionViewLayout: UICollectionViewLayout,
-           referenceSizeForHeaderInSection section: Int
-       ) -> CGSize {
-           .init(width: 149, height: 18)
-       }
-   }
+        _ collectionView: UICollectionView,
+        layout collectionViewLayout: UICollectionViewLayout,
+        referenceSizeForHeaderInSection section: Int
+    ) -> CGSize {
+        .init(width: 149, height: 18)
+    }
+}
 
 extension TrackersViewController: UISearchBarDelegate {
     
     func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
         switch searchText{
-            
-        case "":
-            searchBar.setShowsCancelButton(false, animated: true)
-            factory.trackersForShowing = factory.filterTrackers(in: factory.trackersStorage, forDayWithIndex: factory.weekdayIndex)
-        default:
-            //без асинхронного вызова заглушка появляется только после ввода второго символа. Видимо потому что trackersForShowing: [TrackerCategory] уже пуст, но UI еще обновился?
-            DispatchQueue.main.async {
-                self.updateCollectionViewPlaceholder(forSearch: true)
-            }
-            searchBar.setShowsCancelButton(true, animated: true)
-            factory.trackersForShowing = factory.filterTrackers(in: factory.trackersStorage, by: searchText)
+                
+            case "":
+                searchBar.setShowsCancelButton(false, animated: true)
+                factory.trackersForShowing = factory.filterTrackers(in: factory.trackersStorage, forDayWithIndex: factory.weekdayIndex)
+            default:
+                //без асинхронного вызова заглушка появляется только после ввода второго символа. Видимо потому что trackersForShowing: [TrackerCategory] уже пуст, но UI еще обновился?
+                DispatchQueue.main.async {
+                    self.updateCollectionViewPlaceholder(forSearch: true)
+                }
+                searchBar.setShowsCancelButton(true, animated: true)
+                factory.trackersForShowing = factory.filterTrackers(in: factory.trackersStorage, by: searchText)
         }
     }
     

@@ -14,7 +14,8 @@ final class TrackersFactory {
     var selectedColor = UIColor()
     var isPinned = false
     var weekdayIndex = TrackerCalendar.currentDayWeekIndex
-    
+    var selectedDate = Date()
+    var currentFilterName = "Все трекеры"
     var pinnedTrackers: [Tracker] = []
     
     var schedule = Array(repeating: false, count: WeekDay.allCases.count) {
@@ -79,48 +80,6 @@ final class TrackersFactory {
         let unpinned = trackers.filter { !$0.isPinned }
         return (pinned, unpinned)
     }
-
-    func filterTrackers(in categoriesArray: [TrackerCategory], forDayWithIndex weekdayIndex: Int) -> [TrackerCategory] {
-        var categoriesForShowing: [TrackerCategory] = []
-        for category in trackersStorage {
-            for tracker in category.trackers {
-                if tracker.schedule[weekdayIndex] == true {
-                    if let index = categoriesForShowing.enumerated().first(where:  { $0.element.title == category.title })?.offset {
-                        let updatedCategory = categoriesForShowing[index]
-                        var updatedTrackers = updatedCategory.trackers
-                        updatedTrackers.append(tracker)
-                        let newCategory = TrackerCategory(title: category.title, trackers: updatedTrackers)
-                        categoriesForShowing[index] = newCategory
-                    } else {
-                        let newCategory = TrackerCategory(title: category.title, trackers: [tracker])
-                        categoriesForShowing.append(newCategory)
-                    }
-                }
-            }
-        }
-        return categoriesForShowing
-    }
-    
-    func filterTrackers(in categoriesArray: [TrackerCategory], by name: String) -> [TrackerCategory] {
-        var categoriesForShowing: [TrackerCategory] = []
-        for category in categoriesArray {
-            for tracker in category.trackers {
-                let trackerName = tracker.title.lowercased()
-                let searchText = name.lowercased()
-                if trackerName.contains(searchText) {
-                    if let categoryIndex = categoriesForShowing.enumerated().first(where: { $0.element.title == category.title })?.offset {
-                        let updatedCategory = categoriesForShowing[categoryIndex]
-                        var updatedTrackers = updatedCategory.trackers
-                        updatedTrackers.append(tracker)
-                        categoriesForShowing[categoryIndex] = updatedCategory
-                    } else {
-                        categoriesForShowing.append(TrackerCategory(title: category.title, trackers: [tracker]))
-                    }
-                }
-            }
-        }
-        return categoriesForShowing
-    }
     
     func getDayCounterLabel(for tracker: Tracker) -> String {
         let daysCount = getRecordsCount(for: tracker)
@@ -133,12 +92,12 @@ final class TrackersFactory {
             counterLabel = "\(daysCount) дней"
         } else {
             switch lastDigit {
-            case 1:
-                counterLabel = "\(daysCount) день"
-            case 2, 3, 4:
-                counterLabel = "\(daysCount) дня"
-            default:
-                counterLabel = "\(daysCount) дней"
+                case 1:
+                    counterLabel = "\(daysCount) день"
+                case 2, 3, 4:
+                    counterLabel = "\(daysCount) дня"
+                default:
+                    counterLabel = "\(daysCount) дней"
             }
         }
         return counterLabel
@@ -157,20 +116,14 @@ final class TrackersFactory {
         categoryStore.changeCategoryForTracker(trackerID: id, to: newCategoryName)
     }
     
-    func updateTrackersForShowing() {
-        let (pinned, unpinned) = getPinnedAndUnpinnedTrackers(forDayWithIndex: weekdayIndex)
-        pinnedTrackers = pinned
-        trackersForShowing = filterTrackers(in: trackersStorage, forDayWithIndex: weekdayIndex)
-    }
-    
     func pinTracker(id: UUID, needPin: Bool) {
         trackerStore.pinTracker(id: id, needPin: needPin)
     }
     
     func isPinned(trackerId: UUID) -> Bool {
         trackerStore.isPinned(trackerId: trackerId)
-        }
-
+    }
+    
     func markTrackerAsCompleted(trackerID: UUID, on date: Date) {
         let record = TrackerRecord(trackerID: trackerID, date: date)
         trackerRecordStore.addRecord(record)
@@ -197,6 +150,115 @@ final class TrackersFactory {
     func getCategory(forTracker id: UUID) -> TrackerCategory? {
         categoryStore.fetchCategory(forTracker: id)
     }
+    
+    func updateTrackersForShowing() {
+        let (pinned, _) = getPinnedAndUnpinnedTrackers(forDayWithIndex: weekdayIndex)
+        pinnedTrackers = pinned
+        
+        trackersForShowing = getFilteredTrackers()
+    }
+    
+    //MARK: - Filters
+    
+    func  getFilteredTrackers() -> [TrackerCategory] {
+        switch currentFilterName {
+            case FiltersNames.allTrackers.rawValue:
+                return getAllTrackers()
+            case FiltersNames.todayTrackers.rawValue:
+                return getTodayTrackers()
+            case FiltersNames.completedTrackers.rawValue:
+                return getCompletedTrackers()
+            case FiltersNames.uncompletedTrackers.rawValue:
+                return getUncompletedTrackers()
+            default:
+                return getAllTrackers()
+        }
+    }
+    
+    func getAllTrackers() -> [TrackerCategory] {
+        filterTrackers(in: trackersStorage, forDayWithIndex: weekdayIndex)
+    }
+    
+    func getTodayTrackers() -> [TrackerCategory] {
+        filterTrackers(in: trackersStorage, forDayWithIndex: TrackerCalendar.currentDayWeekIndex)
+    }
+    
+    func getCompletedTrackers() -> [TrackerCategory] {
+        let allTrackers = filterTrackers(in: trackersStorage, forDayWithIndex: weekdayIndex)
+        var completedCategories: [TrackerCategory] = []
+        
+        for category in allTrackers {
+            let completedTrackers = category.trackers.filter { tracker in
+                trackerRecordStore.checkRecord(trackerID: tracker.id, on: selectedDate)
+            }
+            
+            if !completedTrackers.isEmpty {
+                completedCategories.append(TrackerCategory(title: category.title, trackers: completedTrackers))
+            }
+        }
+        
+        return completedCategories
+    }
+    
+    func getUncompletedTrackers() -> [TrackerCategory] {
+        let allTrackers = filterTrackers(in: trackersStorage, forDayWithIndex: weekdayIndex)
+        var uncompletedCategories: [TrackerCategory] = []
+        
+        for category in allTrackers {
+            let uncompletedTrackers = category.trackers.filter { tracker in
+                !trackerRecordStore.checkRecord(trackerID: tracker.id, on: selectedDate)
+            }
+            
+            if !uncompletedTrackers.isEmpty {
+                uncompletedCategories.append(TrackerCategory(title: category.title, trackers: uncompletedTrackers))
+            }
+        }
+        
+        return uncompletedCategories
+    }
+    
+    func filterTrackers(in categoriesArray: [TrackerCategory], by name: String) -> [TrackerCategory] {
+        var categoriesForShowing: [TrackerCategory] = []
+        for category in categoriesArray {
+            for tracker in category.trackers {
+                let trackerName = tracker.title.lowercased()
+                let searchText = name.lowercased()
+                if trackerName.contains(searchText) {
+                    if let categoryIndex = categoriesForShowing.enumerated().first(where: { $0.element.title == category.title })?.offset {
+                        let updatedCategory = categoriesForShowing[categoryIndex]
+                        var updatedTrackers = updatedCategory.trackers
+                        updatedTrackers.append(tracker)
+                        categoriesForShowing[categoryIndex] = updatedCategory
+                    } else {
+                        categoriesForShowing.append(TrackerCategory(title: category.title, trackers: [tracker]))
+                    }
+                }
+            }
+        }
+        return categoriesForShowing
+    }
+    
+    func filterTrackers(in categoriesArray: [TrackerCategory], forDayWithIndex weekdayIndex: Int) -> [TrackerCategory] {
+        var categoriesForShowing: [TrackerCategory] = []
+        for category in trackersStorage {
+            for tracker in category.trackers {
+                if tracker.schedule[weekdayIndex] == true {
+                    if let index = categoriesForShowing.enumerated().first(where:  { $0.element.title == category.title })?.offset {
+                        let updatedCategory = categoriesForShowing[index]
+                        var updatedTrackers = updatedCategory.trackers
+                        updatedTrackers.append(tracker)
+                        let newCategory = TrackerCategory(title: category.title, trackers: updatedTrackers)
+                        categoriesForShowing[index] = newCategory
+                    } else {
+                        let newCategory = TrackerCategory(title: category.title, trackers: [tracker])
+                        categoriesForShowing.append(newCategory)
+                    }
+                }
+            }
+        }
+        return categoriesForShowing
+    }
+    
 }
 
 
