@@ -3,8 +3,6 @@ import CoreData
 
 final class TrackerStore: NSObject, NSFetchedResultsControllerDelegate {
     
-    @NSManaged public var isPinned: Bool
-    
     private let appDelegate = AppDelegate()
     private var context: NSManagedObjectContext
     private var categoryFetchedResultsController: NSFetchedResultsController<TrackerCategoryCoreData>?
@@ -74,23 +72,6 @@ final class TrackerStore: NSObject, NSFetchedResultsControllerDelegate {
         }
     }
     
-    func isPinned(trackerId: UUID) -> Bool {
-        var isPinned = false
-        let fetchRequest: NSFetchRequest<TrackerCoreData> = TrackerCoreData.fetchRequest()
-        fetchRequest.predicate = NSPredicate(format: "id == %@", trackerId as CVarArg)
-        
-        do {
-            if let tracker = try context.fetch(fetchRequest).first {
-                isPinned = tracker.isPinned?.boolValue ?? false
-                appDelegate.saveContext(context: context)
-            }
-        } catch {
-            print("Failed to check pin tracker: \(error.localizedDescription)")
-        }
-        
-        return isPinned
-    }
-        
     func deleteTracker(id: UUID) {
         let fetchRequest: NSFetchRequest<TrackerCoreData> = TrackerCoreData.fetchRequest()
         fetchRequest.predicate = NSPredicate(format: "id == %@", id as CVarArg)

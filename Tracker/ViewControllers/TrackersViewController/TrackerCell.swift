@@ -199,7 +199,7 @@ final class TrackerCell: UICollectionViewCell {
 extension TrackerCell: UIContextMenuInteractionDelegate {
     func contextMenuInteraction(_ interaction: UIContextMenuInteraction, configurationForMenuAtLocation location: CGPoint) -> UIContextMenuConfiguration? {
         guard let tracker = tracker else  { return .init() }
-        let trackerPinned = factory.isPinned(trackerId: tracker.id)
+        let trackerPinned = tracker.isPinned
         let pinActionTitle = trackerPinned ? "Открепить" : "Закрепить"
         
         let pinAction = UIAction(title: pinActionTitle, image: nil) { [weak self]  _ in

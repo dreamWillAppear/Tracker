@@ -73,14 +73,6 @@ final class TrackersFactory {
         trackerStore.deleteTracker(id: UUID)
     }
     
-    func getPinnedAndUnpinnedTrackers(forDayWithIndex index: Int) -> ([Tracker], [Tracker]) {
-        let trackers = filterTrackers(in: trackersStorage, forDayWithIndex: index)
-            .flatMap { $0.trackers }
-        let pinned = trackers.filter { $0.isPinned }
-        let unpinned = trackers.filter { !$0.isPinned }
-        return (pinned, unpinned)
-    }
-    
     func getDayCounterLabel(for tracker: Tracker) -> String {
         let daysCount = getRecordsCount(for: tracker)
         var counterLabel = ""
@@ -109,7 +101,7 @@ final class TrackersFactory {
             newTitle: newTitle,
             newColor: newColor,
             newEmoji: newEmoji,
-            newSchedule: newSchedule, 
+            newSchedule: newSchedule,
             isPinned: isPinned
         )
         
@@ -118,10 +110,6 @@ final class TrackersFactory {
     
     func pinTracker(id: UUID, needPin: Bool) {
         trackerStore.pinTracker(id: id, needPin: needPin)
-    }
-    
-    func isPinned(trackerId: UUID) -> Bool {
-        trackerStore.isPinned(trackerId: trackerId)
     }
     
     func markTrackerAsCompleted(trackerID: UUID, on date: Date) {
@@ -152,69 +140,8 @@ final class TrackersFactory {
     }
     
     func updateTrackersForShowing() {
-        let (pinned, _) = getPinnedAndUnpinnedTrackers(forDayWithIndex: weekdayIndex)
-        pinnedTrackers = pinned
-        
+        pinnedTrackers = getPinnedTrackers()
         trackersForShowing = getFilteredTrackers()
-    }
-    
-    //MARK: - Filters
-    
-    func  getFilteredTrackers() -> [TrackerCategory] {
-        switch currentFilterName {
-            case FiltersNames.allTrackers.rawValue:
-                return getAllTrackers()
-            case FiltersNames.todayTrackers.rawValue:
-                return getTodayTrackers()
-            case FiltersNames.completedTrackers.rawValue:
-                return getCompletedTrackers()
-            case FiltersNames.uncompletedTrackers.rawValue:
-                return getUncompletedTrackers()
-            default:
-                return getAllTrackers()
-        }
-    }
-    
-    func getAllTrackers() -> [TrackerCategory] {
-        filterTrackers(in: trackersStorage, forDayWithIndex: weekdayIndex)
-    }
-    
-    func getTodayTrackers() -> [TrackerCategory] {
-        filterTrackers(in: trackersStorage, forDayWithIndex: TrackerCalendar.currentDayWeekIndex)
-    }
-    
-    func getCompletedTrackers() -> [TrackerCategory] {
-        let allTrackers = filterTrackers(in: trackersStorage, forDayWithIndex: weekdayIndex)
-        var completedCategories: [TrackerCategory] = []
-        
-        for category in allTrackers {
-            let completedTrackers = category.trackers.filter { tracker in
-                trackerRecordStore.checkRecord(trackerID: tracker.id, on: selectedDate)
-            }
-            
-            if !completedTrackers.isEmpty {
-                completedCategories.append(TrackerCategory(title: category.title, trackers: completedTrackers))
-            }
-        }
-        
-        return completedCategories
-    }
-    
-    func getUncompletedTrackers() -> [TrackerCategory] {
-        let allTrackers = filterTrackers(in: trackersStorage, forDayWithIndex: weekdayIndex)
-        var uncompletedCategories: [TrackerCategory] = []
-        
-        for category in allTrackers {
-            let uncompletedTrackers = category.trackers.filter { tracker in
-                !trackerRecordStore.checkRecord(trackerID: tracker.id, on: selectedDate)
-            }
-            
-            if !uncompletedTrackers.isEmpty {
-                uncompletedCategories.append(TrackerCategory(title: category.title, trackers: uncompletedTrackers))
-            }
-        }
-        
-        return uncompletedCategories
     }
     
     func filterTrackers(in categoriesArray: [TrackerCategory], by name: String) -> [TrackerCategory] {
@@ -259,6 +186,80 @@ final class TrackersFactory {
         return categoriesForShowing
     }
     
+    //MARK: - Private Methods
+    
+    //MARK: - Methods For Filter Button
+    
+    private  func  getFilteredTrackers() -> [TrackerCategory] {
+        switch currentFilterName {
+            case FiltersNames.allTrackers.rawValue:
+                return getAllTrackers()
+            case FiltersNames.todayTrackers.rawValue:
+                return getTodayTrackers()
+            case FiltersNames.completedTrackers.rawValue:
+                return getCompletedTrackers()
+            case FiltersNames.uncompletedTrackers.rawValue:
+                return getUncompletedTrackers()
+            default:
+                return getAllTrackers()
+        }
+    }
+    
+    private  func getAllTrackers() -> [TrackerCategory] {
+        filterTrackers(in: trackersStorage, forDayWithIndex: weekdayIndex)
+    }
+    
+    private   func getTodayTrackers() -> [TrackerCategory] {
+        filterTrackers(in: trackersStorage, forDayWithIndex: TrackerCalendar.currentDayWeekIndex)
+    }
+    
+    private  func getCompletedTrackers() -> [TrackerCategory] {
+        let allTrackers = filterTrackers(in: trackersStorage, forDayWithIndex: weekdayIndex)
+        var completedCategories: [TrackerCategory] = []
+        
+        for category in allTrackers {
+            let completedTrackers = category.trackers.filter { tracker in
+                trackerRecordStore.checkRecord(trackerID: tracker.id, on: selectedDate)
+            }
+            
+            if !completedTrackers.isEmpty {
+                completedCategories.append(TrackerCategory(title: category.title, trackers: completedTrackers))
+            }
+        }
+        
+        return completedCategories
+    }
+    
+    private   func getUncompletedTrackers() -> [TrackerCategory] {
+        let allTrackers = filterTrackers(in: trackersStorage, forDayWithIndex: weekdayIndex)
+        var uncompletedCategories: [TrackerCategory] = []
+        
+        for category in allTrackers {
+            let uncompletedTrackers = category.trackers.filter { tracker in
+                !trackerRecordStore.checkRecord(trackerID: tracker.id, on: selectedDate)
+            }
+            
+            if !uncompletedTrackers.isEmpty {
+                uncompletedCategories.append(TrackerCategory(title: category.title, trackers: uncompletedTrackers))
+            }
+        }
+        
+        return uncompletedCategories
+    }
+    
+    private func getPinnedTrackers() -> [Tracker]{
+        var pinnedTrackers: [Tracker] = []
+        let filteredStorage = getFilteredTrackers()
+        filteredStorage.forEach { category in
+            category.trackers.forEach { tracker in
+                if tracker.isPinned {
+                    pinnedTrackers.append(tracker)
+                }
+            }
+        }
+        
+        return pinnedTrackers
+    }
 }
 
 
