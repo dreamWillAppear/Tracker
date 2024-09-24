@@ -41,6 +41,7 @@
 		FD8A207B2C111B8D0056A256 /* TrackerCalendar.swift in Sources */ = {isa = PBXBuildFile; fileRef = FD8A207A2C111B8D0056A256 /* TrackerCalendar.swift */; };
 		FD8B03252C8A4A39001CCE88 /* AddCategoryViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = FD8B03242C8A4A39001CCE88 /* AddCategoryViewController.swift */; };
 		FD9DDDDB2CA1E5F800157EFF /* FiltersNames.swift in Sources */ = {isa = PBXBuildFile; fileRef = FD9DDDDA2CA1E5F800157EFF /* FiltersNames.swift */; };
+		FD9DDDDE2CA2EBD400157EFF /* StatisticsCounterView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FD9DDDDD2CA2EBD400157EFF /* StatisticsCounterView.swift */; };
 		FD9EEB0F2C8911AD0004E154 /* CategorySelectViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = FD9EEB0E2C8911AD0004E154 /* CategorySelectViewModel.swift */; };
 		FD9EEB112C89163E0004E154 /* CategorySelectViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = FD9EEB102C89163E0004E154 /* CategorySelectViewController.swift */; };
 		FD9EEB132C89CC010004E154 /* CategoryCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = FD9EEB122C89CC010004E154 /* CategoryCell.swift */; };
@@ -83,6 +84,7 @@
 		FD8A207A2C111B8D0056A256 /* TrackerCalendar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrackerCalendar.swift; sourceTree = "<group>"; };
 		FD8B03242C8A4A39001CCE88 /* AddCategoryViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddCategoryViewController.swift; sourceTree = "<group>"; };
 		FD9DDDDA2CA1E5F800157EFF /* FiltersNames.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FiltersNames.swift; sourceTree = "<group>"; };
+		FD9DDDDD2CA2EBD400157EFF /* StatisticsCounterView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatisticsCounterView.swift; sourceTree = "<group>"; };
 		FD9EEB0E2C8911AD0004E154 /* CategorySelectViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CategorySelectViewModel.swift; sourceTree = "<group>"; };
 		FD9EEB102C89163E0004E154 /* CategorySelectViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CategorySelectViewController.swift; sourceTree = "<group>"; };
 		FD9EEB122C89CC010004E154 /* CategoryCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CategoryCell.swift; sourceTree = "<group>"; };
@@ -233,13 +235,13 @@
 		FD53E19B2BF5657C0073B644 /* ViewControllers */ = {
 			isa = PBXGroup;
 			children = (
+				FD9DDDDC2CA2E72A00157EFF /* StatisticsViewController */,
 				FD44575D2CA0B22B00000834 /* FiltersViewController */,
 				16CF4D942C87AAAF002DC444 /* OnboardingViewController */,
 				16F0FD142C1DF0F6004C854A /* TrackersViewController */,
 				169602DA2C3219A0003DB1BC /* AddTrackerViewController */,
 				16D1F78E2C1F9F03007601DE /* AddHabbitViewController */,
 				167A2E7B2C0B4A8D00437041 /* Scheduler */,
-				FD53E1992BF562890073B644 /* StatisticsViewController.swift */,
 			);
 			path = ViewControllers;
 			sourceTree = "<group>";
@@ -253,6 +255,15 @@
 				FD80C28A2C3F38DC00885B41 /* TrackerRecordStore.swift */,
 			);
 			path = CoreData;
+			sourceTree = "<group>";
+		};
+		FD9DDDDC2CA2E72A00157EFF /* StatisticsViewController */ = {
+			isa = PBXGroup;
+			children = (
+				FD53E1992BF562890073B644 /* StatisticsViewController.swift */,
+				FD9DDDDD2CA2EBD400157EFF /* StatisticsCounterView.swift */,
+			);
+			path = StatisticsViewController;
 			sourceTree = "<group>";
 		};
 		FD9EEB0D2C89068C0004E154 /* CategorySelect */ = {
@@ -354,6 +365,7 @@
 				16343C402BFE603E00838829 /* EditTrackerViewController.swift in Sources */,
 				167A2E7F2C0B4BE700437041 /* ScheduleTableViewCell.swift in Sources */,
 				FD9DDDDB2CA1E5F800157EFF /* FiltersNames.swift in Sources */,
+				FD9DDDDE2CA2EBD400157EFF /* StatisticsCounterView.swift in Sources */,
 				16279ECF2C3854E800722E41 /* Storage.xcdatamodeld in Sources */,
 				167A2E7D2C0B4AB000437041 /* WeekdayEnum.swift in Sources */,
 				16947A4F2C033CA800426968 /* TrackersFactory.swift in Sources */,
