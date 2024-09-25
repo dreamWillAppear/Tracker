@@ -192,11 +192,17 @@ final class TrackersViewController: UIViewController {
     private func updateCollectionViewPlaceholder(forSearch: Bool) {
         collectionViewPlaceholderStackView.isHidden = !factory.trackersForShowing.isEmpty
         filtersButton.isHidden = factory.trackersForShowing.isEmpty
-        
+    
         if forSearch {
             noTrackersImageView.image = .noSearchResult
             noTrackersLabel.text = "Ничего не найдено"
         } else {
+            guard factory.currentFilterName == FiltersNames.allTrackers.rawValue else {
+                noTrackersImageView.image = .noSearchResult
+                noTrackersLabel.text = "Ничего не найдено"
+                filtersButton.isHidden = false
+                return
+            }
             noTrackersImageView.image = .noTrackers
             noTrackersLabel.text = "Что будем отслеживать?"
         }
@@ -277,7 +283,6 @@ final class TrackersViewController: UIViewController {
         collectionView.reloadData()
     }
     
-    
     @objc private func didTapFiltersButton() {
         let viewController = FiltersViewController()
         present(UINavigationController(rootViewController: viewController), animated: true)
@@ -293,15 +298,14 @@ final class TrackersViewController: UIViewController {
             
             self?.factory.updateTrackersForShowing()
         }
-        //отладочное: при нажатии на кнопку Фильтры - БД очищается и экран обновляется
-       factory.eraseAllDataFromBase()
+        
+       //factory.eraseAllDataFromBase() //отладочное: при нажатии на кнопку Фильтры - БД очищается и экран обновляется
     }
     
     @objc private func datePickerValueDateChanged(_ sender: UIDatePicker) {
         if factory.currentFilterName == FiltersNames.todayTrackers.rawValue {
             factory.currentFilterName = FiltersNames.allTrackers.rawValue
         }
-        
         
         dateFormatter.dateFormat = "yyyy-MM-dd"
         currentDate = sender.date

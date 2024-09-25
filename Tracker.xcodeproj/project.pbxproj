@@ -168,7 +168,7 @@
 			path = OnboardingViewController;
 			sourceTree = "<group>";
 		};
-		16D1F78E2C1F9F03007601DE /* AddHabbitViewController */ = {
+		16D1F78E2C1F9F03007601DE /* EditTrackerViewController */ = {
 			isa = PBXGroup;
 			children = (
 				16343C3F2BFE603E00838829 /* EditTrackerViewController.swift */,
@@ -176,7 +176,7 @@
 				169602D32C2CB36F003DB1BC /* EmojiCollectionView */,
 				169602D42C2CB382003DB1BC /* ColorSelectCollectionView */,
 			);
-			path = AddHabbitViewController;
+			path = EditTrackerViewController;
 			sourceTree = "<group>";
 		};
 		16F0FD142C1DF0F6004C854A /* TrackersViewController */ = {
@@ -212,7 +212,6 @@
 				1631E0992BF40A85003986AE /* TabBarController.swift */,
 				FD8A207A2C111B8D0056A256 /* TrackerCalendar.swift */,
 				FD9DDDDA2CA1E5F800157EFF /* FiltersNames.swift */,
-				FD9EEB0D2C89068C0004E154 /* CategorySelect */,
 				1645C9B12BF8A5A600CC7B90 /* Models */,
 				FD53E19B2BF5657C0073B644 /* ViewControllers */,
 				16947A4D2C033C8300426968 /* TrackersFactory */,
@@ -237,12 +236,13 @@
 		FD53E19B2BF5657C0073B644 /* ViewControllers */ = {
 			isa = PBXGroup;
 			children = (
+				FD9EEB0D2C89068C0004E154 /* CategorySelect */,
 				FD9DDDDC2CA2E72A00157EFF /* StatisticsViewController */,
 				FD44575D2CA0B22B00000834 /* FiltersViewController */,
 				16CF4D942C87AAAF002DC444 /* OnboardingViewController */,
 				16F0FD142C1DF0F6004C854A /* TrackersViewController */,
 				169602DA2C3219A0003DB1BC /* AddTrackerViewController */,
-				16D1F78E2C1F9F03007601DE /* AddHabbitViewController */,
+				16D1F78E2C1F9F03007601DE /* EditTrackerViewController */,
 				167A2E7B2C0B4A8D00437041 /* Scheduler */,
 			);
 			path = ViewControllers;

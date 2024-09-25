@@ -473,6 +473,7 @@ final class EditTrackerViewController: UIViewController, UITextFieldDelegate {
                 schedule: factory.schedule)
             
             factory.addToStorage(tracker: tracker, for: newCategoryName)
+            factory.schedule = Array(repeating: false, count: WeekDay.allCases.count)  //приводим к исходному schedule после добавления трекера в хранилище
         }
         
         factory.updateTrackersForShowing()
@@ -516,6 +517,7 @@ extension EditTrackerViewController {
     }
     
     func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
+        print(trackerNameEntered, categorySelected, scheduleDidSet, emojiSelected, colorSelected)
         guard let currentText = addTrackerNameField.text else { return true }
         let newTextLenght = currentText.count + string.count - range.length
         trackerNameEntered = newTextLenght != 0 ? true : false

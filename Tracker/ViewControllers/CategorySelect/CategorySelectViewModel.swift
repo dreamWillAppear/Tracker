@@ -2,8 +2,6 @@ final class CategorySelectViewModel {
     
     var categories: [TrackerCategory] = []
     
-    var lastSelectedCategory = ""
-    
     private let trackerCategoryStore = TrackerCategoryStore(context: TrackersFactory.shared.context)
     
     var categoriesUpdated: (() -> Void)?

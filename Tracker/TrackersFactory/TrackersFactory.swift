@@ -8,8 +8,6 @@ final class TrackersFactory {
     static let trackersForShowingUpdatedNotification = Notification.Name("trackersForShowingUpdatedNotification")
     static let scheduleUpdatedNotification = Notification.Name("scheduleUpdatedNotification")
     
-   
-    
     lazy var context = appDelegate.persistentContainer.viewContext
     
     var trackerStorageUpdated: (() -> Void)?
@@ -36,7 +34,6 @@ final class TrackersFactory {
     
     var trackersStorage: [TrackerCategory] = [] {
         didSet{
-            schedule = Array(repeating: false, count: WeekDay.allCases.count)  //приводим к исходному schedule после добавления трекера в хранилище
             trackerStorageUpdated?()
             updateTrackersForShowing()
         }
@@ -52,7 +49,7 @@ final class TrackersFactory {
     private  init() {
         getInitialData()
     }
-    
+        
     // MARK: - Public Methods
     
     func eraseAllDataFromBase() {
