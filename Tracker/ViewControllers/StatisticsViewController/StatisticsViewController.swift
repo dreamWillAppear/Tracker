@@ -5,6 +5,8 @@ final class StatisticsViewController: UIViewController {
     
     // MARK: - Private Properties
     
+    private let factory = StatisticsFactory.shared
+    
     private lazy var mainLabel: UILabel = {
         let label = UILabel()
         label.text = "Статистика"
@@ -18,7 +20,7 @@ final class StatisticsViewController: UIViewController {
         view.axis = .vertical
         view.alignment = .center
         view.spacing = 8
-        view.isHidden = true
+        view.isHidden = false
         return view
     }()
     
@@ -43,17 +45,24 @@ final class StatisticsViewController: UIViewController {
         return stack
     }()
     
-    private lazy var bestPeriod = StatisticsCounter(counter: 123123, counterName: "Лучший период")
-    private lazy var perfectDays = StatisticsCounter(counter: 23, counterName: "Идеальные дни")
-    private lazy var completedTrackers = StatisticsCounter(counter: 1, counterName: "Трекеров завершено")
-    private lazy var averageCount = StatisticsCounter(counter: 2333333945999999955, counterName: "Среднее значение")
+    private lazy var bestPeriod = StatisticsCounter(counter: factory.longestPerfectStreak, counterName: "Лучший период")
+    private lazy var perfectDays = StatisticsCounter(counter: factory.perfectDaysCount, counterName: "Идеальные дни")
+    private lazy var completedTrackers = StatisticsCounter(counter: factory.allRecordsCount, counterName: "Трекеров завершено")
+    private lazy var averageCount = StatisticsCounter(counter: factory.averageValue, counterName: "Среднее значение")
+    
+    private lazy var counters = [bestPeriod, perfectDays, completedTrackers, averageCount]
     
     // MARK: - Public Methods
     
     override func viewDidLoad() {
         super.viewDidLoad()
-
+        
         setUI()
+        
+        factory.statisticsDidUpdated = { [weak self] in
+            self?.updateStatistics()
+        }
+        
     }
     
     // MARK: - Private Methods
@@ -72,11 +81,13 @@ final class StatisticsViewController: UIViewController {
             noStatisticsStackView.addArrangedSubview($0)
         }
         
-        [bestPeriod, perfectDays, completedTrackers, averageCount].forEach {
+        counters.forEach {
+            $0.isHidden = $0.counter == 0
             countersStackView.addArrangedSubview($0)
         }
         
         setConstraints()
+        checkPlaceholderVisibility()
     }
     
     private func setConstraints() {
@@ -108,14 +119,43 @@ final class StatisticsViewController: UIViewController {
         let visibleViews = countersStackView.visibleViewsCount()
         guard visibleViews  > 1 else { return 90 }
         
-        return CGFloat((visibleViews * 90) + (12 * visibleViews - 1)) 
+        return CGFloat((visibleViews * 90) + (12 * visibleViews - 1))
     }
     
+    private func updateStatistics() {
+        completedTrackers.counter = factory.allRecordsCount
+        perfectDays.counter = factory.perfectDaysCount
+        bestPeriod.counter = factory.longestPerfectStreak
+        averageCount.counter = factory.averageValue
+        checkPlaceholderVisibility()
+    }
     
+    private func checkPlaceholderVisibility() {
+        let isAnyCounterVisible = counters.contains { $0.counter != 0 }
+        noStatisticsStackView.isHidden = isAnyCounterVisible
+        countersStackView.isHidden = !noStatisticsStackView.isHidden
+        
+        countersStackView.arrangedSubviews.forEach { $0.removeFromSuperview() }
+        
+        counters.forEach { counter in
+            if counter.counter != 0 {
+                counter.isHidden = false
+                countersStackView.addArrangedSubview(counter)
+            }
+        }
+        
+        countersStackView.snp.updateConstraints { make in
+            make.height.equalTo(getCountersStackViewHeight())
+        }
+        
+        view.setNeedsLayout()
+        view.layoutIfNeeded()
+    }
+
 }
-    
+
 extension UIStackView {
-     func visibleViewsCount() -> Int {
+    func visibleViewsCount() -> Int {
         var visibleViewCount = 0
         self.arrangedSubviews.forEach {
             if !$0.isHidden {

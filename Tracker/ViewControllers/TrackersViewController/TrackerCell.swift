@@ -10,6 +10,7 @@ final class TrackerCell: UICollectionViewCell {
     var didTapIncrease: (() -> Void)?
     
     private let factory = TrackersFactory.shared
+    private let statisticsFactory = StatisticsFactory.shared
     private var tracker: Tracker?
     private var selectedDate: Date?
     private var trackerColor: UIColor?

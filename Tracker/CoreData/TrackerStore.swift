@@ -131,6 +131,16 @@ final class TrackerStore: NSObject, NSFetchedResultsControllerDelegate {
         }
     }
     
+    func getTrackers(for date: Date) -> [Tracker] {
+        let calendar = Calendar.current
+        let weekday = calendar.component(.weekday, from: date)
+        let allTrackers = fetchAllTrackers()
+        return allTrackers.filter { tracker in
+             let schedule = tracker.schedule
+            return schedule[weekday - 1]
+        }
+    }
+
     private func fetchCategoryCoreData(withTitle title: String) -> TrackerCategoryCoreData? {
         let fetchRequest: NSFetchRequest<TrackerCategoryCoreData> = TrackerCategoryCoreData.fetchRequest()
         fetchRequest.predicate = NSPredicate(format: "title == %@", title)
@@ -141,6 +151,21 @@ final class TrackerStore: NSObject, NSFetchedResultsControllerDelegate {
             print("Failed to fetch category: \(error)")
             return nil
         }
+    }
+    
+    func fetchAllTrackers() -> [Tracker] {
+        guard let categories = categoryFetchedResultsController?.fetchedObjects else { return [] }
+        var trackers: [Tracker] = []
+        
+        for category in categories {
+            if let trackerCoreDataArray = category.trackers?.allObjects as? [TrackerCoreData] {
+                let trackerModels = trackerCoreDataArray.compactMap { trackerCoreData -> Tracker? in
+                    fetchTracker(by: trackerCoreData.id!)
+                }
+                trackers.append(contentsOf: trackerModels)
+            }
+        }
+        return trackers
     }
     
     private func setupFetchedResultsControllers() {

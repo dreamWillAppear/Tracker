@@ -263,7 +263,6 @@ final class EditTrackerViewController: UIViewController, UITextFieldDelegate {
         //настройка уже выбранной категории, эмодзи и цвета редактируемого трекера
         categoryName = selectedCategory?.title ?? ""
         newCategoryName = categoryName
-        print("configure for edit - newCategoryName is \(newCategoryName)")
         factory.selectedEmoji = tracker.emoji
         factory.selectedColor = tracker.color
     
@@ -426,8 +425,6 @@ final class EditTrackerViewController: UIViewController, UITextFieldDelegate {
     }
     
     private func updateTracker() {
-        print("new category is \(newCategoryName)")
-        print("old catgory is \(categoryName)")
         guard let editableTracker = editableTracker else { return }
         factory.editTracker(
             id: editableTracker.id,

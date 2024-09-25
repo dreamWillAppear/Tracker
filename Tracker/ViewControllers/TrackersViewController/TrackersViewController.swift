@@ -10,6 +10,7 @@ final class TrackersViewController: UIViewController {
     private lazy var currentDate: Date = TrackerCalendar.currentDate
     private let categoriesUpdatedNotification = TrackersFactory.trackersForShowingUpdatedNotification
     private let factory = TrackersFactory.shared
+    private let statisticsFactory = StatisticsFactory.shared
     private var completedTrackers: [TrackerRecord] = []
     
     private var categoriesForShowing: [TrackerCategory] = [] {
@@ -210,6 +211,7 @@ final class TrackersViewController: UIViewController {
         
         let action = UIAlertAction(title: "Удалить", style: .destructive) { [weak self] _ in
             self?.factory.deleteTrackerFromStorage(UUID: trackerID)
+            self?.statisticsFactory.updateStatistics()
         }
         
         let cancelAction = UIAlertAction(title: "Отмена", style: .cancel)
@@ -292,7 +294,7 @@ final class TrackersViewController: UIViewController {
             self?.factory.updateTrackersForShowing()
         }
         //отладочное: при нажатии на кнопку Фильтры - БД очищается и экран обновляется
-        //factory.eraseAllDataFromBase()
+       factory.eraseAllDataFromBase()
     }
     
     @objc private func datePickerValueDateChanged(_ sender: UIDatePicker) {
@@ -355,6 +357,7 @@ extension TrackersViewController: UICollectionViewDataSource, UICollectionViewDe
         cell.didTapEditTracker = { [weak self] in
             let vc = EditTrackerViewController(isHabbit: true, tracker: tracker)
             self?.present(UINavigationController(rootViewController: vc), animated: true)
+            self?.statisticsFactory.updateStatistics()
         }
         
         cell.didTapDeleteTracker = { [weak self] in
@@ -363,6 +366,7 @@ extension TrackersViewController: UICollectionViewDataSource, UICollectionViewDe
         
         cell.didTapIncrease = { [weak self] in
             self?.collectionView.reloadData()
+            self?.statisticsFactory.updateStatistics()
         }
         
         return cell

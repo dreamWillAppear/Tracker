@@ -3,9 +3,17 @@ import SnapKit
 
 class StatisticsCounter: UIView {
     
-    var counter: Int
+    var counter: Int {
+        didSet {
+            counterLabel.text = String(counter)
+        }
+    }
     
-    var counterName: String
+    var counterName: String {
+        didSet {
+            counterLabel.text = counterName
+        }
+    }
     
     private lazy var counterLabel: UILabel = {
         let label = UILabel()
@@ -35,10 +43,6 @@ class StatisticsCounter: UIView {
         return stack
     }()
     
-    
-    
-    
-    // Инициализация
     init(counter: Int, counterName: String) {
         self.counter = counter
         self.counterName = counterName
@@ -50,12 +54,10 @@ class StatisticsCounter: UIView {
         fatalError("init(coder:) has not been implemented")
     }
     
-    // Метод для настройки представления
     private func setupView() {
         layer.cornerRadius = 16
         layer.masksToBounds = true
         
-        // Добавляем подвиды
         [counterLabel, counterNameLabel].forEach {
             labelsStackView.addArrangedSubview($0)
         }

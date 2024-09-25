@@ -42,6 +42,7 @@
 		FD8B03252C8A4A39001CCE88 /* AddCategoryViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = FD8B03242C8A4A39001CCE88 /* AddCategoryViewController.swift */; };
 		FD9DDDDB2CA1E5F800157EFF /* FiltersNames.swift in Sources */ = {isa = PBXBuildFile; fileRef = FD9DDDDA2CA1E5F800157EFF /* FiltersNames.swift */; };
 		FD9DDDDE2CA2EBD400157EFF /* StatisticsCounterView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FD9DDDDD2CA2EBD400157EFF /* StatisticsCounterView.swift */; };
+		FD9DDDE22CA34D2000157EFF /* StatisticsFactory.swift in Sources */ = {isa = PBXBuildFile; fileRef = FD9DDDE12CA34D2000157EFF /* StatisticsFactory.swift */; };
 		FD9EEB0F2C8911AD0004E154 /* CategorySelectViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = FD9EEB0E2C8911AD0004E154 /* CategorySelectViewModel.swift */; };
 		FD9EEB112C89163E0004E154 /* CategorySelectViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = FD9EEB102C89163E0004E154 /* CategorySelectViewController.swift */; };
 		FD9EEB132C89CC010004E154 /* CategoryCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = FD9EEB122C89CC010004E154 /* CategoryCell.swift */; };
@@ -85,6 +86,7 @@
 		FD8B03242C8A4A39001CCE88 /* AddCategoryViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddCategoryViewController.swift; sourceTree = "<group>"; };
 		FD9DDDDA2CA1E5F800157EFF /* FiltersNames.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FiltersNames.swift; sourceTree = "<group>"; };
 		FD9DDDDD2CA2EBD400157EFF /* StatisticsCounterView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatisticsCounterView.swift; sourceTree = "<group>"; };
+		FD9DDDE12CA34D2000157EFF /* StatisticsFactory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatisticsFactory.swift; sourceTree = "<group>"; };
 		FD9EEB0E2C8911AD0004E154 /* CategorySelectViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CategorySelectViewModel.swift; sourceTree = "<group>"; };
 		FD9EEB102C89163E0004E154 /* CategorySelectViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CategorySelectViewController.swift; sourceTree = "<group>"; };
 		FD9EEB122C89CC010004E154 /* CategoryCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CategoryCell.swift; sourceTree = "<group>"; };
@@ -262,6 +264,7 @@
 			children = (
 				FD53E1992BF562890073B644 /* StatisticsViewController.swift */,
 				FD9DDDDD2CA2EBD400157EFF /* StatisticsCounterView.swift */,
+				FD9DDDE12CA34D2000157EFF /* StatisticsFactory.swift */,
 			);
 			path = StatisticsViewController;
 			sourceTree = "<group>";
@@ -378,6 +381,7 @@
 				FD4204262BF17E7C0007A254 /* TrackersViewController.swift in Sources */,
 				FD4204222BF17E7C0007A254 /* AppDelegate.swift in Sources */,
 				FD9EEB0F2C8911AD0004E154 /* CategorySelectViewModel.swift in Sources */,
+				FD9DDDE22CA34D2000157EFF /* StatisticsFactory.swift in Sources */,
 				167C6D752C2885AC0013F9BC /* EmojiCell.swift in Sources */,
 				16D1F78D2C1F9ECE007601DE /* TrackerButton.swift in Sources */,
 				16AE20E52C2A1D600043A3D3 /* EmojiCollectionHeader.swift in Sources */,

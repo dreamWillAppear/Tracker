@@ -8,7 +8,11 @@ final class TrackersFactory {
     static let trackersForShowingUpdatedNotification = Notification.Name("trackersForShowingUpdatedNotification")
     static let scheduleUpdatedNotification = Notification.Name("scheduleUpdatedNotification")
     
+   
+    
     lazy var context = appDelegate.persistentContainer.viewContext
+    
+    var trackerStorageUpdated: (() -> Void)?
     
     var selectedEmoji = ""
     var selectedColor = UIColor()
@@ -32,8 +36,8 @@ final class TrackersFactory {
     
     var trackersStorage: [TrackerCategory] = [] {
         didSet{
-            //приводим к исходному schedule после добавления трекера в хранилище
-            schedule = Array(repeating: false, count: WeekDay.allCases.count)
+            schedule = Array(repeating: false, count: WeekDay.allCases.count)  //приводим к исходному schedule после добавления трекера в хранилище
+            trackerStorageUpdated?()
             updateTrackersForShowing()
         }
     }
@@ -71,6 +75,7 @@ final class TrackersFactory {
     
     func deleteTrackerFromStorage(UUID: UUID) {
         trackerStore.deleteTracker(id: UUID)
+        trackerRecordStore.deleteRecords(for: UUID)
     }
     
     func getDayCounterLabel(for tracker: Tracker) -> String {
@@ -134,6 +139,10 @@ final class TrackersFactory {
     func getRecordsCount(for tracker: Tracker) -> Int {
         trackerRecordStore.getRecordsCount(for: tracker.id)
     }
+        
+    func getAllRecordsCount() -> Int {
+        trackerRecordStore.getRecordsCount()
+    }
     
     func getCategory(forTracker id: UUID) -> TrackerCategory? {
         categoryStore.fetchCategory(forTracker: id)
@@ -186,6 +195,84 @@ final class TrackersFactory {
         return categoriesForShowing
     }
     
+    func getCompletedTrackers() -> [TrackerCategory] {
+      let allTrackers = filterTrackers(in: trackersStorage, forDayWithIndex: weekdayIndex)
+      var completedCategories: [TrackerCategory] = []
+      
+      for category in allTrackers {
+          let completedTrackers = category.trackers.filter { tracker in
+              trackerRecordStore.checkRecord(trackerID: tracker.id, on: selectedDate)
+          }
+          
+          if !completedTrackers.isEmpty {
+              completedCategories.append(TrackerCategory(title: category.title, trackers: completedTrackers))
+          }
+      }
+      
+      return completedCategories
+  }
+    
+    func getPerfectDays() -> [Date] {
+        var perfectDays: [Date] = []
+        let allTrackers = trackerStore.fetchAllTrackers()
+        let allDatesWithRecords = trackerRecordStore.getAllDatesWithRecords()
+        
+        let calendar = Calendar.current
+        
+        for date in allDatesWithRecords {
+            var isPerfectDay = true
+            let weekday = calendar.component(.weekday, from: date)
+            let dayOfWeekIndex = ((weekday + 5) % 7) // Используем ту же логику индексации, что и в datePicker
+            
+            for tracker in allTrackers {
+                let schedule = tracker.schedule
+                
+                if dayOfWeekIndex >= 0 && dayOfWeekIndex < schedule.count && schedule[dayOfWeekIndex] {
+                    let isCompleted = trackerRecordStore.checkRecord(trackerID: tracker.id, on: date)
+                    if !isCompleted {
+                        isPerfectDay = false
+                        break
+                    }
+                }
+            }
+            
+            if isPerfectDay {
+                perfectDays.append(date)
+            }
+        }
+        
+        perfectDays = Array(Set(perfectDays)) // Удаляем дубли
+        return perfectDays
+    }
+
+    func getLongestPerfectStreak(from perfectDays: [Date]) -> Int {
+        
+        let sortedDates = perfectDays.sorted()
+        var maxCount = 0
+        var currentCount = 0
+        
+        guard sortedDates.count > 0 else { return 0 }
+        
+        for i in 1..<sortedDates.count {
+            let previousDate = sortedDates[i - 1]
+            let currentDate = sortedDates[i]
+            
+            if Calendar.current.isDate(currentDate, inSameDayAs: previousDate.addingTimeInterval(86400)) {
+                currentCount += 1
+            } else {
+                maxCount = max(maxCount, currentCount)
+                currentCount = 0
+            }
+        }
+        
+        maxCount = max(maxCount, currentCount)
+        
+        guard maxCount > 0 else {  return 0 }
+        
+        return maxCount + 1
+    }
+
+
     //MARK: - Private Methods
     
     //MARK: - Methods For Filter Button
@@ -211,23 +298,6 @@ final class TrackersFactory {
     
     private   func getTodayTrackers() -> [TrackerCategory] {
         filterTrackers(in: trackersStorage, forDayWithIndex: TrackerCalendar.currentDayWeekIndex)
-    }
-    
-    private  func getCompletedTrackers() -> [TrackerCategory] {
-        let allTrackers = filterTrackers(in: trackersStorage, forDayWithIndex: weekdayIndex)
-        var completedCategories: [TrackerCategory] = []
-        
-        for category in allTrackers {
-            let completedTrackers = category.trackers.filter { tracker in
-                trackerRecordStore.checkRecord(trackerID: tracker.id, on: selectedDate)
-            }
-            
-            if !completedTrackers.isEmpty {
-                completedCategories.append(TrackerCategory(title: category.title, trackers: completedTrackers))
-            }
-        }
-        
-        return completedCategories
     }
     
     private   func getUncompletedTrackers() -> [TrackerCategory] {

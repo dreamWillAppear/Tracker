@@ -62,7 +62,6 @@ final class TrackerCategoryStore {
             print("Failed to change category for tracker: \(error.localizedDescription)")
         }
     }
-
     
     func fetchCategory(forTracker id: UUID) -> TrackerCategory? {
         let fetchRequest: NSFetchRequest<TrackerCategoryCoreData> = TrackerCategoryCoreData.fetchRequest()
