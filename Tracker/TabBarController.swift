@@ -4,9 +4,9 @@ final class TabBarController: UITabBarController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        tabBar.backgroundColor = .trackerWhite
-        tabBar.layer.borderWidth = 1
-        tabBar.layer.borderColor = UIColor.trackerLightGray.cgColor
+        tabBar.backgroundColor = .trackerMainBackground
+        tabBar.layer.borderWidth = 0.3
+        tabBar.layer.borderColor = UIColor.trackerTabBarBorder.cgColor
         let trackersViewController = UINavigationController(rootViewController: TrackersViewController())
         let statisticsViewController = StatisticsViewController()
         configureTabBarButtons(trackersViewControler: trackersViewController, and: statisticsViewController)

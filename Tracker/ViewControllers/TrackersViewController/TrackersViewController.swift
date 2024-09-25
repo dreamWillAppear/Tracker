@@ -100,7 +100,7 @@ final class TrackersViewController: UIViewController {
         button.backgroundColor = .trackerBlue
         button.setTitle("Фильтры", for: .normal)
         button.titleLabel?.font = .systemFont(ofSize: 17)
-        button.tintColor = .trackerWhite
+        button.tintColor = .white
         button.layer.cornerRadius = 16
         button.isHidden = true
         button.addTarget(self, action: #selector(didTapFiltersButton), for: .touchUpInside)
@@ -164,7 +164,7 @@ final class TrackersViewController: UIViewController {
     }
     
     private func setUI() {
-        view.backgroundColor = .trackerWhite
+        view.backgroundColor = .trackerMainBackground
         
         [searchField,
          mainLabel,

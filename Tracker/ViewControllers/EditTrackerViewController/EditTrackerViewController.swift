@@ -214,7 +214,7 @@ final class EditTrackerViewController: UIViewController, UITextFieldDelegate {
     // MARK: - Private Methods
     
     private func setUI() {
-        view.backgroundColor = .trackerWhite
+        view.backgroundColor = .trackerMainBackground
         self.navigationController?.navigationBar.titleTextAttributes = [NSAttributedString.Key.font: UIFont.systemFont(ofSize: 16, weight: .medium)]
         
         if editableTracker != nil {
@@ -517,7 +517,6 @@ extension EditTrackerViewController {
     }
     
     func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
-        print(trackerNameEntered, categorySelected, scheduleDidSet, emojiSelected, colorSelected)
         guard let currentText = addTrackerNameField.text else { return true }
         let newTextLenght = currentText.count + string.count - range.length
         trackerNameEntered = newTextLenght != 0 ? true : false

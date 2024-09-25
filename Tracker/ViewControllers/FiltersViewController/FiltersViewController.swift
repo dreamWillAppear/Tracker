@@ -57,7 +57,7 @@ final class FiltersViewController: UIViewController, UITableViewDelegate, UITabl
     }
     
     private func setUI() {
-        view.backgroundColor = .trackerWhite
+        view.backgroundColor = .trackerMainBackground
         self.navigationController?.navigationBar.titleTextAttributes = [NSAttributedString.Key.font: UIFont.systemFont(ofSize: 16, weight: .medium)]
         title = "Фильтры"
         

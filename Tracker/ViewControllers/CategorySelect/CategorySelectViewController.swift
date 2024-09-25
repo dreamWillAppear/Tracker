@@ -123,7 +123,7 @@ final class CategorySelectViewController: UIViewController, UITableViewDelegate,
     private func setUI(){
         self.navigationController?.navigationBar.titleTextAttributes = [NSAttributedString.Key.font: UIFont.systemFont(ofSize: 16, weight: .medium)]
         title = "Категория"
-        view.backgroundColor = .trackerWhite
+        view.backgroundColor = .trackerMainBackground
         
         updateNoCategoriesPlaceholderVisibility()
         

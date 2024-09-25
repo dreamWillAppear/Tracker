@@ -48,7 +48,7 @@ final class AddCategoryViewController: UIViewController, UITextFieldDelegate {
     private func setUI() {
         self.navigationController?.navigationBar.titleTextAttributes = [NSAttributedString.Key.font: UIFont.systemFont(ofSize: 16, weight: .medium)]
         title = "Новая категория"
-        view.backgroundColor = .trackerWhite
+        view.backgroundColor = .trackerMainBackground
         
         [categoryNameTextField, doneButton].forEach {
             view.addSubview($0)

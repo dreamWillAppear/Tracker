@@ -34,7 +34,7 @@ final class OnboardingViewController: UIPageViewController {
         
         setUI()
         
-        view.backgroundColor = .trackerWhite
+        view.backgroundColor = .trackerMainBackground
     }
     
     private func setUI() {

@@ -58,7 +58,7 @@ final class AddTrackerViewController: UIViewController {
     // MARK: - Private Methods
     
     private func setUI() {
-        view.backgroundColor = .trackerWhite
+        view.backgroundColor = .trackerMainBackground
         self.navigationController?.navigationBar.titleTextAttributes = [NSAttributedString.Key.font: UIFont.systemFont(ofSize: 16, weight: .medium)]
         title = "Создание трекера"
         

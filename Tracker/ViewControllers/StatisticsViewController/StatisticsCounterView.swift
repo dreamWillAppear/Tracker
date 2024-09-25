@@ -17,7 +17,7 @@ class StatisticsCounter: UIView {
     
     private lazy var counterLabel: UILabel = {
         let label = UILabel()
-        label.textColor = .black
+        label.textColor = .trackerBlack
         label.text = String(counter)
         let textSize = (label.text?.count ?? 0) < 13 ? 34 : 34/2 as CGFloat //на случай, если значение будет слишком большим
         label.font = .systemFont(ofSize: textSize, weight: .bold)
@@ -27,7 +27,7 @@ class StatisticsCounter: UIView {
     
     private lazy var counterNameLabel: UILabel = {
         let label = UILabel()
-        label.textColor = .black
+        label.textColor = .trackerBlack
         label.text = counterName
         label.font = .systemFont(ofSize: 12, weight: .medium)
         label.textAlignment = .left

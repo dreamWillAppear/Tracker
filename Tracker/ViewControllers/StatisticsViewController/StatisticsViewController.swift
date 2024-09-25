@@ -68,7 +68,7 @@ final class StatisticsViewController: UIViewController {
     // MARK: - Private Methods
     
     private func setUI() {
-        view.backgroundColor = .trackerWhite
+        view.backgroundColor = .trackerMainBackground
         
         [mainLabel,
          countersStackView,
