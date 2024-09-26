@@ -103,7 +103,7 @@ final class StatisticsViewController: UIViewController {
             make.top.equalTo(mainLabel.snp.bottom).inset(-84)
             make.bottom.equalToSuperview().inset(50)
             make.width.equalToSuperview()
-           }
+        }
         
         mainLabel.snp.makeConstraints { make in
             make.width.equalTo(254)
@@ -166,7 +166,7 @@ final class StatisticsViewController: UIViewController {
         view.setNeedsLayout()
         view.layoutIfNeeded()
     }
-
+    
 }
 
 extension UIStackView {

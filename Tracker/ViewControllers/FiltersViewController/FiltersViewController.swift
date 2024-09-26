@@ -1,9 +1,13 @@
 import UIKit
 import SnapKit
 
-final class FiltersViewController: UIViewController, UITableViewDelegate, UITableViewDataSource {
+final class FiltersViewController: UIViewController,  UITableViewDataSource {
+    
+    //MARK: - Public Properties
     
     var filterSelected: ((String) -> Void)?
+    
+    //MARK: - Private Properties
     
     private let viewModel = FilterViewModel()
     
@@ -22,6 +26,7 @@ final class FiltersViewController: UIViewController, UITableViewDelegate, UITabl
         return tableView
     }()
     
+    //MARK: - Public Methods
     
     override func viewDidLoad() {
         tableView.dataSource = self
@@ -29,6 +34,33 @@ final class FiltersViewController: UIViewController, UITableViewDelegate, UITabl
         
         setUI()
     }
+    
+    //MARK: - Private Methods
+    
+    private func setUI() {
+        view.backgroundColor = .trackerMainBackground
+        self.navigationController?.navigationBar.titleTextAttributes = [NSAttributedString.Key.font: UIFont.systemFont(ofSize: 16, weight: .medium)]
+        title = "Фильтры"
+        
+        view.addSubview(tableView)
+        
+        setConstraints()
+    }
+    
+    private func setConstraints() {
+        tableView.snp.makeConstraints { make in
+            make.top.equalToSuperview().inset(81)
+            make.leading.equalToSuperview().inset(16)
+            make.trailing.equalToSuperview().inset(16)
+            make.height.equalTo(75 * viewModel.filtersNames.count)
+        }
+    }
+    
+}
+
+//MARK: - UITableViewDelegate
+
+extension FiltersViewController: UITableViewDelegate {
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         viewModel.filtersNames.count
@@ -51,28 +83,9 @@ final class FiltersViewController: UIViewController, UITableViewDelegate, UITabl
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         let cell =  tableView.cellForRow(at: indexPath) as? FiltersCell
-        cell?.checkmarkImageView.isHidden = false
-        filterSelected?(cell?.filterLabel.text ?? "")
+        cell?.isSelected(selected: true)
+        filterSelected?(cell?.getGetSelectedFilterName() ?? "")
         self.dismiss(animated: true)
-    }
-    
-    private func setUI() {
-        view.backgroundColor = .trackerMainBackground
-        self.navigationController?.navigationBar.titleTextAttributes = [NSAttributedString.Key.font: UIFont.systemFont(ofSize: 16, weight: .medium)]
-        title = "Фильтры"
-        
-        view.addSubview(tableView)
-        
-        setConstraints()
-    }
-    
-    private func setConstraints() {
-        tableView.snp.makeConstraints { make in
-            make.top.equalToSuperview().inset(81)
-            make.leading.equalToSuperview().inset(16)
-            make.trailing.equalToSuperview().inset(16)
-            make.height.equalTo(75 * viewModel.filtersNames.count)
-        }
     }
     
 }

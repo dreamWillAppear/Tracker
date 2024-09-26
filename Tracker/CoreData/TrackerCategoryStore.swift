@@ -37,7 +37,7 @@ final class TrackerCategoryStore {
         do {
             
             if let trackerToMove = try context.fetch(fetchTrackerRequest).first {
-
+                
                 let allCategories = try context.fetch(fetchAllCategoriesRequest)
                 for category in allCategories {
                     if let trackers = category.trackers?.allObjects as? [TrackerCoreData],
@@ -104,7 +104,7 @@ final class TrackerCategoryStore {
         }
         return nil
     }
-
+    
     func fetchAllCategories() -> [TrackerCategory] {
         let fetchRequest: NSFetchRequest<TrackerCategoryCoreData> = TrackerCategoryCoreData.fetchRequest()
         

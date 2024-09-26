@@ -4,7 +4,9 @@ final class FiltersCell: UITableViewCell {
     
     static let reuseIdentifier = "FiltersCell"
     
-    lazy var filterLabel: UILabel = {
+    //MARK: - Private Properties
+    
+    private lazy var filterLabel: UILabel = {
         let label = UILabel()
         label.font = .systemFont(ofSize: 17, weight: .regular)
         label.textColor = .trackerBlack
@@ -12,13 +14,15 @@ final class FiltersCell: UITableViewCell {
         return label
     }()
     
-    lazy var checkmarkImageView: UIImageView = {
+   private  lazy var checkmarkImageView: UIImageView = {
         let imageView = UIImageView()
         imageView.image = UIImage(systemName: "checkmark")
         imageView.contentMode = .center
         imageView.isHidden = true
         return imageView
     }()
+    
+    //MARK: - Public Methods
     
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
@@ -33,6 +37,16 @@ final class FiltersCell: UITableViewCell {
         filterLabel.text = filterName
         checkmarkImageView.isHidden = !isSelected
     }
+    
+    func isSelected(selected: Bool){
+        checkmarkImageView.isHidden = !selected
+    }
+    
+    func getGetSelectedFilterName() -> String {
+        filterLabel.text ?? ""
+    }
+    
+    //MARK: - Private Methods
     
     private func setUI() {
         backgroundColor  = .trackerBackground
@@ -57,6 +71,6 @@ final class FiltersCell: UITableViewCell {
             make.centerY.equalToSuperview()
         }
     }
-
+    
     
 }

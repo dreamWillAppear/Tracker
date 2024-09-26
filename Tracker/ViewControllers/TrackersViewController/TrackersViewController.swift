@@ -203,7 +203,7 @@ final class TrackersViewController: UIViewController {
     private func updateCollectionViewPlaceholder(forSearch: Bool) {
         collectionViewPlaceholderStackView.isHidden = !factory.trackersForShowing.isEmpty
         filtersButton.isHidden = factory.trackersForShowing.isEmpty
-    
+        
         if forSearch {
             noTrackersImageView.image = .noSearchResult
             noTrackersLabel.text = "Ничего не найдено"
@@ -296,7 +296,7 @@ final class TrackersViewController: UIViewController {
     
     @objc private func didTapFiltersButton() {
         AnalyticsService().trackClick(screen: "Main", item: "filter")
-
+        
         let viewController = FiltersViewController()
         present(UINavigationController(rootViewController: viewController), animated: true)
         
@@ -312,7 +312,7 @@ final class TrackersViewController: UIViewController {
             self?.factory.updateTrackersForShowing()
         }
         
-       //factory.eraseAllDataFromBase() //отладочное: при нажатии на кнопку Фильтры - БД очищается и экран обновляется
+        //factory.eraseAllDataFromBase() //отладочное: при нажатии на кнопку Фильтры - БД очищается и экран обновляется
     }
     
     @objc private func datePickerValueDateChanged(_ sender: UIDatePicker) {

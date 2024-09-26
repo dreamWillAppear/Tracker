@@ -35,14 +35,14 @@ final class TrackerStore: NSObject, NSFetchedResultsControllerDelegate {
         if let categoryCoreData = fetchCategoryCoreData(withTitle: category.title) {
             trackerCoreData.category = categoryCoreData
         }
-
+        
         appDelegate.saveContext(context: context)
     }
-
+    
     func updateTracker(id: UUID, newTitle: String, newColor: UIColor, newEmoji: String, newSchedule: [Bool], isPinned: Bool) {
         let fetchRequest: NSFetchRequest<TrackerCoreData> = TrackerCoreData.fetchRequest()
         fetchRequest.predicate = NSPredicate(format: "id == %@", id as CVarArg)
-
+        
         do {
             if let trackerToUpdate = try context.fetch(fetchRequest).first {
                 trackerToUpdate.title = newTitle
@@ -75,7 +75,7 @@ final class TrackerStore: NSObject, NSFetchedResultsControllerDelegate {
     func deleteTracker(id: UUID) {
         let fetchRequest: NSFetchRequest<TrackerCoreData> = TrackerCoreData.fetchRequest()
         fetchRequest.predicate = NSPredicate(format: "id == %@", id as CVarArg)
-
+        
         do {
             let results = try context.fetch(fetchRequest)
             
@@ -136,11 +136,11 @@ final class TrackerStore: NSObject, NSFetchedResultsControllerDelegate {
         let weekday = calendar.component(.weekday, from: date)
         let allTrackers = fetchAllTrackers()
         return allTrackers.filter { tracker in
-             let schedule = tracker.schedule
+            let schedule = tracker.schedule
             return schedule[weekday - 1]
         }
     }
-
+    
     private func fetchCategoryCoreData(withTitle title: String) -> TrackerCategoryCoreData? {
         let fetchRequest: NSFetchRequest<TrackerCategoryCoreData> = TrackerCategoryCoreData.fetchRequest()
         fetchRequest.predicate = NSPredicate(format: "title == %@", title)

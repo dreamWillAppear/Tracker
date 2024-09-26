@@ -9,14 +9,14 @@ struct AnalyticsService {
     }
     
     func reportEvent(event: String, screen: String, item: String? = nil) {
-            var params: [AnyHashable: Any] = ["event": event, "screen": screen]
-            if let item = item {
-                params["item"] = item
-            }
-            YMMYandexMetrica.reportEvent(event, parameters: params, onFailure: { error in
-                print("REPORT ERROR: \(error.localizedDescription)")
-            })
+        var params: [AnyHashable: Any] = ["event": event, "screen": screen]
+        if let item = item {
+            params["item"] = item
         }
+        YMMYandexMetrica.reportEvent(event, parameters: params, onFailure: { error in
+            print("REPORT ERROR: \(error.localizedDescription)")
+        })
+    }
     
     func trackOpenScreen(screen: String) {
         reportEvent(event: "open", screen: screen)

@@ -18,7 +18,7 @@ final class TabBarController: UITabBarController {
         super.traitCollectionDidChange(previousTraitCollection)
         tabBar.layer.borderColor = UIColor.trackerTabBarBorder.cgColor
     }
-
+    
     private func configureTabBarButtons(trackersViewControler: UIViewController, and statisticsViewController: UIViewController) {
         trackersViewControler.tabBarItem = UITabBarItem(
             title: Localizable.tabBarTrackersButton.localized(),

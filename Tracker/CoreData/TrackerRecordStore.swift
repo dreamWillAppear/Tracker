@@ -51,7 +51,7 @@ final class TrackerRecordStore {
             print("Failed to delete records for trackerID \(trackerID): \(error)")
         }
     }
-
+    
     func getRecordsCount(for trackerID: UUID) -> Int {
         let request: NSFetchRequest<TrackerRecordCoreData> = TrackerRecordCoreData.fetchRequest()
         request.predicate = NSPredicate(format: "trackerID == %@", trackerID as CVarArg)
@@ -88,7 +88,7 @@ final class TrackerRecordStore {
             print("Failed to fetch dates with records: \(error)")
             return dates
         }
-   
+        
         return dates
     }
     
