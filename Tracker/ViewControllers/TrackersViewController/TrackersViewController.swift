@@ -118,10 +118,21 @@ final class TrackersViewController: UIViewController {
         setupObservers()
         configureDismissingKeyboard()
         factory.getInitialData()
+        
+    }
+    
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        AnalyticsService().trackOpenScreen(screen: "Main")
+    }
+    
+    override func viewDidDisappear(_ animated: Bool) {
+        AnalyticsService().trackCloseScreen(screen: "Main")
     }
     
     deinit {
         NotificationCenter.default.removeObserver(self, name: categoriesUpdatedNotification, object: nil)
+        AnalyticsService().trackOpenScreen(screen: "Main")
     }
     
     // MARK: - Private Methods
@@ -284,6 +295,8 @@ final class TrackersViewController: UIViewController {
     }
     
     @objc private func didTapFiltersButton() {
+        AnalyticsService().trackClick(screen: "Main", item: "filter")
+
         let viewController = FiltersViewController()
         present(UINavigationController(rootViewController: viewController), animated: true)
         
@@ -316,6 +329,7 @@ final class TrackersViewController: UIViewController {
     }
     
     @objc private func didTapAddTrackerButton() {
+        AnalyticsService().trackClick(screen: "Main", item: "add_track")
         let viewController = AddTrackerViewController()
         present(UINavigationController(rootViewController: viewController), animated: true)
     }
@@ -359,16 +373,19 @@ extension TrackersViewController: UICollectionViewDataSource, UICollectionViewDe
         cell.configureCell(for: tracker, date: currentDate)
         
         cell.didTapEditTracker = { [weak self] in
+            AnalyticsService().trackClick(screen: "Main", item: "edit")
             let vc = EditTrackerViewController(isHabbit: true, tracker: tracker)
             self?.present(UINavigationController(rootViewController: vc), animated: true)
             self?.statisticsFactory.updateStatistics()
         }
         
         cell.didTapDeleteTracker = { [weak self] in
+            AnalyticsService().trackClick(screen: "Main", item: "delete")
             self?.showDeleteConfirmationAlert(trackerID: tracker.id)
         }
         
         cell.didTapIncrease = { [weak self] in
+            AnalyticsService().trackClick(screen: "Main", item: "track")
             self?.collectionView.reloadData()
             self?.statisticsFactory.updateStatistics()
         }
