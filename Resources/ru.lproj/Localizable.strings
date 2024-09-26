@@ -1,16 +1,7 @@
-/*Убедитесь, что:
-После изменения языка устройства (или симулятора) на английский выполнен перевод:
-В заголовке главного экрана отображается Trackers.
-На кнопке фильтров на главном экране — Filters.
-Текст на вкладках Трекеры и Статистика стал Trackers и Statistics.
-Количество дней в треках на главном экране отображается как days или day — в зависимости от количества.
-При возврате языка устройства на русский весь текст отображается на русском.
-Менять названия трекеров и категории не нужно.*/
-
-"trackersViewController.mainTitle" = "Trackers";
-"trackersViewController.filterButtonTitle" = "Filters";
-"tabBar.trackersButton" = "Trackers";
-"tabBar.statisticsButton" = "Statistics";
-"trackerCell.counterLabel.oneDay" = "day";
-"trackerCell.counterLabel.severalDays" = "days";
-"trackerCell.counterLabel.ru_dnya" = "days";
+"trackersViewController.mainTitle" = "Трекеры";
+"trackersViewController.filterButtonTitle" = "Фильтры";
+"tabBar.trackersButton" = "Трекеры";
+"tabBar.statisticsButton" = "Статистика";
+"trackerCell.counterLabel.oneDay" = "день";
+"trackerCell.counterLabel.severalDays" = "дней";
+"trackerCell.counterLabel.ru_dnya" = "дня";
