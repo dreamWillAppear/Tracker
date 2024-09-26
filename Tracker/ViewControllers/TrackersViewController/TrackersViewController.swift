@@ -32,7 +32,7 @@ final class TrackersViewController: UIViewController {
     
     private lazy var mainLabel: UILabel = {
         let label = UILabel()
-        label.text = "Трекеры"
+        label.text = Localizable.trackersViewControllerMainTitle.localized()
         label.font = UIFont.boldSystemFont(ofSize: 34)
         label.textAlignment = .left
         return label
@@ -98,7 +98,7 @@ final class TrackersViewController: UIViewController {
     private lazy var filtersButton: UIButton = {
         let button = UIButton(type: .system)
         button.backgroundColor = .trackerBlue
-        button.setTitle("Фильтры", for: .normal)
+        button.setTitle(Localizable.trackersViewControllerFilterButtonTitle.localized(), for: .normal)
         button.titleLabel?.font = .systemFont(ofSize: 17)
         button.tintColor = .white
         button.layer.cornerRadius = 16

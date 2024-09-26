@@ -15,14 +15,14 @@ final class TabBarController: UITabBarController {
     
     private func configureTabBarButtons(trackersViewControler: UIViewController, and statisticsViewController: UIViewController) {
         trackersViewControler.tabBarItem = UITabBarItem(
-            title: "Трекеры",
+            title: Localizable.tabBarTrackersButton.localized(),
             image: UIImage(systemName: "record.circle.fill")?
                 .withTintColor(.trackerGray, renderingMode: .alwaysOriginal),
             selectedImage: UIImage(systemName: "record.circle.fill")
         )
         
         statisticsViewController.tabBarItem = UITabBarItem(
-            title: "Статистика",
+            title: Localizable.tabBarStatisticsButton.localized(),
             image: UIImage(systemName: "hare.fill")?
                 .withTintColor(.trackerGray, renderingMode: .alwaysOriginal),
             selectedImage: UIImage(systemName: "hare.fill")

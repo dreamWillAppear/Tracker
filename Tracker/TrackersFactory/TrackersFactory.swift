@@ -49,7 +49,7 @@ final class TrackersFactory {
     private  init() {
         getInitialData()
     }
-        
+    
     // MARK: - Public Methods
     
     func eraseAllDataFromBase() {
@@ -76,6 +76,10 @@ final class TrackersFactory {
     }
     
     func getDayCounterLabel(for tracker: Tracker) -> String {
+        let oneDay = Localizable.trackerCellCounterLabelOneDay.localized()
+        let severalDays = Localizable.trackerCellCounterLabelSeveralDays.localized()
+        let rusDnya = Localizable.trackerCellCounterLabelRu_dnya.localized()
+        
         let daysCount = getRecordsCount(for: tracker)
         var counterLabel = ""
         
@@ -83,15 +87,15 @@ final class TrackersFactory {
         let lastDigit = daysCount % 10
         
         if (11...14).contains(lastTwoDigits) {
-            counterLabel = "\(daysCount) дней"
+            counterLabel = "\(daysCount) "
         } else {
             switch lastDigit {
                 case 1:
-                    counterLabel = "\(daysCount) день"
+                    counterLabel = "\(daysCount) \(oneDay)"
                 case 2, 3, 4:
-                    counterLabel = "\(daysCount) дня"
+                    counterLabel = "\(daysCount) \(rusDnya)"
                 default:
-                    counterLabel = "\(daysCount) дней"
+                    counterLabel = "\(daysCount) \(severalDays)"
             }
         }
         return counterLabel
@@ -136,7 +140,7 @@ final class TrackersFactory {
     func getRecordsCount(for tracker: Tracker) -> Int {
         trackerRecordStore.getRecordsCount(for: tracker.id)
     }
-        
+    
     func getAllRecordsCount() -> Int {
         trackerRecordStore.getRecordsCount()
     }
@@ -193,21 +197,21 @@ final class TrackersFactory {
     }
     
     func getCompletedTrackers() -> [TrackerCategory] {
-      let allTrackers = filterTrackers(in: trackersStorage, forDayWithIndex: weekdayIndex)
-      var completedCategories: [TrackerCategory] = []
-      
-      for category in allTrackers {
-          let completedTrackers = category.trackers.filter { tracker in
-              trackerRecordStore.checkRecord(trackerID: tracker.id, on: selectedDate)
-          }
-          
-          if !completedTrackers.isEmpty {
-              completedCategories.append(TrackerCategory(title: category.title, trackers: completedTrackers))
-          }
-      }
-      
-      return completedCategories
-  }
+        let allTrackers = filterTrackers(in: trackersStorage, forDayWithIndex: weekdayIndex)
+        var completedCategories: [TrackerCategory] = []
+        
+        for category in allTrackers {
+            let completedTrackers = category.trackers.filter { tracker in
+                trackerRecordStore.checkRecord(trackerID: tracker.id, on: selectedDate)
+            }
+            
+            if !completedTrackers.isEmpty {
+                completedCategories.append(TrackerCategory(title: category.title, trackers: completedTrackers))
+            }
+        }
+        
+        return completedCategories
+    }
     
     func getPerfectDays() -> [Date] {
         var perfectDays: [Date] = []
@@ -241,7 +245,7 @@ final class TrackersFactory {
         perfectDays = Array(Set(perfectDays)) // Удаляем дубли
         return perfectDays
     }
-
+    
     func getLongestPerfectStreak(from perfectDays: [Date]) -> Int {
         
         let sortedDates = perfectDays.sorted()
@@ -268,8 +272,8 @@ final class TrackersFactory {
         
         return maxCount + 1
     }
-
-
+    
+    
     //MARK: - Private Methods
     
     //MARK: - Methods For Filter Button

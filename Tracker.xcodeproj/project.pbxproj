@@ -29,6 +29,8 @@
 		FD141BC42CA4BAF4001EECA9 /* TrackerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = FD141BC32CA4BAF4001EECA9 /* TrackerTests.swift */; };
 		FD141BCC2CA4BB2C001EECA9 /* InlineSnapshotTesting in Frameworks */ = {isa = PBXBuildFile; productRef = FD141BCB2CA4BB2C001EECA9 /* InlineSnapshotTesting */; };
 		FD141BCE2CA4BB2C001EECA9 /* SnapshotTesting in Frameworks */ = {isa = PBXBuildFile; productRef = FD141BCD2CA4BB2C001EECA9 /* SnapshotTesting */; };
+		FD331E082CA4DC4100EF937A /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = FD331E062CA4DC4100EF937A /* Localizable.strings */; };
+		FD331E0B2CA4E33B00EF937A /* Localizable.swift in Sources */ = {isa = PBXBuildFile; fileRef = FD331E0A2CA4E33B00EF937A /* Localizable.swift */; };
 		FD4204222BF17E7C0007A254 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = FD4204212BF17E7C0007A254 /* AppDelegate.swift */; };
 		FD4204262BF17E7C0007A254 /* TrackersViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = FD4204252BF17E7C0007A254 /* TrackersViewController.swift */; };
 		FD42042B2BF17E7E0007A254 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = FD42042A2BF17E7E0007A254 /* Assets.xcassets */; };
@@ -84,6 +86,9 @@
 		16F0FD122C1DF01A004C854A /* TrackerRecord.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrackerRecord.swift; sourceTree = "<group>"; };
 		FD141BC12CA4BAF4001EECA9 /* TrackerTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = TrackerTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		FD141BC32CA4BAF4001EECA9 /* TrackerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrackerTests.swift; sourceTree = "<group>"; };
+		FD331E072CA4DC4100EF937A /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/Localizable.strings; sourceTree = "<group>"; };
+		FD331E092CA4DF4500EF937A /* ru */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ru; path = ru.lproj/Localizable.strings; sourceTree = "<group>"; };
+		FD331E0A2CA4E33B00EF937A /* Localizable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Localizable.swift; sourceTree = "<group>"; };
 		FD42041E2BF17E7C0007A254 /* Tracker.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Tracker.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		FD4204212BF17E7C0007A254 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		FD4204252BF17E7C0007A254 /* TrackersViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrackersViewController.swift; sourceTree = "<group>"; };
@@ -221,10 +226,23 @@
 			path = TrackerTests;
 			sourceTree = "<group>";
 		};
+		FD331E052CA4DBDA00EF937A /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				FD8A207A2C111B8D0056A256 /* TrackerCalendar.swift */,
+				FD9DDDDA2CA1E5F800157EFF /* FiltersNames.swift */,
+				FD331E0A2CA4E33B00EF937A /* Localizable.swift */,
+				FD42042A2BF17E7E0007A254 /* Assets.xcassets */,
+				FD331E062CA4DC4100EF937A /* Localizable.strings */,
+			);
+			path = Resources;
+			sourceTree = "<group>";
+		};
 		FD4204152BF17E7C0007A254 = {
 			isa = PBXGroup;
 			children = (
 				FD4204202BF17E7C0007A254 /* Tracker */,
+				FD331E052CA4DBDA00EF937A /* Resources */,
 				FD141BC22CA4BAF4001EECA9 /* TrackerTests */,
 				FD42041F2BF17E7C0007A254 /* Products */,
 			);
@@ -244,13 +262,10 @@
 			children = (
 				FD4204212BF17E7C0007A254 /* AppDelegate.swift */,
 				1631E0992BF40A85003986AE /* TabBarController.swift */,
-				FD8A207A2C111B8D0056A256 /* TrackerCalendar.swift */,
-				FD9DDDDA2CA1E5F800157EFF /* FiltersNames.swift */,
 				1645C9B12BF8A5A600CC7B90 /* Models */,
 				FD53E19B2BF5657C0073B644 /* ViewControllers */,
 				16947A4D2C033C8300426968 /* TrackersFactory */,
 				FD80C2872C3F386300885B41 /* CoreData */,
-				FD42042A2BF17E7E0007A254 /* Assets.xcassets */,
 				FD42042C2BF17E7E0007A254 /* LaunchScreen.storyboard */,
 				FD42042F2BF17E7E0007A254 /* Info.plist */,
 			);
@@ -385,6 +400,7 @@
 			knownRegions = (
 				en,
 				Base,
+				ru,
 			);
 			mainGroup = FD4204152BF17E7C0007A254;
 			packageReferences = (
@@ -414,6 +430,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				FD42042B2BF17E7E0007A254 /* Assets.xcassets in Resources */,
+				FD331E082CA4DC4100EF937A /* Localizable.strings in Resources */,
 				FD42042E2BF17E7E0007A254 /* Base in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -465,6 +482,7 @@
 				FD9EEB112C89163E0004E154 /* CategorySelectViewController.swift in Sources */,
 				FD80C28B2C3F38DC00885B41 /* TrackerRecordStore.swift in Sources */,
 				FD80C2892C3F38BB00885B41 /* TrackerCategoryStore.swift in Sources */,
+				FD331E0B2CA4E33B00EF937A /* Localizable.swift in Sources */,
 				FD8B03252C8A4A39001CCE88 /* AddCategoryViewController.swift in Sources */,
 				169602D92C2CB3D0003DB1BC /* ColorSelectCell.swift in Sources */,
 				FD4457612CA0D66700000834 /* FiltersCell.swift in Sources */,
@@ -484,6 +502,15 @@
 /* End PBXTargetDependency section */
 
 /* Begin PBXVariantGroup section */
+		FD331E062CA4DC4100EF937A /* Localizable.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				FD331E072CA4DC4100EF937A /* en */,
+				FD331E092CA4DF4500EF937A /* ru */,
+			);
+			name = Localizable.strings;
+			sourceTree = "<group>";
+		};
 		FD42042C2BF17E7E0007A254 /* LaunchScreen.storyboard */ = {
 			isa = PBXVariantGroup;
 			children = (
@@ -546,6 +573,7 @@
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
@@ -609,6 +637,7 @@
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
