@@ -3,11 +3,15 @@ import SnapKit
 
 final class EmojiCell: UICollectionViewCell {
     
+    //MARK: - Public Properties
+    
     static let reuseIdentifier = "emojiCell"
     
     static let emojiArray = ["🙂", "😻", "🌺", "🐶", "❤️", "😱",
                              "😇", "😡", "🥶", "🤔", "🙌", "🍔",
                              "🥦", "🏓", "🥇", "🎸", "🏝", "😪"]
+    
+    //MARK: - Public Properties
     
     private lazy var label: UILabel = {
         let label = UILabel()
@@ -17,6 +21,8 @@ final class EmojiCell: UICollectionViewCell {
         label.layer.cornerRadius = 16
         return label
     }()
+    
+    //MARK: - Public Methods
     
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -34,8 +40,9 @@ final class EmojiCell: UICollectionViewCell {
         label.backgroundColor = isSelected ? .trackerLightGray : .clear
     }
     
+    //MARK: - Private Methods
+    
     private func configureConstraints(){
-        
         contentView.snp.makeConstraints { make in
             make.leading.trailing.top.bottom.equalToSuperview()
         }

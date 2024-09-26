@@ -3,10 +3,14 @@ import CoreData
 
 final class TrackerStore: NSObject, NSFetchedResultsControllerDelegate {
     
+    //MARK: - Private Properties
+    
     private let appDelegate = AppDelegate()
     private var context: NSManagedObjectContext
     private var categoryFetchedResultsController: NSFetchedResultsController<TrackerCategoryCoreData>?
     private var trackerFetchedResultsController: NSFetchedResultsController<TrackerCoreData>?
+    
+    //MARK: - Public Methods
     
     init(context: NSManagedObjectContext) {
         self.context = context
@@ -141,18 +145,6 @@ final class TrackerStore: NSObject, NSFetchedResultsControllerDelegate {
         }
     }
     
-    private func fetchCategoryCoreData(withTitle title: String) -> TrackerCategoryCoreData? {
-        let fetchRequest: NSFetchRequest<TrackerCategoryCoreData> = TrackerCategoryCoreData.fetchRequest()
-        fetchRequest.predicate = NSPredicate(format: "title == %@", title)
-        
-        do {
-            return try context.fetch(fetchRequest).first
-        } catch {
-            print("Failed to fetch category: \(error)")
-            return nil
-        }
-    }
-    
     func fetchAllTrackers() -> [Tracker] {
         guard let categories = categoryFetchedResultsController?.fetchedObjects else { return [] }
         var trackers: [Tracker] = []
@@ -166,6 +158,20 @@ final class TrackerStore: NSObject, NSFetchedResultsControllerDelegate {
             }
         }
         return trackers
+    }
+    
+    //MARK: - Private Methods
+    
+    private func fetchCategoryCoreData(withTitle title: String) -> TrackerCategoryCoreData? {
+        let fetchRequest: NSFetchRequest<TrackerCategoryCoreData> = TrackerCategoryCoreData.fetchRequest()
+        fetchRequest.predicate = NSPredicate(format: "title == %@", title)
+        
+        do {
+            return try context.fetch(fetchRequest).first
+        } catch {
+            print("Failed to fetch category: \(error)")
+            return nil
+        }
     }
     
     private func setupFetchedResultsControllers() {

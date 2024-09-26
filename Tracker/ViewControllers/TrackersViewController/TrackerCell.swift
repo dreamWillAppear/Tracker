@@ -3,11 +3,15 @@ import SnapKit
 
 final class TrackerCell: UICollectionViewCell {
     
+    //MARK: - Public Properties
+    
     static let reuseIdentifier = "trackerCell"
     
     var didTapEditTracker: (() -> Void)?
     var didTapDeleteTracker: (() -> Void)?
     var didTapIncrease: (() -> Void)?
+    
+    //MARK: - Private Properties
     
     private let factory = TrackersFactory.shared
     private let statisticsFactory = StatisticsFactory.shared
@@ -61,6 +65,8 @@ final class TrackerCell: UICollectionViewCell {
         return button
     }()
     
+    //MARK: - Public Methods
+    
     override init(frame: CGRect) {
         super.init(frame: frame)
         
@@ -94,6 +100,8 @@ final class TrackerCell: UICollectionViewCell {
         configureIncreaseButton(tracker: tracker, date: date)
         configureCounterLabel()
     }
+    
+    //MARK: - Private Methods
     
     private func configureCounterLabel() {
         guard let tracker = tracker else { return }

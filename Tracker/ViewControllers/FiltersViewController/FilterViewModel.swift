@@ -1,6 +1,6 @@
 final class FilterViewModel {
     
-    private let factory = TrackersFactory.shared
+    //MARK: - Public Properties
     
     var filtersNames: [String] = {
         return FiltersNames.allCases.map { $0.rawValue }

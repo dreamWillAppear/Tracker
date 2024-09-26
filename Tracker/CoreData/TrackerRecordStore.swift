@@ -3,12 +3,16 @@ import CoreData
 
 final class TrackerRecordStore {
     
+    //MARK: - Private Properties
+    
     private let appDelegate = AppDelegate()
     private let context: NSManagedObjectContext
     
     init(context: NSManagedObjectContext) {
         self.context = context
     }
+    
+    //MARK: - Public Properties
     
     func addRecord(_ record: TrackerRecord) {
         let calendar = TrackerCalendar.currentCalendar

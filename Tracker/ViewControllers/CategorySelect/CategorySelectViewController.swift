@@ -1,8 +1,12 @@
 import UIKit
 
-final class CategorySelectViewController: UIViewController, UITableViewDelegate, UITableViewDataSource {
+final class CategorySelectViewController: UIViewController, UITableViewDataSource {
+    
+    //MARK: - Public Properties
     
     var categoryNameSelected: ((String) -> Void)?
+    
+    //MARK: - Private Properties
     
     private let viewModel = CategorySelectViewModel()
     private var selectedCategoryName: String
@@ -58,6 +62,8 @@ final class CategorySelectViewController: UIViewController, UITableViewDelegate,
         return label
     }()
     
+    //MARK: - Public Methods
+    
     init(selectedCategoryName: String) {
         self.selectedCategoryName = selectedCategoryName
         super.init(nibName: nil, bundle: nil)
@@ -81,34 +87,7 @@ final class CategorySelectViewController: UIViewController, UITableViewDelegate,
         currentTableHeight = tableView.frame.size.height
     }
     
-    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        viewModel.categories.count
-    }
-    
-    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        guard  let cell = tableView.dequeueReusableCell(withIdentifier: CategoryCell.reuseIdentifier, for: indexPath) as? CategoryCell else {
-            return UITableViewCell()
-        }
-        
-        let category = viewModel.categories.reversed()[indexPath.row]
-        let isSelected = selectedCategoryName == category.title
-        
-        cell.checkmarkImageView.isHidden = false
-        cell.configureCell(categoryName: category.title, isSelected: isSelected)
-        return cell
-    }
-    
-    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        rowHeight
-    }
-    
-    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        let selectedCategory = viewModel.categories.reversed()[indexPath.row]
-        let cell = tableView.cellForRow(at: indexPath) as? CategoryCell
-        cell?.checkmarkImageView.isHidden = false
-        categoryNameSelected?(selectedCategory.title)
-        self.dismiss(animated: true)
-    }
+    //MARK: - Private Methods
     
     private func bindViewModel() {
         viewModel.categoriesUpdated = { [weak self] in
@@ -213,3 +192,37 @@ final class CategorySelectViewController: UIViewController, UITableViewDelegate,
     }
 }
 
+//MARK: - UITableViewDelegate
+
+extension CategorySelectViewController: UITableViewDelegate {
+    
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        viewModel.categories.count
+    }
+    
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        guard  let cell = tableView.dequeueReusableCell(withIdentifier: CategoryCell.reuseIdentifier, for: indexPath) as? CategoryCell else {
+            return UITableViewCell()
+        }
+        
+        let category = viewModel.categories.reversed()[indexPath.row]
+        let isSelected = selectedCategoryName == category.title
+        
+        cell.isSelected(selected: true)
+        cell.configureCell(categoryName: category.title, isSelected: isSelected)
+        return cell
+    }
+    
+    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+        rowHeight
+    }
+    
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        let selectedCategory = viewModel.categories.reversed()[indexPath.row]
+        let cell = tableView.cellForRow(at: indexPath) as? CategoryCell
+        cell?.isSelected(selected: true)
+        categoryNameSelected?(selectedCategory.title)
+        self.dismiss(animated: true)
+    }
+    
+}

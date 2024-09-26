@@ -2,10 +2,13 @@ import UIKit
 import SnapKit
 
 final class TrackerButton: UIButton {
+ 
+    //MARK: - Private Properties
     
-    // не понимаю как сдвинуть родной titleLabel - он игнорирует snp, поэтому родной удаляется и его роль выполняет mainLabel
     private var mainLabel: UILabel?
     private var supplementaryLabel: UILabel?
+    
+    //MARK: - Public Methods
     
     func addSupplementaryView(with text: String) {
         let labelsStackView = UIStackView()

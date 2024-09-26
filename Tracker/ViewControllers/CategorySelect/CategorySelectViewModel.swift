@@ -1,10 +1,16 @@
 final class CategorySelectViewModel {
     
+    //MARK: - Public Properties
+    
     var categories: [TrackerCategory] = []
+    
+    var categoriesUpdated: (() -> Void)?
+    
+    //MARK: - Private Properties
     
     private let trackerCategoryStore = TrackerCategoryStore(context: TrackersFactory.shared.context)
     
-    var categoriesUpdated: (() -> Void)?
+    //MARK: - Public Methods
     
     init() {
         fetchCategories()
@@ -18,5 +24,7 @@ final class CategorySelectViewModel {
         categories = trackerCategoryStore.fetchAllCategories()
         categoriesUpdated?()
     }
+    
+    
     
 }

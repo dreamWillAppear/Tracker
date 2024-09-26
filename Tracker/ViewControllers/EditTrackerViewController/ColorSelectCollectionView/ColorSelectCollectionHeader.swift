@@ -3,6 +3,8 @@ import SnapKit
 
 final class ColorSelectCollectionHeader: UICollectionReusableView {
     
+    //MARK: - Public Properties
+    
     static let identifier = "ColorSelectHeaderView"
     
     let title: UILabel = {
@@ -12,6 +14,8 @@ final class ColorSelectCollectionHeader: UICollectionReusableView {
         label.text = "Цвет"
         return label
     }()
+    
+    //MARK: - Public Methods
     
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -26,6 +30,8 @@ final class ColorSelectCollectionHeader: UICollectionReusableView {
         addSubview(title)
         setConstraints()
     }
+    
+    //MARK: - Private Methods
     
     private func setConstraints() {
         title.snp.makeConstraints { make in

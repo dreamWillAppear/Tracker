@@ -3,9 +3,13 @@ import CoreData
 
 final class TrackerCategoryStore {
     
+    //MARK: - Private Properties
+    
     private let appDelegate = AppDelegate()
     private let fetchRequest: NSFetchRequest<TrackerCategoryCoreData> = TrackerCategoryCoreData.fetchRequest()
     private var context: NSManagedObjectContext
+    
+    //MARK: - Public Methods
     
     init(context: NSManagedObjectContext) {
         self.context = context

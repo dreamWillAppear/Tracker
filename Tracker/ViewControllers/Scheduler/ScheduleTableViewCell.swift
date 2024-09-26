@@ -7,9 +7,13 @@ protocol SwitchCellDelegate: AnyObject {
 
 final class ScheduleTableViewCell: UITableViewCell {
     
+    //MARK: - Public Properties
+    
     weak var delegate: SwitchCellDelegate?
     
     static let reuseIdentifier = "ScheduleTableViewCell"
+    
+    //MARK: - Private Properties
     
     private let weekDayLabel: UILabel = {
         let label = UILabel()
@@ -25,6 +29,8 @@ final class ScheduleTableViewCell: UITableViewCell {
     }()
     
     private let weekdays = WeekDay.allCases.map { $0.rawValue }
+    
+    //MARK: - Public Methods
     
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
@@ -58,6 +64,8 @@ final class ScheduleTableViewCell: UITableViewCell {
         weekDayLabel.text = weekDay.rawValue
         switcher.isOn = isOn
     }
+    
+    //MARK: - Actions
     
     @objc func switchValueChanded(_ sender: UISwitch) {
         delegate?.switchValueChanded(sender, cell: self)

@@ -240,8 +240,6 @@ final class TrackersViewController: UIViewController {
         present(alert, animated: true)
     }
     
-    
-    
     private func setConstraints() {
         mainLabel.snp.makeConstraints { make in
             make.width.equalTo(254)
@@ -287,8 +285,8 @@ final class TrackersViewController: UIViewController {
     }
     
     
-    
     //MARK: - Actions
+    
     @objc private func categoriesUpdated() {
         updateCollectionViewPlaceholder(forSearch: false)
         collectionView.reloadData()
@@ -356,6 +354,7 @@ extension TrackersViewController: UICollectionViewDataSource, UICollectionViewDe
     }
     
     //MARK: - ConfigureCell
+    
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: TrackerCell.reuseIdentifier, for: indexPath) as? TrackerCell else {
             return .init()

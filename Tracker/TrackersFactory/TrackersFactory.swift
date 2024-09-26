@@ -39,13 +39,13 @@ final class TrackersFactory {
         }
     }
     
+    //MARK: - Private Properties
+    
     private let appDelegate = AppDelegate()
     private lazy var categoryStore = TrackerCategoryStore(context: context)
     private lazy var trackerStore = TrackerStore(context: context)
     private lazy var trackerRecordStore = TrackerRecordStore(context: context)
-    
-    // MARK: - Initializers
-    
+        
     private  init() {
         getInitialData()
     }

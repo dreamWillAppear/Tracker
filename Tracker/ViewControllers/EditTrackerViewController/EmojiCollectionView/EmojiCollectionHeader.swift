@@ -2,6 +2,8 @@ import UIKit
 
 final class EmojiCollectionHeader: UICollectionReusableView {
     
+    //MARK: - Public Properties
+    
     static let identifier = "EmojiHeaderView"
     
     let title: UILabel = {
@@ -11,6 +13,8 @@ final class EmojiCollectionHeader: UICollectionReusableView {
         label.text = "Emoji"
         return label
     }()
+    
+    //MARK: - Public Methods
     
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -25,6 +29,8 @@ final class EmojiCollectionHeader: UICollectionReusableView {
         addSubview(title)
         setConstraints()
     }
+    
+    //MARK: - Private Methods
     
     private func setConstraints() {
         title.snp.makeConstraints { make in

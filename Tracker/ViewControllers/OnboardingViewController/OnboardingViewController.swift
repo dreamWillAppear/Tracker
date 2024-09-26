@@ -3,6 +3,8 @@ import SnapKit
 
 final class OnboardingViewController: UIPageViewController {
     
+    //MARK: - Private Properties
+    
     private lazy var bluePageText: String = {
         "Отслеживайте только то, что хотите"
     }()
@@ -16,7 +18,7 @@ final class OnboardingViewController: UIPageViewController {
         OnboardingPageViewController(backgroundImage: .onboardingRedBackground, labelText: redPageText)
     ]
     
-    lazy var pageControl: UIPageControl = {
+    private lazy var pageControl: UIPageControl = {
         let pageControl = UIPageControl()
         pageControl.numberOfPages = pages.count
         pageControl.currentPage = 0
@@ -25,20 +27,19 @@ final class OnboardingViewController: UIPageViewController {
         return pageControl
     }()
     
+    //MARK: - Public Methods
+    
     override func viewDidLoad() {
         super.viewDidLoad()
-        
         dataSource = self
-        
         delegate = self
-        
         setUI()
-        
         view.backgroundColor = .trackerMainBackground
     }
     
+    //MARK: - Private Methods
+    
     private func setUI() {
-        
         
         if let firstPage = pages.first {
             setViewControllers([firstPage], direction: .forward, animated: true, completion: nil)
@@ -59,6 +60,8 @@ final class OnboardingViewController: UIPageViewController {
         }
     }
 }
+
+//MARK: - UIPageViewControllerDataSource UIPageViewControllerDelegate
 
 extension OnboardingViewController: UIPageViewControllerDataSource, UIPageViewControllerDelegate {
     

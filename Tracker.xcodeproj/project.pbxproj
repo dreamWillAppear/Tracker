@@ -55,6 +55,7 @@
 		FD9EEB112C89163E0004E154 /* CategorySelectViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = FD9EEB102C89163E0004E154 /* CategorySelectViewController.swift */; };
 		FD9EEB132C89CC010004E154 /* CategoryCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = FD9EEB122C89CC010004E154 /* CategoryCell.swift */; };
 		FDC14C912BFFC8D400198716 /* TrackerCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = FDC14C902BFFC8D400198716 /* TrackerCell.swift */; };
+		FDCC1CD12CA60925009FC350 /* UIViewAddGradienBorderExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = FDCC1CD02CA60925009FC350 /* UIViewAddGradienBorderExtension.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -121,6 +122,7 @@
 		FD9EEB102C89163E0004E154 /* CategorySelectViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CategorySelectViewController.swift; sourceTree = "<group>"; };
 		FD9EEB122C89CC010004E154 /* CategoryCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CategoryCell.swift; sourceTree = "<group>"; };
 		FDC14C902BFFC8D400198716 /* TrackerCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrackerCell.swift; sourceTree = "<group>"; };
+		FDCC1CD02CA60925009FC350 /* UIViewAddGradienBorderExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIViewAddGradienBorderExtension.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -261,6 +263,7 @@
 		FD331E052CA4DBDA00EF937A /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				FDCC1CD02CA60925009FC350 /* UIViewAddGradienBorderExtension.swift */,
 				FD8A207A2C111B8D0056A256 /* TrackerCalendar.swift */,
 				FD9DDDDA2CA1E5F800157EFF /* FiltersNames.swift */,
 				FD331E0A2CA4E33B00EF937A /* Localizable.swift */,
@@ -591,6 +594,7 @@
 				FD4457612CA0D66700000834 /* FiltersCell.swift in Sources */,
 				16F0FD112C1DEFE8004C854A /* TrackerCategory.swift in Sources */,
 				1629E74A2BFB331E00A50F54 /* AddTrackerViewController.swift in Sources */,
+				FDCC1CD12CA60925009FC350 /* UIViewAddGradienBorderExtension.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

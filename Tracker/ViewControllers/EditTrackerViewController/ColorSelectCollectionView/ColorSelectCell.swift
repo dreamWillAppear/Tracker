@@ -3,6 +3,8 @@ import SnapKit
 
 final class ColorSelectCell: UICollectionViewCell {
     
+    //MARK: - Public Properties
+    
     static let reuseIdentifier = "colorSelectCell"
     
     static let colors: [UIColor] = (1...18).compactMap { index in
@@ -12,11 +14,15 @@ final class ColorSelectCell: UICollectionViewCell {
         return color
     }
     
+    //MARK: - Private Properties
+    
     private lazy var colorView: UIView = {
         let view = UIView()
         view.layer.cornerRadius = 8
         return view
     }()
+    
+    //MARK: - Public Methods
     
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -35,6 +41,8 @@ final class ColorSelectCell: UICollectionViewCell {
         contentView.layer.borderWidth = isSelected ? 3 : 0
         colorView.backgroundColor = color
     }
+    
+    //MARK: - Private Methods
     
     private func configureConstraints(){
         contentView.snp.makeConstraints { make in
