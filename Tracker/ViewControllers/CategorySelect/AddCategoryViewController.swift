@@ -37,12 +37,8 @@ final class AddCategoryViewController: UIViewController, UITextFieldDelegate {
     override func viewDidLoad() {
         super.viewDidLoad()
         categoryNameTextField.delegate = self
+        configureDismissingKeyboard() 
         setUI()
-    }
-    
-    func textFieldDidChangeSelection(_ textField: UITextField) {
-        guard  let text = textField.text else { return }
-        setDoneButtonState(isEnabled: !text.isEmpty)
     }
     
     private func setUI() {
@@ -78,6 +74,19 @@ final class AddCategoryViewController: UIViewController, UITextFieldDelegate {
         doneButton.backgroundColor = isEnabled ? .trackerBlack : .trackerGray
     }
     
+    private func configureDismissingKeyboard() {
+        let tapAssideKeyboard = UITapGestureRecognizer(target: self, action: #selector(dismissKeyboard))
+        tapAssideKeyboard.cancelsTouchesInView = false
+        let scrollGesture = UIPanGestureRecognizer(target: self, action: #selector(dismissKeyboard))
+        
+        [tapAssideKeyboard, scrollGesture].forEach {
+            view.addGestureRecognizer($0)
+        }
+        
+        categoryNameTextField.delegate = self
+    }
+    
+    
     //MARK: - Actions
     
     @objc private func didTapDoneButton() {
@@ -85,5 +94,24 @@ final class AddCategoryViewController: UIViewController, UITextFieldDelegate {
         viewModel.addCategory(name: name)
         newCategoryAdded?()
         self.dismiss(animated: true)
+    }
+    
+    @objc private func dismissKeyboard() {
+        view.endEditing(true)
+    }
+    
+}
+
+//MARK: - textField Delegate
+
+extension AddCategoryViewController {
+    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
+        textField.resignFirstResponder()
+        return true
+    }
+    
+    func textFieldDidChangeSelection(_ textField: UITextField) {
+        guard  let text = textField.text else { return }
+        setDoneButtonState(isEnabled: !text.isEmpty)
     }
 }

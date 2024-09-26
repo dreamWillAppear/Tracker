@@ -66,7 +66,6 @@ final class EditTrackerViewController: UIViewController, UITextFieldDelegate {
     }()
     
     private lazy var buttonsStackView: UIStackView = {
-        
         let image = UIImage(named: "Chevron")?
             .withRenderingMode(.alwaysOriginal)
             .withTintColor(.trackerGray)
@@ -265,7 +264,7 @@ final class EditTrackerViewController: UIViewController, UITextFieldDelegate {
         newCategoryName = categoryName
         factory.selectedEmoji = tracker.emoji
         factory.selectedColor = tracker.color
-    
+        
         createButton.isEnabled = true
         createButton.backgroundColor = .trackerBlack
         createButton.setTitle("Сохранить", for: .normal)
@@ -335,7 +334,11 @@ final class EditTrackerViewController: UIViewController, UITextFieldDelegate {
     private func configureDismissingKeyboard() {
         let tapAssideKeyboard = UITapGestureRecognizer(target: self, action: #selector(dismissKeyboard))
         tapAssideKeyboard.cancelsTouchesInView = false
-        view.addGestureRecognizer(tapAssideKeyboard)
+        let scrollGesture = UIPanGestureRecognizer(target: self, action: #selector(dismissKeyboard))
+        
+        [tapAssideKeyboard, scrollGesture].forEach {
+            view.addGestureRecognizer($0)
+        }
         
         addTrackerNameField.delegate = self
     }
@@ -355,7 +358,6 @@ final class EditTrackerViewController: UIViewController, UITextFieldDelegate {
     }
     
     private func setConstraints() {
-        
         mainScrollView.snp.makeConstraints { make in
             make.edges.equalToSuperview()
             make.width.equalToSuperview()
@@ -430,7 +432,7 @@ final class EditTrackerViewController: UIViewController, UITextFieldDelegate {
             id: editableTracker.id,
             newTitle: addTrackerNameField.text ?? "",
             newColor: factory.selectedColor,
-            newEmoji: factory.selectedEmoji, 
+            newEmoji: factory.selectedEmoji,
             isPinned: factory.isPinned,
             newSchedule: factory.schedule,
             oldCategoryName: categoryName,
@@ -447,7 +449,8 @@ final class EditTrackerViewController: UIViewController, UITextFieldDelegate {
             self?.categorySelected = !category.isEmpty
             self?.categoryButton.addSupplementaryView(with: category)
             
-            guard let editableTracker = self?.editableTracker else { return } //если при редактировании привычки создать новую категрию, а потом вернуться на экран редактирования трекера - расписание сбрасывается - пока не понял почему так, ведь все остальное остается на месте. Однако "все остальное" не храниться в factory - возможно дело в этом.
+            guard let editableTracker = self?.editableTracker else { return }
+            
             self?.factory.schedule = editableTracker.schedule
         }
         
@@ -542,10 +545,10 @@ extension EditTrackerViewController: UICollectionViewDelegate, UICollectionViewD
         numberOfItemsInSection section: Int) -> Int {
             
             switch collectionView {
-            case emojiCollectionView:
-                return EmojiCell.emojiArray.count
-            default:
-                return ColorSelectCell.colors.count
+                case emojiCollectionView:
+                    return EmojiCell.emojiArray.count
+                default:
+                    return ColorSelectCell.colors.count
             }
         }
     
@@ -554,22 +557,22 @@ extension EditTrackerViewController: UICollectionViewDelegate, UICollectionViewD
         cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
             
             switch collectionView {
-            case emojiCollectionView:
-                guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: EmojiCell.reuseIdentifier, for: indexPath) as? EmojiCell else {
-                    return .init()
-                }
-                let isSeclected = selectedEmojiCellIndexPath == indexPath
-                cell.configureCell(with: EmojiCell.emojiArray[indexPath.item], isSelected: isSeclected)
-                return cell
-                
-            default:
-                guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: ColorSelectCell.reuseIdentifier, for: indexPath) as? ColorSelectCell else {
-                    return .init()
-                }
-                let isSelected = selectedColorCellIndexPath == indexPath
-                
-                cell.configureCell(color: ColorSelectCell.colors[indexPath.item], isSelected: isSelected)
-                return cell
+                case emojiCollectionView:
+                    guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: EmojiCell.reuseIdentifier, for: indexPath) as? EmojiCell else {
+                        return .init()
+                    }
+                    let isSeclected = selectedEmojiCellIndexPath == indexPath
+                    cell.configureCell(with: EmojiCell.emojiArray[indexPath.item], isSelected: isSeclected)
+                    return cell
+                    
+                default:
+                    guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: ColorSelectCell.reuseIdentifier, for: indexPath) as? ColorSelectCell else {
+                        return .init()
+                    }
+                    let isSelected = selectedColorCellIndexPath == indexPath
+                    
+                    cell.configureCell(color: ColorSelectCell.colors[indexPath.item], isSelected: isSelected)
+                    return cell
             }
         }
     
@@ -578,17 +581,17 @@ extension EditTrackerViewController: UICollectionViewDelegate, UICollectionViewD
         viewForSupplementaryElementOfKind kind: String,
         at indexPath: IndexPath) -> UICollectionReusableView {
             switch collectionView {
-            case emojiCollectionView:
-                guard let header = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: EmojiCollectionHeader.identifier, for: indexPath) as? EmojiCollectionHeader else {
-                    return .init()
-                }
-                return header
-                
-            default:
-                guard let header = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: ColorSelectCollectionHeader.identifier, for: indexPath) as? ColorSelectCollectionHeader else {
-                    return .init()
-                }
-                return header
+                case emojiCollectionView:
+                    guard let header = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: EmojiCollectionHeader.identifier, for: indexPath) as? EmojiCollectionHeader else {
+                        return .init()
+                    }
+                    return header
+                    
+                default:
+                    guard let header = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: ColorSelectCollectionHeader.identifier, for: indexPath) as? ColorSelectCollectionHeader else {
+                        return .init()
+                    }
+                    return header
             }
         }
     
@@ -602,16 +605,16 @@ extension EditTrackerViewController: UICollectionViewDelegate, UICollectionViewD
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         
         switch collectionView {
-            
-        case emojiCollectionView:
-            factory.selectedEmoji = EmojiCell.emojiArray[indexPath.row]
-            selectedEmojiCellIndexPath = indexPath
-            emojiSelected = true
-            
-        default:
-            factory.selectedColor = ColorSelectCell.colors[indexPath.row]
-            selectedColorCellIndexPath = indexPath
-            colorSelected = true
+                
+            case emojiCollectionView:
+                factory.selectedEmoji = EmojiCell.emojiArray[indexPath.row]
+                selectedEmojiCellIndexPath = indexPath
+                emojiSelected = true
+                
+            default:
+                factory.selectedColor = ColorSelectCell.colors[indexPath.row]
+                selectedColorCellIndexPath = indexPath
+                colorSelected = true
         }
         
         collectionView.reloadData()

@@ -15,6 +15,11 @@ final class StatisticsViewController: UIViewController {
         return label
     }()
     
+    private lazy var mainScrollView: UIScrollView = {
+        let scrollView = UIScrollView()
+        return scrollView
+    }()
+    
     private lazy var noStatisticsStackView: UIStackView = {
         let view = UIStackView()
         view.axis = .vertical
@@ -70,8 +75,10 @@ final class StatisticsViewController: UIViewController {
     private func setUI() {
         view.backgroundColor = .trackerMainBackground
         
+        mainScrollView.addSubview(countersStackView)
+        
         [mainLabel,
-         countersStackView,
+         mainScrollView,
          noStatisticsStackView].forEach {
             view.addSubview($0)
         }
@@ -91,6 +98,13 @@ final class StatisticsViewController: UIViewController {
     }
     
     private func setConstraints() {
+        
+        mainScrollView.snp.makeConstraints { make in
+            make.top.equalTo(mainLabel.snp.bottom).inset(-84)
+            make.bottom.equalToSuperview().inset(50)
+            make.width.equalToSuperview()
+           }
+        
         mainLabel.snp.makeConstraints { make in
             make.width.equalTo(254)
             make.height.equalTo(41)
@@ -109,9 +123,10 @@ final class StatisticsViewController: UIViewController {
         
         countersStackView.snp.makeConstraints { make in
             make.centerX.equalToSuperview()
-            make.top.equalTo(mainLabel.snp.bottom).inset(-84)
+            make.top.equalToSuperview()
             make.height.equalTo(getCountersStackViewHeight()) //высотка вьюх + высота отсупов по макету
             make.leading.trailing.equalToSuperview().inset(16)
+            make.bottom.equalToSuperview()
         }
     }
     
