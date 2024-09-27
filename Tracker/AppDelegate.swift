@@ -1,5 +1,6 @@
 import UIKit
 import CoreData
+import YandexMobileMetrica
 
 @main
 class AppDelegate: UIResponder, UIApplicationDelegate {
@@ -14,6 +15,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         window.rootViewController = TabBarController()
         window.makeKeyAndVisible()
         self.window = window
+        AnalyticsService.activate()
         return true
     }
     

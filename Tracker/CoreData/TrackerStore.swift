@@ -3,10 +3,14 @@ import CoreData
 
 final class TrackerStore: NSObject, NSFetchedResultsControllerDelegate {
     
+    //MARK: - Private Properties
+    
     private let appDelegate = AppDelegate()
     private var context: NSManagedObjectContext
     private var categoryFetchedResultsController: NSFetchedResultsController<TrackerCategoryCoreData>?
     private var trackerFetchedResultsController: NSFetchedResultsController<TrackerCoreData>?
+    
+    //MARK: - Public Methods
     
     init(context: NSManagedObjectContext) {
         self.context = context
@@ -23,19 +27,71 @@ final class TrackerStore: NSObject, NSFetchedResultsControllerDelegate {
         NotificationCenter.default.post(name: TrackersFactory.trackersForShowingUpdatedNotification, object: nil)
     }
     
-    func addTracker(_ tracker: Tracker, to category: TrackerCategory) {
+    func addTracker(_ tracker: Tracker, to category: TrackerCategory, isPinned: Bool = false) {
         let trackerCoreData = TrackerCoreData(context: context)
         trackerCoreData.id = tracker.id
         trackerCoreData.title = tracker.title
         trackerCoreData.color = tracker.color.encodeColor()
         trackerCoreData.emoji = tracker.emoji
         trackerCoreData.schedule = tracker.schedule.encode()
+        trackerCoreData.isPinned = NSNumber(value: isPinned)  
         
         if let categoryCoreData = fetchCategoryCoreData(withTitle: category.title) {
             trackerCoreData.category = categoryCoreData
         }
         
         appDelegate.saveContext(context: context)
+    }
+    
+    func updateTracker(id: UUID, newTitle: String, newColor: UIColor, newEmoji: String, newSchedule: [Bool], isPinned: Bool) {
+        let fetchRequest: NSFetchRequest<TrackerCoreData> = TrackerCoreData.fetchRequest()
+        fetchRequest.predicate = NSPredicate(format: "id == %@", id as CVarArg)
+        
+        do {
+            if let trackerToUpdate = try context.fetch(fetchRequest).first {
+                trackerToUpdate.title = newTitle
+                trackerToUpdate.color = newColor.encodeColor()
+                trackerToUpdate.emoji = newEmoji
+                trackerToUpdate.schedule = newSchedule.encode()
+                trackerToUpdate.isPinned = NSNumber(value: isPinned)
+                
+                appDelegate.saveContext(context: context)
+            }
+        } catch {
+            print("Failed to update tracker: \(error.localizedDescription)")
+        }
+    }
+    
+    func pinTracker(id: UUID, needPin: Bool) {
+        let fetchRequest: NSFetchRequest<TrackerCoreData> = TrackerCoreData.fetchRequest()
+        fetchRequest.predicate = NSPredicate(format: "id == %@", id as CVarArg)
+        
+        do {
+            if let tracker = try context.fetch(fetchRequest).first {
+                tracker.isPinned = NSNumber(value: needPin)
+                appDelegate.saveContext(context: context)
+            }
+        } catch {
+            print("Failed to pin tracker: \(error.localizedDescription)")
+        }
+    }
+    
+    func deleteTracker(id: UUID) {
+        let fetchRequest: NSFetchRequest<TrackerCoreData> = TrackerCoreData.fetchRequest()
+        fetchRequest.predicate = NSPredicate(format: "id == %@", id as CVarArg)
+        
+        do {
+            let results = try context.fetch(fetchRequest)
+            
+            for tracker in results {
+                context.delete(tracker)
+            }
+            
+            appDelegate.saveContext(context: context)
+            
+        } catch {
+            print("Error deleting tracker: \(error.localizedDescription)")
+        }
     }
     
     func addCategory(title: String) {
@@ -55,6 +111,7 @@ final class TrackerStore: NSObject, NSFetchedResultsControllerDelegate {
                       let colorData = trackerCoreData.color,
                       let color = UIColor.color(withData: colorData),
                       let emoji = trackerCoreData.emoji,
+                      let isPinned = trackerCoreData.isPinned,
                       let scheduleData = trackerCoreData.schedule,
                       let schedule = try? NSKeyedUnarchiver.unarchivedObject(ofClass: NSArray.self, from: scheduleData) as? [Bool] else {
                     print("Failed to unwrap TrackerCoreData properties")
@@ -65,7 +122,8 @@ final class TrackerStore: NSObject, NSFetchedResultsControllerDelegate {
                     id: trackerID,
                     title: title,
                     color: color,
-                    emoji: emoji,
+                    emoji: emoji, 
+                    isPinned: isPinned.boolValue,
                     schedule: schedule
                 )
             } else {
@@ -76,6 +134,33 @@ final class TrackerStore: NSObject, NSFetchedResultsControllerDelegate {
             return nil
         }
     }
+    
+    func getTrackers(for date: Date) -> [Tracker] {
+        let calendar = Calendar.current
+        let weekday = calendar.component(.weekday, from: date)
+        let allTrackers = fetchAllTrackers()
+        return allTrackers.filter { tracker in
+            let schedule = tracker.schedule
+            return schedule[weekday - 1]
+        }
+    }
+    
+    func fetchAllTrackers() -> [Tracker] {
+        guard let categories = categoryFetchedResultsController?.fetchedObjects else { return [] }
+        var trackers: [Tracker] = []
+        
+        for category in categories {
+            if let trackerCoreDataArray = category.trackers?.allObjects as? [TrackerCoreData] {
+                let trackerModels = trackerCoreDataArray.compactMap { trackerCoreData -> Tracker? in
+                    fetchTracker(by: trackerCoreData.id!)
+                }
+                trackers.append(contentsOf: trackerModels)
+            }
+        }
+        return trackers
+    }
+    
+    //MARK: - Private Methods
     
     private func fetchCategoryCoreData(withTitle title: String) -> TrackerCategoryCoreData? {
         let fetchRequest: NSFetchRequest<TrackerCategoryCoreData> = TrackerCategoryCoreData.fetchRequest()
@@ -129,6 +214,7 @@ final class TrackerStore: NSObject, NSFetchedResultsControllerDelegate {
                         let title = trackerCoreData.title,
                         let colorData = trackerCoreData.color,
                         let emoji = trackerCoreData.emoji,
+                        let isPinned = trackerCoreData.isPinned,
                         let scheduleData = trackerCoreData.schedule,
                         let schedule = try? NSKeyedUnarchiver.unarchivedObject(ofClasses: [NSArray.self, NSNumber.self], from: scheduleData) as? [Bool]
                     else {
@@ -137,7 +223,14 @@ final class TrackerStore: NSObject, NSFetchedResultsControllerDelegate {
                     
                     let color = UIColor.color(withData: colorData) ?? .clear
                     
-                    return Tracker(id: id, title: title, color: color, emoji: emoji, schedule: schedule)
+                    return Tracker(
+                        id: id,
+                        title: title,
+                        color: color,
+                        emoji: emoji, 
+                        isPinned: isPinned.boolValue,
+                        schedule: schedule
+                    )
                 }
                 
                 if let categoryTitle = category.title {

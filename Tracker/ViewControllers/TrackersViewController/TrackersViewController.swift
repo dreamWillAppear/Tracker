@@ -10,6 +10,7 @@ final class TrackersViewController: UIViewController {
     private lazy var currentDate: Date = TrackerCalendar.currentDate
     private let categoriesUpdatedNotification = TrackersFactory.trackersForShowingUpdatedNotification
     private let factory = TrackersFactory.shared
+    private let statisticsFactory = StatisticsFactory.shared
     private var completedTrackers: [TrackerRecord] = []
     
     private var categoriesForShowing: [TrackerCategory] = [] {
@@ -31,7 +32,7 @@ final class TrackersViewController: UIViewController {
     
     private lazy var mainLabel: UILabel = {
         let label = UILabel()
-        label.text = "Трекеры"
+        label.text = Localizable.trackersViewControllerMainTitle.localized()
         label.font = UIFont.boldSystemFont(ofSize: 34)
         label.textAlignment = .left
         return label
@@ -97,9 +98,9 @@ final class TrackersViewController: UIViewController {
     private lazy var filtersButton: UIButton = {
         let button = UIButton(type: .system)
         button.backgroundColor = .trackerBlue
-        button.setTitle("Фильтры", for: .normal)
+        button.setTitle(Localizable.trackersViewControllerFilterButtonTitle.localized(), for: .normal)
         button.titleLabel?.font = .systemFont(ofSize: 17)
-        button.tintColor = .trackerWhite
+        button.tintColor = .white
         button.layer.cornerRadius = 16
         button.isHidden = true
         button.addTarget(self, action: #selector(didTapFiltersButton), for: .touchUpInside)
@@ -117,10 +118,21 @@ final class TrackersViewController: UIViewController {
         setupObservers()
         configureDismissingKeyboard()
         factory.getInitialData()
+        
+    }
+    
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        AnalyticsService().trackOpenScreen(screen: "Main")
+    }
+    
+    override func viewDidDisappear(_ animated: Bool) {
+        AnalyticsService().trackCloseScreen(screen: "Main")
     }
     
     deinit {
         NotificationCenter.default.removeObserver(self, name: categoriesUpdatedNotification, object: nil)
+        AnalyticsService().trackOpenScreen(screen: "Main")
     }
     
     // MARK: - Private Methods
@@ -140,6 +152,9 @@ final class TrackersViewController: UIViewController {
         collectionView.register(
             TrackerCell.self,
             forCellWithReuseIdentifier: TrackerCell.reuseIdentifier)
+        
+        //оверскролл, что бы filtersButton не мешала взаимодействовать с трекерами
+        collectionView.contentInset = UIEdgeInsets(top: 0, left: 0, bottom: 75, right: 0)
     }
     
     private func configureDismissingKeyboard() {
@@ -160,7 +175,7 @@ final class TrackersViewController: UIViewController {
     }
     
     private func setUI() {
-        view.backgroundColor = .trackerWhite
+        view.backgroundColor = .trackerMainBackground
         
         [searchField,
          mainLabel,
@@ -193,9 +208,36 @@ final class TrackersViewController: UIViewController {
             noTrackersImageView.image = .noSearchResult
             noTrackersLabel.text = "Ничего не найдено"
         } else {
+            guard factory.currentFilterName == FiltersNames.allTrackers.rawValue else {
+                noTrackersImageView.image = .noSearchResult
+                noTrackersLabel.text = "Ничего не найдено"
+                filtersButton.isHidden = false
+                return
+            }
             noTrackersImageView.image = .noTrackers
             noTrackersLabel.text = "Что будем отслеживать?"
         }
+    }
+    
+    private func showDeleteConfirmationAlert(trackerID: UUID) {
+        let alert = UIAlertController(
+            title: "Уверены, что хотите удалить трекер?",
+            message: nil,
+            preferredStyle: .actionSheet
+        )
+        
+        let action = UIAlertAction(title: "Удалить", style: .destructive) { [weak self] _ in
+            self?.factory.deleteTrackerFromStorage(UUID: trackerID)
+            self?.statisticsFactory.updateStatistics()
+        }
+        
+        let cancelAction = UIAlertAction(title: "Отмена", style: .cancel)
+        
+        [action, cancelAction].forEach {
+            alert.addAction($0)
+        }
+        
+        present(alert, animated: true)
     }
     
     private func setConstraints() {
@@ -242,29 +284,50 @@ final class TrackersViewController: UIViewController {
         
     }
     
+    
     //MARK: - Actions
+    
     @objc private func categoriesUpdated() {
+        updateCollectionViewPlaceholder(forSearch: false)
         collectionView.reloadData()
     }
     
-    //отладочное: при нажатии на кнопку Фильтры - БД очищается и экран обновляется
     @objc private func didTapFiltersButton() {
-        factory.eraseAllDataFromBase()
-        updateCollectionViewPlaceholder(forSearch: false)
+        AnalyticsService().trackClick(screen: "Main", item: "filter")
+        
+        let viewController = FiltersViewController()
+        present(UINavigationController(rootViewController: viewController), animated: true)
+        
+        viewController.filterSelected = { [weak self] filterName in
+            self?.factory.currentFilterName = filterName
+            
+            guard filterName != FiltersNames.todayTrackers.rawValue else {
+                self?.datePicker.date = TrackerCalendar.currentDate
+                self?.factory.updateTrackersForShowing()
+                return
+            }
+            
+            self?.factory.updateTrackersForShowing()
+        }
+        
+        //factory.eraseAllDataFromBase() //отладочное: при нажатии на кнопку Фильтры - БД очищается и экран обновляется
     }
     
     @objc private func datePickerValueDateChanged(_ sender: UIDatePicker) {
-        DispatchQueue.main.async {
-            self.updateCollectionViewPlaceholder(forSearch: false)
+        if factory.currentFilterName == FiltersNames.todayTrackers.rawValue {
+            factory.currentFilterName = FiltersNames.allTrackers.rawValue
         }
+        
         dateFormatter.dateFormat = "yyyy-MM-dd"
         currentDate = sender.date
         let weekday = currentCalendar.component(.weekday, from: currentDate)
+        factory.selectedDate = currentDate
         factory.weekdayIndex = ((weekday + 5) % 7)
         factory.updateTrackersForShowing()
     }
     
     @objc private func didTapAddTrackerButton() {
+        AnalyticsService().trackClick(screen: "Main", item: "add_track")
         let viewController = AddTrackerViewController()
         present(UINavigationController(rootViewController: viewController), animated: true)
     }
@@ -278,27 +341,56 @@ final class TrackersViewController: UIViewController {
 extension TrackersViewController: UICollectionViewDataSource, UICollectionViewDelegate, UICollectionViewDelegateFlowLayout {
     
     func numberOfSections(in collectionView: UICollectionView) -> Int {
-        factory.trackersForShowing.count
+        return factory.trackersForShowing.count + (factory.pinnedTrackers.isEmpty ? 0 : 1)
     }
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        updateCollectionViewPlaceholder(forSearch: false)
-        return factory.trackersForShowing[section].trackers.count
+        if section == 0 && !factory.pinnedTrackers.isEmpty {
+            return factory.pinnedTrackers.count  // Количество закрепленных трекеров
+        } else {
+            let adjustedSection = factory.pinnedTrackers.isEmpty ? section : section - 1
+            return factory.trackersForShowing[adjustedSection].trackers.count
+        }
     }
     
     //MARK: - ConfigureCell
-    func collectionView(
-        _ collectionView: UICollectionView,
-        cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-            guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: TrackerCell.reuseIdentifier, for: indexPath) as? TrackerCell else {
-                return .init()
-            }
-            
-            let tracker = factory.trackersForShowing[indexPath.section].trackers[indexPath.item]
-            
-            cell.configureCell(for: tracker, date: currentDate)
-            return cell
+    
+    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+        guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: TrackerCell.reuseIdentifier, for: indexPath) as? TrackerCell else {
+            return .init()
         }
+        
+        let tracker: Tracker
+        
+        if indexPath.section == 0 && !factory.pinnedTrackers.isEmpty {
+            tracker = factory.pinnedTrackers[indexPath.item]  // Закрепленные трекеры
+        } else {
+            let adjustedSection = factory.pinnedTrackers.isEmpty ? indexPath.section : indexPath.section - 1
+            tracker = factory.trackersForShowing[adjustedSection].trackers[indexPath.item]
+        }
+        
+        cell.configureCell(for: tracker, date: currentDate)
+        
+        cell.didTapEditTracker = { [weak self] in
+            AnalyticsService().trackClick(screen: "Main", item: "edit")
+            let vc = EditTrackerViewController(isHabbit: true, tracker: tracker)
+            self?.present(UINavigationController(rootViewController: vc), animated: true)
+            self?.statisticsFactory.updateStatistics()
+        }
+        
+        cell.didTapDeleteTracker = { [weak self] in
+            AnalyticsService().trackClick(screen: "Main", item: "delete")
+            self?.showDeleteConfirmationAlert(trackerID: tracker.id)
+        }
+        
+        cell.didTapIncrease = { [weak self] in
+            AnalyticsService().trackClick(screen: "Main", item: "track")
+            self?.collectionView.reloadData()
+            self?.statisticsFactory.updateStatistics()
+        }
+        
+        return cell
+    }
     
     func collectionView(
         _ collectionView: UICollectionView,
@@ -311,18 +403,20 @@ extension TrackersViewController: UICollectionViewDataSource, UICollectionViewDe
         return .init(width: availableWidth / 2, height: 148)
     }
     
-    func collectionView(
-        _ collectionView: UICollectionView,
-        viewForSupplementaryElementOfKind kind: String,
-        at indexPath: IndexPath
-    ) -> UICollectionReusableView {
+    func collectionView(_ collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, at indexPath: IndexPath) -> UICollectionReusableView {
         guard let header = collectionView.dequeueReusableSupplementaryView(
             ofKind: kind,
             withReuseIdentifier: CategoryHeaderView.identifier,
             for: indexPath
         ) as? CategoryHeaderView else { return .init() }
         
-        header.categoryTitle.text = factory.trackersForShowing[indexPath.section].title
+        if indexPath.section == 0 && !factory.pinnedTrackers.isEmpty {
+            header.categoryTitle.text = "Закрепленные"
+        } else {
+            let adjustedSection = factory.pinnedTrackers.isEmpty ? indexPath.section : indexPath.section - 1
+            header.categoryTitle.text = factory.trackersForShowing[adjustedSection].title
+        }
+        
         return header
     }
     
@@ -339,23 +433,21 @@ extension TrackersViewController: UISearchBarDelegate {
     
     func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
         switch searchText{
-            
-        case "":
-            updateCollectionViewPlaceholder(forSearch: false)
-            searchBar.setShowsCancelButton(false, animated: true)
-            factory.trackersForShowing = factory.filterTrackers(in: factory.trackersStorage, forDayWithIndex: factory.weekdayIndex)
-        default:
-            //без асинхронного вызова заглушка появляется только после ввода второго символа. Видимо потому что trackersForShowing: [TrackerCategory] уже пуст, но UI еще обновился?
-            DispatchQueue.main.async {
-                self.updateCollectionViewPlaceholder(forSearch: true)
-            }
-            searchBar.setShowsCancelButton(true, animated: true)
-            factory.trackersForShowing = factory.filterTrackers(in: factory.trackersStorage, by: searchText)
+                
+            case "":
+                searchBar.setShowsCancelButton(false, animated: true)
+                factory.trackersForShowing = factory.filterTrackers(in: factory.trackersStorage, forDayWithIndex: factory.weekdayIndex)
+            default:
+                //без асинхронного вызова заглушка появляется только после ввода второго символа. Видимо потому что trackersForShowing: [TrackerCategory] уже пуст, но UI еще обновился?
+                DispatchQueue.main.async {
+                    self.updateCollectionViewPlaceholder(forSearch: true)
+                }
+                searchBar.setShowsCancelButton(true, animated: true)
+                factory.trackersForShowing = factory.filterTrackers(in: factory.trackersStorage, by: searchText)
         }
     }
     
     func searchBarCancelButtonClicked(_ searchBar: UISearchBar) {
-        updateCollectionViewPlaceholder(forSearch: false)
         searchBar.text = ""
         searchBar.setShowsCancelButton(false, animated: true)
         searchBar.endEditing(true)
@@ -366,6 +458,5 @@ extension TrackersViewController: UISearchBarDelegate {
         searchBar.setShowsCancelButton(true, animated: true)
         return true
     }
-    
 }
 

@@ -28,7 +28,20 @@
 		<key>Tracker.xcscheme_^#shared#^_</key>
 		<dict>
 			<key>orderHint</key>
-			<integer>0</integer>
+			<integer>1</integer>
+		</dict>
+	</dict>
+	<key>SuppressBuildableAutocreation</key>
+	<dict>
+		<key>FD141BC02CA4BAF4001EECA9</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>FD42041D2BF17E7C0007A254</key>
+		<dict>
+			<key>primary</key>
+			<true/>
 		</dict>
 	</dict>
 </dict>

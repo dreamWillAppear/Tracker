@@ -46,7 +46,7 @@ final class ScheduleViewController: UIViewController {
     // MARK: - Private Methods
     
     private func setUI(){
-        view.backgroundColor = .trackerWhite
+        view.backgroundColor = .trackerMainBackground
         
         [tableView,
          doneButton].forEach {

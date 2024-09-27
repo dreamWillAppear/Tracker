@@ -58,7 +58,7 @@ final class AddTrackerViewController: UIViewController {
     // MARK: - Private Methods
     
     private func setUI() {
-        view.backgroundColor = .trackerWhite
+        view.backgroundColor = .trackerMainBackground
         self.navigationController?.navigationBar.titleTextAttributes = [NSAttributedString.Key.font: UIFont.systemFont(ofSize: 16, weight: .medium)]
         title = "Создание трекера"
         
@@ -90,13 +90,13 @@ final class AddTrackerViewController: UIViewController {
     //MARK: - Actions
     
     @objc private func didTapAddHabbitButton(){
-        let viewController = AddHabbitViewController()
+        let viewController = EditTrackerViewController(isHabbit: true, tracker: nil)
         viewController.isHabbit = true
         present(UINavigationController(rootViewController: viewController), animated: true)
     }
     
     @objc private func didTapAddEventButton(){
-        let viewController = AddHabbitViewController()
+        let viewController = EditTrackerViewController(isHabbit: false, tracker: nil)
         viewController.isHabbit = false
         present(UINavigationController(rootViewController: viewController), animated: true)
     }

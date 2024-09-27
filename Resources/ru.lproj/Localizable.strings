@@ -1,0 +1,7 @@
+"trackersViewController.mainTitle" = "Трекеры";
+"trackersViewController.filterButtonTitle" = "Фильтры";
+"tabBar.trackersButton" = "Трекеры";
+"tabBar.statisticsButton" = "Статистика";
+"trackerCell.counterLabel.oneDay" = "день";
+"trackerCell.counterLabel.severalDays" = "дней";
+"trackerCell.counterLabel.ru_dnya" = "дня";

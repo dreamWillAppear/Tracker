@@ -3,6 +3,8 @@ import SnapKit
 
 final class OnboardingPageViewController: UIViewController {
     
+    //MARK: - Private Properties
+    
     private var backgroundImage: UIImage
     private var labelText: String
     
@@ -37,6 +39,8 @@ final class OnboardingPageViewController: UIViewController {
         return button
     }()
     
+    //MARK: - Public Methods
+    
     init(backgroundImage: UIImage, labelText: String) {
         self.backgroundImage = backgroundImage
         self.labelText = labelText
@@ -52,6 +56,8 @@ final class OnboardingPageViewController: UIViewController {
         
         setUI()
     }
+    
+    //MARK: - Private Methods
     
     private func setUI() {
         [backgroundImageView, label, amazingButton].forEach {
@@ -79,6 +85,8 @@ final class OnboardingPageViewController: UIViewController {
             make.bottom.equalToSuperview().inset(84)
         }
     }
+    
+    //MARK: - Actions
     
     @objc private func didTapThatAmazingButton() {
         self.dismiss(animated: true)

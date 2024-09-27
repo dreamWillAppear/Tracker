@@ -3,6 +3,8 @@ import SnapKit
 
 final class CategoryHeaderView: UICollectionReusableView {
     
+    //MARK: - Public Properties
+    
     static let identifier = "CategoryHeaderView"
     
     let categoryTitle: UILabel = {
@@ -11,6 +13,8 @@ final class CategoryHeaderView: UICollectionReusableView {
         label.font = .systemFont(ofSize: 19, weight: .bold)
         return label
     }()
+    
+    //MARK: - Public Methods
     
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -25,6 +29,8 @@ final class CategoryHeaderView: UICollectionReusableView {
         addSubview(categoryTitle)
         setConstraints()
     }
+    
+    //MARK: - Private Methods
     
     private func setConstraints() {
         categoryTitle.snp.makeConstraints { make in

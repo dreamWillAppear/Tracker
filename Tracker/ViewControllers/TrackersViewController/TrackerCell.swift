@@ -3,9 +3,18 @@ import SnapKit
 
 final class TrackerCell: UICollectionViewCell {
     
+    //MARK: - Public Properties
+    
     static let reuseIdentifier = "trackerCell"
     
+    var didTapEditTracker: (() -> Void)?
+    var didTapDeleteTracker: (() -> Void)?
+    var didTapIncrease: (() -> Void)?
+    
+    //MARK: - Private Properties
+    
     private let factory = TrackersFactory.shared
+    private let statisticsFactory = StatisticsFactory.shared
     private var tracker: Tracker?
     private var selectedDate: Date?
     private var trackerColor: UIColor?
@@ -16,10 +25,17 @@ final class TrackerCell: UICollectionViewCell {
         return view
     }()
     
+    private lazy var pinIcon: UIImageView = {
+        let imageView = UIImageView()
+        imageView.image = UIImage(named: "Pin Icon")?.withTintColor(.trackerWhite, renderingMode: .alwaysOriginal)
+        imageView.isHidden = true
+        return imageView
+    }()
+    
     private lazy var trackerTitle: UILabel = {
         let label = UILabel()
         label.font = .systemFont(ofSize: 12, weight: .medium)
-        label.textColor = .trackerWhite
+        label.textColor = .white
         label.numberOfLines = 0
         label.textAlignment = .left
         return label
@@ -49,10 +65,15 @@ final class TrackerCell: UICollectionViewCell {
         return button
     }()
     
+    //MARK: - Public Methods
+    
     override init(frame: CGRect) {
         super.init(frame: frame)
         
+        contentView.layer.cornerRadius = colorFilledView.layer.cornerRadius
+        
         [colorFilledView,
+         pinIcon,
          trackerTitle,
          emojiView,
          dayCounter,
@@ -60,6 +81,7 @@ final class TrackerCell: UICollectionViewCell {
             contentView.addSubview($0)
         }
         setConstraints()
+        setContextMenu()
     }
     
     required init?(coder: NSCoder) {
@@ -70,7 +92,7 @@ final class TrackerCell: UICollectionViewCell {
         self.tracker = tracker
         self.selectedDate = date
         trackerColor = tracker.color
-        
+        pinIcon.isHidden = !tracker.isPinned
         colorFilledView.backgroundColor = tracker.color
         trackerTitle.text = tracker.title
         emojiView.text = tracker.emoji
@@ -79,29 +101,11 @@ final class TrackerCell: UICollectionViewCell {
         configureCounterLabel()
     }
     
+    //MARK: - Private Methods
+    
     private func configureCounterLabel() {
         guard let tracker = tracker else { return }
-        
-        let daysCount = factory.getRecordsCount(for: tracker)
-        var counterLabel = ""
-        
-        let lastTwoDigits = daysCount % 100
-        let lastDigit = daysCount % 10
-        
-        if (11...14).contains(lastTwoDigits) {
-            counterLabel = "\(daysCount) дней"
-        } else {
-            switch lastDigit {
-                case 1:
-                    counterLabel = "\(daysCount) день"
-                case 2, 3, 4:
-                    counterLabel = "\(daysCount) дня"
-                default:
-                    counterLabel = "\(daysCount) дней"
-            }
-        }
-        
-        dayCounter.text = counterLabel
+        dayCounter.text = factory.getDayCounterLabel(for: tracker)
     }
     
     private func selectedDateIsFuture() -> Bool {
@@ -143,6 +147,11 @@ final class TrackerCell: UICollectionViewCell {
             make.trailing.equalToSuperview()
         }
         
+        pinIcon.snp.makeConstraints { make in
+            make.top.equalToSuperview().inset(18)
+            make.trailing.equalToSuperview().inset(12)
+        }
+        
         trackerTitle.snp.makeConstraints { make in
             make.width.equalTo(143)
             make.height.equalTo(34)
@@ -168,7 +177,10 @@ final class TrackerCell: UICollectionViewCell {
         }
     }
     
-    //MARK: - ACTIONS
+    private func setContextMenu() {
+        let interaction = UIContextMenuInteraction(delegate: self)
+        contentView.addInteraction(interaction)
+    }
     
     private func mark(tracker: Tracker, onDate: Date) {
         if factory.isTrackerCompleted(trackerID: tracker.id, on: onDate) {
@@ -177,6 +189,8 @@ final class TrackerCell: UICollectionViewCell {
             factory.markTrackerAsCompleted(trackerID: tracker.id, on: onDate)
         }
     }
+    
+    //MARK: - ACTIONS
     
     @objc private func didTapIncreaseButton() {
         guard
@@ -187,5 +201,32 @@ final class TrackerCell: UICollectionViewCell {
         mark(tracker: tracker, onDate: date)
         configureIncreaseButton(tracker: tracker, date: date)
         configureCounterLabel()
+        didTapIncrease?()
+    }
+}
+
+extension TrackerCell: UIContextMenuInteractionDelegate {
+    func contextMenuInteraction(_ interaction: UIContextMenuInteraction, configurationForMenuAtLocation location: CGPoint) -> UIContextMenuConfiguration? {
+        guard let tracker = tracker else  { return .init() }
+        let trackerPinned = tracker.isPinned
+        let pinActionTitle = trackerPinned ? "Открепить" : "Закрепить"
+        
+        let pinAction = UIAction(title: pinActionTitle, image: nil) { [weak self]  _ in
+            self?.factory.pinTracker(id: tracker.id, needPin: !trackerPinned)
+        }
+        
+        let editAction = UIAction(title: "Редактировать", image: nil) { [weak self] _ in
+            self?.didTapEditTracker?()
+        }
+        
+        let deleteAction = UIAction(title: "Удалить", image: nil, attributes: .destructive) { [weak self] _ in
+            self?.didTapDeleteTracker?()
+        }
+        
+        let menu = UIMenu(title: "", children: [pinAction, editAction, deleteAction])
+        
+        return UIContextMenuConfiguration(identifier: nil, previewProvider: nil) {_ in
+            return menu
+        }
     }
 }
